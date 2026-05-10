@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Schedule - BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #e86a33; --bg: #f5efe6; --card: #fff; --border: #eadbc8; --text: #333; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 16px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+        h1 { color: var(--primary); margin-bottom: 8px; }
+        .muted { color: #666; margin-bottom: 14px; }
+        .top-links { display: flex; gap: 10px; margin-bottom: 14px; }
+        .btn { text-decoration: none; background: var(--primary); color: #fff; padding: 8px 14px; border-radius: 8px; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid var(--border); padding: 10px; text-align: center; }
+        th { background: #f8f2ea; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>My Weekly Schedule</h1>
+            <p class="muted" id="meta">Loading...</p>
+            <div class="top-links">
+                <a class="btn" href="subject-portal.html">Back to Subject Portal</a>
+            </div>
+            <div id="scheduleWrap">Loading schedule...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, collection, query, where, getDocs, doc, getDoc } from './firebase-config.js';
+
+        const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const PERIODS = [1, 2, 3, 4, 5, 6];
+        const BELL_SCHEDULE_DOC = doc(db, 'settings', 'bellSchedule');
+        let bellSchedule = null;
+
+        const sessionData = localStorage.getItem("current_user_session");
+        if (!sessionData) window.location.href = "signin.html";
+        const user = JSON.parse(sessionData);
+        if (user.role !== 'student') window.location.href = "subject-portal.html";
+
+        document.getElementById('meta').textContent = `${user.name} - Grade ${user.grade} Section ${user.section || '-'}`;
+
+        async function loadBellSchedule() {
+            try {
+                const snap = await getDoc(BELL_SCHEDULE_DOC);
+                bellSchedule = snap.exists() ? snap.data() : null;
+            } catch {
+                bellSchedule = null;
+            }
+        }
+
+        function periodLabel(p) {
+            const t = bellSchedule?.periods?.[String(p)];
+            if (t?.start && t?.end) return `${p} <span style="color:#666;font-weight:500;">(${t.start}-${t.end})</span>`;
+            return String(p);
+        }
+
+        async function loadSchedule() {
+            const grade = parseInt(user.grade);
+            const section = String(user.section || '');
+            const q = query(collection(db, "schedules"), where("grade", "==", grade), where("section", "==", section));
+            const snap = await getDocs(q);
+            const entries = [];
+            snap.forEach(d => entries.push(d.data()));
+
+            let html = `<table><thead><tr><th>Period</th>${WEEK_DAYS.map(day => `<th>${day}</th>`).join('')}</tr></thead><tbody>`;
+            PERIODS.forEach(period => {
+                html += `<tr><td><strong>${periodLabel(period)}</strong></td>`;
+                WEEK_DAYS.forEach(day => {
+                    const item = entries.find(e => parseInt(e.period) === period && (e.day || 'Monday') === day);
+                    html += `<td>${item?.subject || '-'}</td>`;
+                });
+                html += `</tr>`;
+                if (period === 3) {
+                    const b = bellSchedule?.breaks?.after3;
+                    if (b?.start && b?.end) {
+                        html += `<tr><td colspan="${WEEK_DAYS.length + 1}" style="background:#f8f2ea;"><strong>${b.label || 'Break'}</strong> <span style="color:#666;">(${b.start}-${b.end})</span></td></tr>`;
+                    }
+                }
+                if (period === 5) {
+                    const l = bellSchedule?.lunch?.after5;
+                    if (l?.start && l?.end) {
+                        html += `<tr><td colspan="${WEEK_DAYS.length + 1}" style="background:#f8f2ea;"><strong>${l.label || 'Lunch'}</strong> <span style="color:#666;">(${l.start}-${l.end})</span></td></tr>`;
+                    }
+                }
+            });
+            html += `</tbody></table>`;
+            document.getElementById('scheduleWrap').innerHTML = html;
+        }
+
+        loadBellSchedule().then(loadSchedule);
+    </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+:root {
+    --primary: #e86a33;
+    --primary-dark: #d3541f;
+    --primary-light: #fdf1ea;
+    --primary-soft: #fff4ed;
+    --bg: #f8f4f0;
+    --card: #ffffff;
+    --text: #2d2d2d;
+    --text-light: #6b6b6b;
+    --text-muted: #8f8f8f;
+    --accent: #fff9f5;
+    --border: #eae2d9;
+    --border-soft: #f0e8e0;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 20px 40px rgba(232, 106, 51, 0.08);
+    --shadow-hover: 0 15px 35px rgba(232, 106, 51, 0.15);
+    --success: #2e7d32;
+    --success-light: #e8f5e9;
+    --danger: #d32f2f;
+    --danger-light: #ffebee;
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+}
+
+[data-theme="dark"] {
+    --primary: #ff8a5c;
+    --primary-dark: #ff7b4a;
+    --primary-light: #4a3328;
+    --primary-soft: #33221d;
+    --bg: #121212;
+    --card: #1e1e1e;
+    --text: #ffffff;
+    --text-light: #b0b0b0;
+    --text-muted: #808080;
+    --accent: #2d2d2d;
+    --border: #333333;
+    --border-soft: #2a2a2a;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.5);
+    --shadow-hover: 0 15px 35px rgba(255, 138, 92, 0.2);
+    --success: #66bb6a;
+    --success-light: #1e3a1e;
+    --danger: #ef5350;
+    --danger-light: #3a1e1e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    line-height: 1.5;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.welcome-header {
+    margin-bottom: 35px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-soft);
+}
+
+.welcome-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.welcome-header h2 span {
+    color: var(--primary);
+    font-weight: 800;
+}
+
+.welcome-header p {
+    font-size: 1rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.account-icon {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.account-icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 1.3rem;
+    box-shadow: 0 4px 14px rgba(232, 106, 51, 0.25);
+    transition: all 0.25s;
+    border: 2px solid white;
+}
+
+.account-icon-link:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(232, 106, 51, 0.4);
+}
+
+.account-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 260px;
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-12px);
+    transition: all 0.25s;
+    z-index: 1001;
+}
+
+.account-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    padding: 20px;
+    background: var(--primary-soft);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.current-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.user-info-dropdown {
+    flex: 1;
+}
+
+.user-name-dropdown {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.user-grade-dropdown {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.dropdown-menu {
+    padding: 8px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.dropdown-item i {
+    width: 20px;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.dropdown-item:hover:not(.disabled) {
+    background: var(--primary-soft);
+}
+
+.dropdown-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.theme-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.theme-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+    width: 105px;
+}
+
+.theme-select:hover {
+    border-color: var(--primary);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--border-soft);
+    margin: 8px 0;
+}
+
+.logout-btn {
+    color: var(--danger);
+}
+
+.logout-btn i {
+    color: var(--danger);
+}
+
+.logout-btn:hover:not(.disabled) {
+    background: var(--danger-light) !important;
+}
+
+.custom-back-btn {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    width: 44px;
+    height: 44px;
+    background: var(--card);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    z-index: 999;
+    transition: all 0.2s;
+    color: var(--text);
+    font-size: 1.2rem;
+}
+
+.custom-back-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.05);
+}
+
+.custom-back-btn:active {
+    transform: scale(0.95);
+}
+
+body.quiz-page .custom-back-btn,
+body.final-exam-page .custom-back-btn {
+    display: none;
+}
+
+.portal-container, 
+.profile-container, 
+.note-container, 
+.container {
+    width: 92%;
+    max-width: 900px;
+    margin: 80px auto 30px;
+    background: var(--card);
+    padding: 35px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    color: var(--text);
+    border: 1px solid var(--border-soft);
+}
+
+.subject-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 16px;
+    margin-top: 25px;
+}
+
+.sub-link {
+    background: var(--primary-soft);
+    border: 1px solid var(--border-soft);
+    padding: 24px 16px;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    transition: all 0.25s;
+    text-align: center;
+    font-size: 1.05rem;
+}
+
+.sub-link:hover {
+    border-color: var(--primary);
+    background: var(--card);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.hidden { 
+    display: none !important; 
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.portal-container, 
+.profile-container, 
+.note-container, 
+.container {
+    animation: slideIn 0.4s ease-out;
+}
+
+@media (max-width: 768px) {
+    .account-icon {
+        top: 16px;
+        right: 16px;
+    }
+    
+    .account-icon-link {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+    }
+    
+    .account-dropdown {
+        width: 240px;
+    }
+    
+    .custom-back-btn {
+        top: 16px;
+        left: 16px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .portal-container, 
+    .profile-container, 
+    .note-container, 
+    .container {
+        padding: 25px;
+        margin: 70px auto 20px;
+        width: 94%;
+    }
+    
+    .subject-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .welcome-header h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-dropdown {
+        width: 220px;
+    }
+    
+    .dropdown-item {
+        padding: 10px 14px;
+    }
+    
+    .theme-select {
+        width: 90px;
+        padding: 6px 8px;
+    }
+    
+    .subject-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .portal-container, 
+    .profile-container, 
+    .note-container, 
+    .container {
+        padding: 20px;
+    }
+}

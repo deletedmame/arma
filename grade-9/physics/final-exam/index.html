@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Final Exam</title>
+    <link rel="stylesheet" href="../../../styles/final.css">
+    <link rel="stylesheet" href="../../../styles/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="final-exam-page">
+
+<div class="account-icon" id="accountIcon">
+    <div class="account-icon-link">👤</div>
+    <div class="account-dropdown" id="accountDropdown">
+        <div class="dropdown-header">
+            <div class="current-user" id="currentUserDisplay">
+                <div class="user-avatar">👤</div>
+                <div class="user-info-dropdown">
+                    <div class="user-name-dropdown">Loading...</div>
+                    <div class="user-grade-dropdown">Grade</div>
+                </div>
+            </div>
+        </div>
+        <div class="dropdown-menu">
+            <div class="dropdown-item theme-item">
+                <i class="fas fa-palette"></i>
+                <span>Theme</span>
+                <select id="theme-selector" class="theme-select">
+                    <option value="light">☀️ Light</option>
+                    <option value="dark">🌙 Dark</option>
+                </select>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="custom-back-btn" onclick="exitFinal()">
+    <i class="fas fa-arrow-left"></i>
+</div>
+
+<div class="exam-container">
+    <h1>Biology Final Exam</h1>
+    
+    <div id="start-screen" class="screen active">
+        <p>Welcome to the Biology Final Exam!</p>
+  
+        <button onclick="startExam()" class="btn-final">Start Exam</button>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <div class="quiz-info">
+            <div>Question <span id="current-q">1</span> / <span id="total-q">10</span></div>
+            <div>Score: <span id="score">0</span></div>
+        </div>
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        <h2 id="question-text"></h2>
+        <div id="answers-container" class="answers-container"></div>
+        
+        <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+            <button id="skip-btn" class="nav-btn" style="background: var(--warning, #f39c12); color: white; border: none; border-radius: 40px; padding: 10px 20px; font-weight: 600; cursor: pointer;">
+                Skip Question →
+            </button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <div class="result-header">
+            <h2>Final Exam Results</h2>
+            <div class="score-display" id="final-score">0/10</div>
+        </div>
+        
+        <div class="result-tabs">
+            <button class="tab-btn active" id="tab-correct" onclick="showTab('correct')">✅ Correct</button>
+            <button class="tab-btn" id="tab-wrong" onclick="showTab('wrong')">❌ Wrong</button>
+        </div>
+
+        <div id="correct-answers" class="answers-review"></div>
+        <div id="wrong-answers" class="answers-review hidden"></div>
+
+        <button onclick="location.href='../index.html'" class="btn-final">Back to Dashboard</button>
+    </div>
+</div>
+
+<script src="../../../theme-manager.js"></script>
+<script>
+    // Simplified Theme & UI Logic to avoid conflicts with script.js
+    function goBack() {
+    window.history.back();
+}
+
+    window.exitFinal = function() {
+        const sessionData = localStorage.getItem("current_user_session");
+        if (sessionData) {
+            const user = JSON.parse(sessionData);
+            localStorage.removeItem(`bio_final_inprogress_${user._uid}`);
+        }
+        window.location.href = '../index.html';
+    };
+
+    window.logout = function() {
+        localStorage.removeItem("current_user_session");
+        window.location.href = '../../../profile.html';
+    };
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Dropdown Logic
+    const icon = document.getElementById('accountIcon');
+    const dropdown = document.getElementById('accountDropdown');
+    const themeSelect = document.getElementById('theme-selector');
+
+    icon.onclick = (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); };
+    dropdown.onclick = (e) => e.stopPropagation();
+    document.onclick = () => dropdown.classList.remove('active');
+
+    // Theme Logic
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    themeSelect.value = savedTheme;
+    themeSelect.onchange = (e) => {
+        document.body.setAttribute('data-theme', e.target.value);
+        localStorage.setItem('theme', e.target.value);
+
+
+    };
+    
+    const sessionData = localStorage.getItem("current_user_session");
+    if(sessionData) {
+        const user = JSON.parse(sessionData);
+        const nameDisplay = document.querySelector('.user-name-dropdown');
+        const gradeDisplay = document.querySelector('.user-grade-dropdown');
+        const avatarDisplay = document.querySelector('.user-avatar');
+
+        if(nameDisplay) nameDisplay.textContent = user.name;
+        if(gradeDisplay) gradeDisplay.textContent = `Grade ${user.grade}`;
+        if(avatarDisplay) avatarDisplay.textContent = user.name.charAt(0).toUpperCase();
+    }
+
+  
+    
+    })
+</script>
+
+<script>
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+</script>
+<script src="script.js" type="module"></script>
+</body>
+</html>

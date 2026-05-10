@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #e86a33; --bg: #f5efe6; --card: #ffffff; --text: #333333; --text-light: #666666; --border: #eadbc8; }
+        [data-theme="dark"] { --primary: #ff8a5c; --bg: #121212; --card: #1e1e1e; --text: #f0f0f0; --text-light: #b0b0b0; --border: #404040; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); }
+        .profile-container { max-width: 600px; margin: 80px auto; background: var(--card); border-radius: 28px; padding: 35px; text-align: center; border: 1px solid var(--border); }
+        .profile-avatar { width: 100px; height: 100px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 48px; color: white; }
+        .info-group { text-align: left; padding: 15px; background: var(--bg); border-radius: 16px; margin-bottom: 15px; }
+        .info-group label { font-size: 12px; color: var(--text-light); display: block; margin-bottom: 5px; }
+        .info-group p { font-size: 18px; font-weight: 600; color: var(--text); }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .stat-card { background: var(--bg); padding: 15px; border-radius: 16px; text-align: center; }
+        .stat-card .value { font-size: 24px; font-weight: bold; color: var(--primary); }
+        .back-btn { background: var(--primary); color: white; padding: 12px 24px; border-radius: 30px; width: 100%; margin-top: 20px; border: none; cursor: pointer; }
+        .footer { text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-light); }
+        .footer a { color: var(--primary); text-decoration: none; }
+        @media (max-width: 480px) { .profile-container { padding: 20px; margin: 60px auto; } }
+    </style>
+</head>
+<body>
+
+<div class="profile-container">
+    <div class="profile-avatar" id="profileAvatar">👤</div>
+    <h2 id="profileName">Loading...</h2>
+    <p id="profileEmail" style="color: var(--text-light); margin-bottom: 20px;"></p>
+    <div class="info-group"><label>ID Number</label><p id="profileIdNumber">-</p></div>
+    <div class="info-group"><label>Grade & Section</label><p id="profileGrade">-</p></div>
+    <div class="info-group"><label>Role</label><p id="profileRole">-</p></div>
+    <div class="stats-grid"><div class="stat-card"><div class="value" id="profileAverage">0%</div><div>📊 Average Score</div></div><div class="stat-card"><div class="value" id="profileAssessments">0</div><div>📝 Assessments Taken</div></div><div class="stat-card"><div class="value" id="profileRank">-</div><div>🏆 Leaderboard Rank</div></div><div class="stat-card"><div class="value" id="profileBest">0%</div><div>⭐ Best Score</div></div></div>
+    <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+</div>
+<div class="footer"><p>Bikolos Nur Academy (BNA) | Powered by <a href="https://youtube.com" target="_blank">Arma</a></p></div>
+
+<script type="module">
+    import { auth, db, doc, getDoc, collection, query, where, getDocs, onAuthStateChanged } from './firebase-config.js';
+    import { getUserProfile, getStudentQuizResults, getLeaderboard } from './firebase-functions.js';
+    
+    function goBack() {
+        const session = localStorage.getItem("current_user_session");
+        if (session) { const user = JSON.parse(session); if (user.role === 'teacher') window.location.href = 'teacher-dashboard.html'; else if (user.role === 'admin') window.location.href = 'admin.html'; else if (user.role === 'parent') window.location.href = 'parent.html'; else window.location.href = 'subject-portal.html'; }
+        else { window.location.href = 'index.html'; }
+    }
+    
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) { window.location.href = 'signin.html'; return; }
+        const profile = await getUserProfile(user.uid);
+        if (profile) {
+            document.getElementById('profileName').textContent = profile.name;
+            document.getElementById('profileEmail').textContent = user.email;
+            document.getElementById('profileIdNumber').textContent = profile.idNumber || '-';
+            document.getElementById('profileGrade').textContent = `Grade ${profile.grade} • Section ${profile.section || 'N/A'}`;
+            document.getElementById('profileRole').textContent = profile.role === 'student' ? 'Student' : profile.role === 'teacher' ? 'Teacher' : profile.role === 'parent' ? 'Parent' : 'Admin';
+            document.getElementById('profileAvatar').textContent = profile.name.charAt(0).toUpperCase();
+            
+            if (profile.role === 'student') {
+                const results = await getStudentQuizResults(user.uid);
+                const gradedResults = results.filter(r => r.includeInAverage !== false);
+                let totalPct = 0, best = 0;
+                gradedResults.forEach(r => { const p = r.percentage || 0; totalPct += p; if (p > best) best = p; });
+                const avg = gradedResults.length > 0 ? Math.round(totalPct / gradedResults.length) : 0;
+                document.getElementById('profileAverage').innerText = avg + '%';
+                document.getElementById('profileAssessments').innerText = gradedResults.length;
+                document.getElementById('profileBest').innerText = best + '%';
+                
+                const leaderboard = await getLeaderboard();
+                const rank = leaderboard.findIndex(s => s.id === user.uid) + 1;
+                document.getElementById('profileRank').innerText = rank > 0 ? `#${rank}` : '-';
+            }
+        }
+    });
+</script>
+</body>
+</html>

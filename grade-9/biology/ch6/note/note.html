@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 6: Ecology | BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== EXACT STYLES FROM PREVIOUS UNITS ===== */
+        :root {
+            --primary: #2ecc71; /* Green accent for Ecology */
+            --primary-dark: #27ae60;
+            --primary-light: #a8e6cf;
+            --bg: #f5efe6;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #eadbc8;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+            --shadow-hover: 0 10px 30px rgba(0,0,0,0.12);
+            --ai-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        [data-theme="dark"] {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --primary-light: #55efc4;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #f0f0f0;
+            --text-light: #b0b0b0;
+            --border: #404040;
+            --shadow: 0 4px 15px rgba(0,0,0,0.3);
+            --shadow-hover: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.2s, color 0.2s;
+        }
+        .note-header {
+            background: var(--card);
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.4rem;
+        }
+        .logo-text h1 { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+        .logo-text span { color: var(--primary); }
+        .logo-text p { font-size: 0.7rem; color: var(--text-light); }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .back-btn {
+            color: var(--text-light); text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 6px; padding: 8px 16px;
+            border-radius: 30px; transition: all 0.2s; background: var(--bg);
+            border: 1px solid var(--border); cursor: pointer;
+        }
+        .back-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .account-wrapper { position: relative; }
+        .account-trigger {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            padding: 4px 8px 4px 12px; background: var(--bg); border-radius: 40px;
+            border: 1px solid var(--border); transition: all 0.2s;
+        }
+        .account-trigger:hover { border-color: var(--primary); }
+        .user-info-header { text-align: right; }
+        .user-name-header { font-weight: 600; color: var(--text); font-size: 0.85rem; }
+        .user-grade-header { font-size: 0.7rem; color: var(--text-light); }
+        .user-avatar-header {
+            width: 34px; height: 34px; background: var(--primary); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white;
+            font-weight: 600; font-size: 0.9rem;
+        }
+        .account-dropdown {
+            position: absolute; top: 50px; right: 0; background: var(--card);
+            border: 1px solid var(--border); border-radius: 16px; width: 280px;
+            box-shadow: var(--shadow-hover); display: none; overflow: hidden; z-index: 200;
+        }
+        .account-dropdown.active { display: block; }
+        .dropdown-header { padding: 16px; background: linear-gradient(135deg, var(--primary-light)15, var(--primary)80); color: white; }
+        .dropdown-user { display: flex; align-items: center; gap: 12px; }
+        .dropdown-avatar {
+            width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            font-weight: 600; border: 2px solid rgba(255,255,255,0.3);
+        }
+        .dropdown-user-info h4 { font-size: 1rem; margin-bottom: 3px; }
+        .dropdown-user-info p { font-size: 0.8rem; opacity: 0.9; }
+        .dropdown-menu { padding: 8px 0; }
+        .dropdown-item {
+            padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: var(--text); cursor: pointer; background: none;
+            border: none; width: 100%; font-size: 0.9rem; transition: background 0.2s;
+            text-align: left;
+        }
+        .dropdown-item:hover { background: var(--bg); }
+        .dropdown-item i { width: 20px; color: var(--primary); }
+        .dropdown-item.danger { color: var(--danger); }
+        .dropdown-item.danger i { color: var(--danger); }
+        .theme-selector { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
+        .theme-selector select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; color: var(--text); font-size: 0.8rem; cursor: pointer; }
+        .dropdown-divider { height: 1px; background: var(--border); margin: 8px 0; }
+        .main-layout-wrapper { display: flex; max-width: 1400px; width: 95%; gap: 25px; margin: 30px auto; align-items: flex-start; }
+        .note-container { flex: 2.5; margin: 0; display: flex; flex-direction: column; background: var(--card); border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+        .note-header-title { padding: 20px 25px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, var(--primary-light)10, transparent 90%); }
+        .note-header-title h1 { font-size: 1.8rem; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+        .note-header-title p { color: var(--text-light); font-size: 0.9rem; }
+        .note-scroll-box { padding: 25px; overflow-y: auto; max-height: 70vh; line-height: 1.7; }
+        .note-scroll-box h3 { color: var(--primary); margin: 20px 0 10px 0; font-size: 1.3rem; }
+        .note-scroll-box h3:first-child { margin-top: 0; }
+        .note-scroll-box h4 { color: var(--text); margin: 15px 0 8px 0; font-size: 1.1rem; }
+        .note-scroll-box p { margin-bottom: 12px; color: var(--text); }
+        .note-scroll-box ul, .note-scroll-box ol { margin-left: 20px; margin-bottom: 15px; }
+        .note-scroll-box li { margin-bottom: 5px; }
+        .note-scroll-box strong { color: var(--primary-dark); }
+        .sidebar { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); text-align: center; }
+        .quiz-sidebar-btn {
+            display: inline-block; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; padding: 14px 25px; border-radius: 14px; text-decoration: none;
+            font-weight: 600; transition: 0.3s; width: 100%; box-sizing: border-box;
+            font-size: 1rem; box-shadow: var(--shadow);
+        }
+        .quiz-sidebar-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+        .video-toggle-btn {
+            width: 100%; background: var(--bg); color: var(--primary); border: 2px solid var(--primary);
+            padding: 14px; border-radius: 14px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.3s; font-size: 1rem;
+        }
+        .video-toggle-btn:hover { background: var(--primary); color: white; }
+        .video-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 10px; box-shadow: var(--shadow); display: none; animation: fadeIn 0.4s ease forwards; }
+        .video-container { width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; background: #000; }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
+        .ai-chat-btn {
+            position: fixed; bottom: 28px; right: 28px; width: 60px; height: 60px;
+            background: var(--ai-gradient); border: none; border-radius: 50%; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); z-index: 1100;
+            display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+            color: white; transition: 0.3s; animation: pulse-glow 2s infinite;
+        }
+        .ai-chat-btn:hover { transform: scale(1.1); }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 8px 35px rgba(102, 126, 234, 0.7); }
+        }
+        .ai-panel {
+            position: fixed; bottom: 100px; right: 28px; width: 420px; max-height: 600px;
+            background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+            display: none; flex-direction: column; z-index: 1150; box-shadow: var(--shadow-hover);
+            overflow: hidden; animation: slideUp 0.3s ease;
+        }
+        .ai-panel.active { display: flex; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .ai-head { padding: 16px 20px; background: var(--ai-gradient); color: white; font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; }
+        .ai-head-left { display: flex; align-items: center; gap: 10px; }
+        .ai-close-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .ai-close-btn:hover { background: rgba(255,255,255,0.3); }
+        .ai-context-badge { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+        .ai-chat { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; height: 420px; background: var(--bg); }
+        .ai-msg { padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; line-height: 1.5; animation: messageIn 0.2s ease; }
+        @keyframes messageIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .ai-msg.user { background: var(--ai-gradient); color: white; align-self: flex-end; border-bottom-right-radius: 6px; }
+        .ai-msg.assistant { background: var(--card); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 6px; color: var(--text); }
+        .ai-typing { align-self: flex-start; background: var(--card); border: 1px solid var(--border); padding: 10px 14px; border-radius: 18px; border-bottom-left-radius: 6px; display: flex; gap: 4px; }
+        .ai-typing span { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: typing 1.4s infinite; }
+        .ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-8px); opacity: 1; } }
+        .ai-input-wrap { display: flex; gap: 10px; padding: 16px; border-top: 1px solid var(--border); background: var(--card); }
+        .ai-input-wrap input { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 30px; background: var(--bg); color: var(--text); outline: none; font-size: 0.9rem; transition: border 0.2s; }
+        .ai-input-wrap input:focus { border-color: var(--primary); }
+        .ai-input-wrap button { background: var(--ai-gradient); border: none; border-radius: 30px; padding: 0 20px; color: white; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
+        .ai-input-wrap button:hover { opacity: 0.9; transform: scale(1.02); }
+        .ai-input-wrap button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .note-footer { text-align: center; padding: 20px; margin-top: 20px; color: var(--text-light); font-size: 0.8rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 900px) { .main-layout-wrapper { flex-direction: column; } .note-container { width: 100%; } .sidebar { width: 100%; } .ai-panel { width: 380px; right: 15px; bottom: 85px; } }
+        @media (max-width: 480px) {
+            .note-header { padding: 12px 15px; } .logo-text h1 { font-size: 1rem; } .logo-text p { display: none; }
+            .user-info-header { display: none; } .ai-panel { width: calc(100% - 30px); right: 15px; max-height: 550px; }
+            .ai-chat-btn { width: 52px; height: 52px; bottom: 20px; right: 20px; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+<!-- Header -->
+<header class="note-header">
+    <div class="logo">
+        <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+        <div class="logo-text"><h1>BNA <span>Academy</span></h1><p>Grade 9 Biology</p></div>
+    </div>
+    <div class="header-actions">
+        <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i><span>Back</span></button>
+        <div class="account-wrapper">
+            <div class="account-trigger" id="accountTrigger">
+                <div class="user-info-header"><div class="user-name-header" id="headerUserName">Student</div><div class="user-grade-header" id="headerUserGrade">Grade 9</div></div>
+                <div class="user-avatar-header" id="headerAvatar">S</div>
+            </div>
+            <div class="account-dropdown" id="accountDropdown">
+                <div class="dropdown-header"><div class="dropdown-user"><div class="dropdown-avatar" id="dropdownAvatar">S</div><div class="dropdown-user-info"><h4 id="dropdownUserName">Student</h4><p id="dropdownUserGrade">Grade 9 • Section A</p></div></div></div>
+                <div class="dropdown-menu">
+                    <a href="../../../../profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="../../../../leaderboard.html" class="dropdown-item"><i class="fas fa-trophy"></i> Leaderboard</a>
+                    <div class="dropdown-divider"></div>
+                    <div class="theme-selector"><span><i class="fas fa-palette"></i> Theme</span><select id="themeSelector"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option></select></div>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item danger" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="main-layout-wrapper">
+    <div class="note-container">
+        <div class="note-header-title">
+            <h1>Unit 6: Ecology</h1>
+            <p><i class="fas fa-book-open"></i> Based on textbook pages 142-165</p>
+        </div>
+        <div class="note-scroll-box">
+            <section>
+                <h3>6.1 Ecology</h3>
+                <p><strong>Ecology</strong> is the study of relationships of organisms to one another and to their environment.</p>
+
+                <h3>6.1.2 Biotic and Abiotic Components</h3>
+                <ul>
+                    <li><strong>Abiotic Factors (Non-living):</strong> Energy (sunlight), Temperature, Water, Nutrients, Salinity, Wind, Soil pH.</li>
+                    <li><strong>Biotic Factors (Living):</strong> Predators, Herbivores, Parasites, Competitors, Pollinators.</li>
+                </ul>
+
+                <h3>6.1.3 Ecological Levels</h3>
+                <ol>
+                    <li><strong>Organism:</strong> Individual living thing.</li>
+                    <li><strong>Population:</strong> Group of interbreeding individuals of the same species in an area.</li>
+                    <li><strong>Community:</strong> All populations of different species interacting in an area.</li>
+                    <li><strong>Ecosystem:</strong> The community plus the abiotic environment.</li>
+                    <li><strong>Biome:</strong> Large geographic area with similar climate and dominant life forms.</li>
+                    <li><strong>Biosphere:</strong> Global sum of all ecosystems.</li>
+                </ol>
+
+                <h3>6.1.4 Ecosystems</h3>
+                <p>A self-supporting unit comprising the community and its physical environment. Energy flows through, and nutrients cycle within.</p>
+                <ul>
+                    <li><strong>Terrestrial:</strong> Forests, grasslands, deserts.</li>
+                    <li><strong>Aquatic:</strong> Freshwater (lakes, rivers, wetlands) and Marine (oceans, estuaries, coral reefs).</li>
+                </ul>
+
+                <h3>6.1.5 Biomes</h3>
+                <h4>Terrestrial Biomes</h4>
+                <ul>
+                    <li><strong>Tropical Rainforest:</strong> High rainfall, high biodiversity, evergreen broadleaf trees.</li>
+                    <li><strong>Desert:</strong> < 25 cm rain/year. Extreme temperatures. Adaptations: water storage (cacti), nocturnal animals.</li>
+                    <li><strong>Savanna:</strong> Tropical grassland with scattered trees. Warm year-round. Distinct wet/dry seasons. Supports large herbivores (zebras, giraffes) and predators (lions).</li>
+                    <li><strong>Temperate Grassland:</strong> Hot summers, cold winters. Fertile soil (prairies).</li>
+                    <li><strong>Boreal Forest (Taiga):</strong> Cold, coniferous trees (pine, spruce).</li>
+                    <li><strong>Temperate Broadleaf Forest:</strong> Deciduous trees that drop leaves in winter.</li>
+                    <li><strong>Tundra:</strong> Coldest biome. Permafrost. Low vegetation (mosses, lichens).</li>
+                </ul>
+                <h4>Aquatic Biomes</h4>
+                <ul>
+                    <li><strong>Lakes & Ponds:</strong> Standing freshwater. Zonation based on light penetration (photic vs. aphotic).</li>
+                    <li><strong>Wetlands:</strong> Soil saturated with water (marshes, swamps). High productivity; natural water filters.</li>
+                    <li><strong>Streams & Rivers:</strong> Flowing freshwater. Headwaters cool and clear; downstream warmer and murkier.</li>
+                    <li><strong>Estuaries:</strong> Transition zone between river and sea. Varying salinity. Highly productive nursery grounds.</li>
+                </ul>
+
+                <h3>6.1.6 Ecological Succession</h3>
+                <ul>
+                    <li><strong>Primary Succession:</strong> Colonization of barren land with no soil (e.g., new volcanic island). Pioneer species: Lichens, mosses.</li>
+                    <li><strong>Secondary Succession:</strong> Recolonization after a disturbance (e.g., fire, farming) where soil remains. Faster than primary.</li>
+                    <li><strong>Climax Community:</strong> Stable, mature community at the end of succession.</li>
+                </ul>
+
+                <h3>6.2 Ecological Relationships</h3>
+                <ul>
+                    <li><strong>Competition (-/-):</strong> Both species harmed vying for limited resources.</li>
+                    <li><strong>Predation (+/-):</strong> Predator kills and eats prey.</li>
+                    <li><strong>Herbivory (+/-):</strong> Herbivore eats parts of a plant.</li>
+                    <li><strong>Parasitism (+/-):</strong> Parasite benefits at host's expense (e.g., tapeworm).</li>
+                    <li><strong>Mutualism (+/+):</strong> Both species benefit (e.g., bees pollinating flowers, mycorrhizae).</li>
+                    <li><strong>Commensalism (+/0):</strong> One benefits, the other is unaffected (e.g., barnacles on a whale).</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-card">
+            <a href="../quiz/index.html" class="quiz-sidebar-btn">
+                <i class="fas fa-pen-nib"></i> Take Chapter Quiz
+            </a>
+        </div>
+        <div class="sidebar-card">
+            <button id="toggleVideoBtn" class="video-toggle-btn">
+                <i class="fas fa-play-circle"></i> Watch Video Lesson
+            </button>
+        </div>
+        <div id="videoCard" class="video-card">
+            <div class="video-container">
+                <!-- Ecology and Biomes Video -->
+                <iframe id="videoIframe" src="https://www.youtube.com/embed/OfV3VNgjpvw?si=R9L2dP8nJ5wXhF7m" title="Ecology and Biomes" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chat Button -->
+<button id="aiChatBtn" class="ai-chat-btn" title="Ask AI Assistant"><i class="fas fa-robot"></i></button>
+
+<!-- AI Chat Panel -->
+<div id="aiPanel" class="ai-panel">
+    <div class="ai-head">
+        <div class="ai-head-left"><i class="fas fa-brain"></i><span>BNA Study Assistant</span></div>
+        <div><span class="ai-context-badge" id="aiContextBadge"><i class="fas fa-microchip"></i> Local AI (Ollama)</span><button class="ai-close-btn" id="aiCloseBtn"><i class="fas fa-times"></i></button></div>
+    </div>
+    <div id="aiChat" class="ai-chat">
+        <div class="ai-msg assistant">
+            🌍 <strong>Welcome to Unit 6: Ecology!</strong><br><br>
+            I can help you understand:<br>
+            • Abiotic vs. Biotic Factors<br>
+            • Levels of Organization (Population to Biosphere)<br>
+            • Terrestrial Biomes (Deserts, Forests, Tundra)<br>
+            • Aquatic Biomes (Lakes, Rivers, Estuaries)<br>
+            • Ecological Succession (Primary vs. Secondary)<br>
+            • Symbiotic Relationships (Mutualism, Parasitism)<br><br>
+            <em>What ecosystem would you like to explore?</em>
+        </div>
+    </div>
+    <div class="ai-input-wrap">
+        <input id="aiInput" type="text" placeholder="Ask about ecology..." />
+        <button id="aiSendBtn"><i class="fas fa-paper-plane"></i> Send</button>
+    </div>
+</div>
+
+<footer class="note-footer">
+    <p>© 2026 Bikolos Nur Academy (BNA) | Powered by Arma Education</p>
+</footer>
+
+<script>
+    // Local LLM via Ollama — no API keys. Install https://ollama.com then: ollama pull llama3.2
+    const LOCAL_AI_URL = 'http://127.0.0.1:11434/v1/chat/completions';
+    const LOCAL_AI_MODEL = 'llama3.2';
+
+    // Context updated for Unit 6
+    const SYSTEM_PROMPT = `You are BNA Study Assistant, a helpful AI tutor running on the student's computer via Ollama.
+Current context: Student is viewing Biology Unit 6 (Ecology, Biomes, Abiotic/Biotic Factors, Succession, Ecological Relationships).
+Provide accurate, step-by-step help. Be engaging and relate concepts to real-world ecosystems.`;
+
+    let conversationHistory = [{ role: "system", content: SYSTEM_PROMPT }];
+
+    function goBack() { window.history.back(); }
+    function logout() { localStorage.removeItem("current_user_session"); window.location.href = '../../../../signin.html'; }
+
+    (function initUI() {
+        const videoBtn = document.getElementById('toggleVideoBtn');
+        const videoCard = document.getElementById('videoCard');
+        const videoIframe = document.getElementById('videoIframe');
+        if(videoBtn && videoCard) {
+            videoBtn.addEventListener('click', () => {
+                if(window.getComputedStyle(videoCard).display === 'none') {
+                    videoCard.style.display = 'block';
+                    videoBtn.innerHTML = '<i class="fas fa-times-circle"></i> Hide Video';
+                } else {
+                    videoCard.style.display = 'none';
+                    videoBtn.innerHTML = '<i class="fas fa-play-circle"></i> Watch Video Lesson';
+                    const currentSrc = videoIframe.src;
+                    videoIframe.src = '';
+                    videoIframe.src = currentSrc;
+                }
+            });
+        }
+        const trigger = document.getElementById('accountTrigger');
+        const dropdown = document.getElementById('accountDropdown');
+        if(trigger && dropdown) {
+            trigger.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', () => dropdown.classList.remove('active'));
+            dropdown.addEventListener('click', (e) => e.stopPropagation());
+        }
+        const themeSelect = document.getElementById('themeSelector');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        if(themeSelect) {
+            themeSelect.value = savedTheme;
+            themeSelect.addEventListener('change', (e) => { document.body.setAttribute('data-theme', e.target.value); localStorage.setItem('theme', e.target.value); });
+        }
+        const sessionData = localStorage.getItem("current_user_session");
+        if(sessionData) {
+            try {
+                const user = JSON.parse(sessionData);
+                const initial = (user.name || 'S').charAt(0).toUpperCase();
+                document.getElementById('headerUserName').textContent = user.name || 'Student';
+                document.getElementById('headerUserGrade').textContent = `Grade ${user.grade || 9}`;
+                document.getElementById('headerAvatar').textContent = initial;
+                document.getElementById('dropdownUserName').textContent = user.name || 'Student';
+                document.getElementById('dropdownUserGrade').textContent = `Grade ${user.grade || 9} • Section ${user.section || 'A'}`;
+                document.getElementById('dropdownAvatar').textContent = initial;
+            } catch(e) {}
+        }
+        document.getElementById('logoutBtn')?.addEventListener('click', logout);
+        const aiBtn = document.getElementById('aiChatBtn');
+        const aiPanel = document.getElementById('aiPanel');
+        const aiCloseBtn = document.getElementById('aiCloseBtn');
+        const aiInput = document.getElementById('aiInput');
+        const aiSendBtn = document.getElementById('aiSendBtn');
+        if(aiBtn && aiPanel) {
+            aiBtn.addEventListener('click', (e) => { e.stopPropagation(); aiPanel.classList.toggle('active'); if(aiPanel.classList.contains('active')) aiInput.focus(); });
+        }
+        if(aiCloseBtn && aiPanel) aiCloseBtn.addEventListener('click', () => aiPanel.classList.remove('active'));
+        document.addEventListener('click', (e) => { if(aiPanel && aiPanel.classList.contains('active') && !aiPanel.contains(e.target) && !aiBtn.contains(e.target)) aiPanel.classList.remove('active'); });
+        if(aiSendBtn && aiInput) {
+            aiSendBtn.addEventListener('click', sendMessage);
+            aiInput.addEventListener('keypress', (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+        }
+    })();
+
+    function addMessage(text, role) {
+        const chatDiv = document.getElementById('aiChat');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `ai-msg ${role}`;
+        msgDiv.innerHTML = formatMessage(text);
+        chatDiv.appendChild(msgDiv);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+        return msgDiv;
+    }
+    function formatMessage(text) { return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/`(.*?)`/g, '<code>$1</code>').replace(/\n/g, '<br>'); }
+    function showTypingIndicator() {
+        const chatDiv = document.getElementById('aiChat');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'ai-typing';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = '<span></span><span></span><span></span>';
+        chatDiv.appendChild(typingDiv);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+    function removeTypingIndicator() { const indicator = document.getElementById('typingIndicator'); if(indicator) indicator.remove(); }
+
+    async function callLocalAI(userMessage) {
+        try {
+            const response = await fetch(LOCAL_AI_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: LOCAL_AI_MODEL,
+                    messages: [...conversationHistory, { role: 'user', content: userMessage }],
+                    temperature: 0.7,
+                    max_tokens: 2000
+                })
+            });
+            if(!response.ok) {
+                const errorData = await response.text();
+                console.error('Local AI error:', response.status, errorData);
+                throw new Error(`API Error: ${response.status}`);
+            }
+            const data = await response.json();
+            return data.choices[0].message.content;
+        } catch(error) {
+            console.error('Error calling local AI:', error);
+            return getLocalResponse(userMessage);
+        }
+    }
+
+    function getLocalResponse(question) {
+        const q = question.toLowerCase();
+        if (q.includes('abiotic') || q.includes('biotic')) {
+            return "🌿 **Biotic factors** are living things (plants, animals, fungi, bacteria).\n\n💧 **Abiotic factors** are non-living (sunlight, temperature, water, soil, air, minerals).\n\nExample: In a pond ecosystem - fish (biotic) + water temperature (abiotic) both affect survival.";
+        }
+        if (q.includes('succession')) {
+            return "🌱 **Ecological Succession** is how ecosystems change over time:\n\n• **Primary succession** - starts on bare rock with NO soil (lichens first, then mosses, then plants). Takes centuries.\n• **Secondary succession** - starts with soil intact after fire/flood/farming. Much faster (decades).\n• **Climax community** - stable final stage (like a mature forest).";
+        }
+        if (q.includes('mutualism')) {
+            return "🤝 **Mutualism** (+/+): Both species benefit!\n\nExamples:\n• Bees + flowers (bee gets nectar, flower gets pollinated)\n• Clownfish + sea anemones (protection + food scraps)\n• Lichen (fungus + algae living together)\n• Gut bacteria + humans (we get digestion help, bacteria get home)";
+        }
+        if (q.includes('parasitism')) {
+            return "🪱 **Parasitism** (+/-): Parasite benefits, host is harmed.\n\nExamples:\n• Tapeworms in intestines\n• Ticks on dogs/humans\n• Mistletoe on trees\n• Mosquitoes (females need blood for eggs)";
+        }
+        if (q.includes('commensalism')) {
+            return "🐟 **Commensalism** (+/0): One benefits, other unaffected.\n\nExamples:\n• Barnacles on a whale (get transport + food, whale unaffected)\n• Birds nesting in trees (shelter, tree unharmed)\n• Remora fish attached to sharks (eat leftovers)";
+        }
+        if (q.includes('biome') || q.includes('tundra') || q.includes('desert') || q.includes('rainforest')) {
+            return "🌍 **Major Terrestrial Biomes:**\n\n• **Tropical Rainforest** - near equator, high rainfall, highest biodiversity\n• **Desert** - <25cm rain/year, extreme temperatures, cacti/camels\n• **Savanna** - tropical grassland, scattered trees, wet/dry seasons\n• **Temperate Forest** - four seasons, deciduous trees\n• **Taiga/Boreal** - cold, coniferous trees (pine/spruce)\n• **Tundra** - coldest, permafrost, low vegetation\n• **Grassland** - hot summers, cold winters, fertile soil";
+        }
+        if (q.includes('estuary') || q.includes('wetland')) {
+            return "💧 **Estuaries & Wetlands:**\n\n• **Estuary** - where river meets sea (brackish water). Highly productive nursery for fish/shrimp.\n• **Wetland** - saturated soil (marshes/swamps). Natural water filters + flood control.\n• Both are critical for biodiversity and water purification!";
+        }
+        if (q.includes('competition')) {
+            return "⚔️ **Competition** (-/-): Both species harmed.\n\nTypes:\n• **Intraspecific** - within same species (most intense)\n• **Interspecific** - between different species\n\nExample: Lions and hyenas competing for the same prey.";
+        }
+        if (q.includes('predation') || q.includes('predator')) {
+            return "🦁 **Predation** (+/-): Predator eats prey.\n\nAdaptations:\n• Predators: sharp teeth/claws, speed, camouflage\n• Prey: warning colors, mimicry, spines/shells, herding behavior\n\nExample: Cheetah hunting gazelle.";
+        }
+        if (q.includes('population') || q.includes('community') || q.includes('ecosystem') || q.includes('levels')) {
+            return "📊 **Ecological Levels of Organization** (smallest to largest):\n\n1. **Organism** - single individual\n2. **Population** - same species in same area\n3. **Community** - all populations together\n4. **Ecosystem** - community + abiotic factors\n5. **Biome** - large region with similar climate\n6. **Biosphere** - all ecosystems on Earth";
+        }
+        if (q.includes('food chain') || q.includes('food web') || q.includes('trophic')) {
+            return "🕸️ **Trophic Levels:**\n\n• **Producers** (autotrophs) - make their own food (plants, algae)\n• **Primary consumers** (herbivores) - eat producers\n• **Secondary consumers** - eat herbivores\n• **Tertiary consumers** - eat secondary consumers\n• **Decomposers** - break down dead matter\n\nEnergy flows one direction: Sun → Producer → Consumer → Decomposer";
+        }
+        if (q.includes('carbon cycle') || q.includes('water cycle') || q.includes('nitrogen')) {
+            return "🔄 **Biogeochemical Cycles:**\n\n• **Water cycle** - evaporation, condensation, precipitation\n• **Carbon cycle** - photosynthesis, respiration, decomposition, burning fossil fuels\n• **Nitrogen cycle** - fixation (bacteria), nitrification, assimilation, denitrification\n\nMatter cycles; energy flows one way through ecosystems.";
+        }
+        
+        return `🌿 **Ecology Assistant**\n\nI can help you understand:\n• Abiotic vs Biotic factors\n• Ecological levels (organism → biosphere)\n• Biomes (rainforest, desert, tundra, etc.)\n• Succession (primary vs secondary)\n• Symbiotic relationships (mutualism, parasitism, commensalism)\n• Predation, competition, and food webs\n• Aquatic ecosystems (estuaries, wetlands, lakes)\n\nWhat specific ecology topic would you like to learn about?`;
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('aiInput');
+        const sendBtn = document.getElementById('aiSendBtn');
+        const message = input.value.trim();
+        if(!message) return;
+        addMessage(message, 'user');
+        input.value = '';
+        input.disabled = true; 
+        sendBtn.disabled = true;
+        showTypingIndicator();
+        try {
+            let response = await callLocalAI(message);
+            conversationHistory.push({ role: 'user', content: message }, { role: 'assistant', content: response });
+            if(conversationHistory.length > 15) conversationHistory = [conversationHistory[0], ...conversationHistory.slice(-10)];
+            removeTypingIndicator();
+            addMessage(response, 'assistant');
+        } catch(error) {
+            removeTypingIndicator();
+            addMessage("Sorry, I encountered an error. " + getLocalResponse(message), 'assistant');
+        } finally {
+            input.disabled = false; 
+            sendBtn.disabled = false; 
+            input.focus();
+        }
+    }
+</script>
+</body>
+</html>

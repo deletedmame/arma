@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1 Quiz - Biology | BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e86a33;
+            --primary-dark: #d3541f;
+            --primary-light: #ff9f7a;
+            --bg: #f5efe6;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #eadbc8;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+            --shadow-hover: 0 10px 30px rgba(0,0,0,0.12);
+        }
+        
+        [data-theme="dark"] {
+            --primary: #ff8a5c;
+            --primary-dark: #e86a33;
+            --primary-light: #ffb49a;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #f0f0f0;
+            --text-light: #b0b0b0;
+            --border: #404040;
+            --shadow: 0 4px 15px rgba(0,0,0,0.3);
+            --shadow-hover: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ===== HEADER ===== */
+        .quiz-header {
+            background: var(--card);
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .logo-text span {
+            color: var(--primary);
+        }
+        
+        .logo-text p {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+        
+        .quiz-meta-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .chapter-indicator {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .back-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.2s;
+        }
+        
+        .back-link:hover {
+            background: var(--bg);
+            color: var(--primary);
+        }
+        
+        /* ===== ACCOUNT DROPDOWN ===== */
+        .account-wrapper {
+            position: relative;
+        }
+        
+        .account-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 8px 4px 12px;
+            background: var(--bg);
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .account-trigger:hover {
+            border-color: var(--primary);
+        }
+        
+        .user-info-header {
+            text-align: right;
+        }
+        
+        .user-name-header {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .user-grade-header {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+        
+        .user-avatar-header {
+            width: 34px;
+            height: 34px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .account-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 260px;
+            box-shadow: var(--shadow-hover);
+            display: none;
+            overflow: hidden;
+            z-index: 200;
+        }
+        
+        .account-dropdown.active {
+            display: block;
+        }
+        
+        .dropdown-header {
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-light)15, var(--primary)80);
+            color: white;
+        }
+        
+        .dropdown-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .dropdown-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .dropdown-user-info h4 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+        
+        .dropdown-user-info p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .dropdown-menu {
+            padding: 8px 0;
+        }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            text-align: left;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--bg);
+        }
+        
+        .dropdown-item i {
+            width: 20px;
+            color: var(--primary);
+        }
+        
+        .dropdown-item.danger {
+            color: var(--danger);
+        }
+        
+        .dropdown-item.danger i {
+            color: var(--danger);
+        }
+        
+        .theme-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+        }
+        
+        .theme-selector select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 8px 0;
+        }
+        
+        /* ===== QUIZ CONTAINER ===== */
+        .quiz-container {
+            max-width: 750px;
+            width: 90%;
+            margin: 30px auto;
+            flex: 1;
+        }
+        
+        /* ===== QUIZ CARD ===== */
+        .quiz-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        
+        /* ===== INFO BAR ===== */
+        .quiz-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .question-counter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        .question-counter i {
+            color: var(--primary);
+        }
+        
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .score-badge {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .streak-badge {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* ===== PROGRESS BAR ===== */
+        .progress-wrapper {
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar-container {
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        /* ===== QUESTION ===== */
+        .question-section {
+            margin-bottom: 25px;
+        }
+        
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 600;
+            line-height: 1.5;
+            color: var(--text);
+        }
+        
+        /* ===== ANSWERS ===== */
+        .answers-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .answer-btn {
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            background: var(--bg);
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .answer-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            transform: translateX(5px);
+            background: var(--card);
+            box-shadow: var(--shadow);
+        }
+        
+        .answer-btn .option-letter {
+            width: 35px;
+            height: 35px;
+            background: var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        
+        .answer-btn.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .answer-btn.correct .option-letter {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .answer-btn.incorrect {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .answer-btn.incorrect .option-letter {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+        
+        /* ===== EXPLANATION ===== */
+        .explanation-container {
+            background: var(--bg);
+            padding: 18px 20px;
+            border-radius: 14px;
+            margin: 20px 0;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .explanation-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .explanation-text {
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* ===== NEXT BUTTON ===== */
+        .next-section {
+            margin-top: 20px;
+        }
+        
+        .next-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: var(--shadow);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* ===== KEYBOARD HINTS ===== */
+        .keyboard-hints {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+        
+        .keyboard-hints kbd {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 3px 10px;
+            margin: 0 4px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+        
+        /* ===== SCREENS ===== */
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        /* ===== RESULT SCREEN ===== */
+        .result-screen {
+            text-align: center;
+        }
+        
+        .result-header {
+            margin-bottom: 30px;
+        }
+        
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .result-header h2 {
+            color: var(--text);
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+        }
+        
+        .result-header p {
+            color: var(--text-light);
+        }
+        
+        .final-score-container {
+            margin: 30px 0;
+        }
+        
+        .final-score {
+            font-size: 5rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+        
+        .final-score small {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        
+        .score-details {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 25px 0;
+        }
+        
+        .detail-item {
+            text-align: center;
+        }
+        
+        .detail-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .rating-container {
+            margin: 20px 0;
+        }
+        
+        .rating-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+        
+        .result-message {
+            background: var(--bg);
+            padding: 15px 20px;
+            border-radius: 14px;
+            margin: 20px 0;
+            color: var(--text);
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .result-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .restart-btn {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .restart-btn:hover {
+            background: var(--border);
+        }
+        
+        .home-btn {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .home-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* ===== HIDDEN ===== */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* ===== ANIMATIONS ===== */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .pulse {
+            animation: pulse 0.3s ease;
+        }
+        
+        .shake {
+            animation: shake 0.3s ease;
+        }
+        
+        /* ===== FOOTER ===== */
+        .quiz-footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+        
+        .quiz-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .quiz-header {
+                padding: 12px 15px;
+            }
+            
+            .logo-text h1 {
+                font-size: 1rem;
+            }
+            
+            .logo-text p {
+                display: none;
+            }
+            
+            .chapter-indicator span {
+                display: none;
+            }
+            
+            .chapter-indicator {
+                padding: 8px 12px;
+            }
+            
+            .user-info-header {
+                display: none;
+            }
+            
+            .quiz-card {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 1.15rem;
+            }
+            
+            .answer-btn {
+                padding: 14px 16px;
+            }
+            
+            .final-score {
+                font-size: 4rem;
+            }
+            
+            .score-details {
+                gap: 20px;
+            }
+            
+            .keyboard-hints {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .quiz-container {
+                width: 95%;
+            }
+            
+            .quiz-card {
+                padding: 15px;
+            }
+            
+            .quiz-info-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .score-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .result-actions {
+                flex-direction: column;
+            }
+        }
+        /* ===== BUTTON CLICK FIX ===== */
+.answer-btn,
+.next-btn,
+.result-btn,
+.restart-btn,
+.home-btn,
+.account-trigger,
+.dropdown-item,
+.back-link {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.answer-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.9;
+}
+
+/* Ensure no overlay is blocking clicks */
+.quiz-container,
+.quiz-card,
+.screen {
+    pointer-events: auto !important;
+}
+
+/* Account dropdown z-index fix */
+.account-dropdown {
+    z-index: 1000;
+}
+
+.account-dropdown .dropdown-item {
+    pointer-events: auto !important;
+}
+
+/* Theme transition fix */
+[data-theme] {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Fix for theme selector dropdown */
+#themeSelector {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: 1001;
+    position: relative;
+}
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="quiz-header">
+    <div class="logo">
+        <div class="logo-icon">
+            <i class="fas fa-dna"></i>
+        </div>
+        <div class="logo-text">
+            <h1>BNA <span>Academy</span></h1>
+            <p>Grade 9 Biology</p>
+        </div>
+    </div>
+    
+    <div class="quiz-meta-header">
+        <div class="chapter-indicator">
+            <i class="fas fa-book-open"></i>
+            <span>Chapter 1</span>
+        </div>
+        <a href="../../index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            <span>Chapters</span>
+        </a>
+    </div>
+    
+    <div class="account-wrapper">
+        <div class="account-trigger" id="accountTrigger">
+            <div class="user-info-header">
+                <div class="user-name-header" id="headerUserName">Student</div>
+                <div class="user-grade-header" id="headerUserGrade">Grade 9</div>
+            </div>
+            <div class="user-avatar-header" id="headerAvatar">S</div>
+        </div>
+        
+        <div class="account-dropdown" id="accountDropdown">
+            <div class="dropdown-header">
+                <div class="dropdown-user">
+                    <div class="dropdown-avatar" id="dropdownAvatar">S</div>
+                    <div class="dropdown-user-info">
+                        <h4 id="dropdownUserName">Student</h4>
+                        <p id="dropdownUserGrade">Grade 9 • Section A</p>
+                    </div>
+                </div>
+            </div>
+            <div class="dropdown-menu">
+                <a href="../../../../profile.html" class="dropdown-item">
+                    <i class="fas fa-user-circle"></i> My Profile
+                </a>
+                <a href="../../../../leaderboard.html" class="dropdown-item">
+                    <i class="fas fa-trophy"></i> Leaderboard
+                </a>
+                <div class="dropdown-divider"></div>
+                <div class="theme-selector">
+                    <span><i class="fas fa-palette"></i> Theme</span>
+                    <select id="themeSelector">
+                        <option value="light">☀️ Light</option>
+                        <option value="dark">🌙 Dark</option>
+                    </select>
+                </div>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item danger" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="quiz-container">
+    <!-- Loading Overlay (add inside quiz-container) -->
+<div id="loading-overlay" style="text-align: center; padding: 60px;">
+    <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--primary);"></i>
+    <p style="margin-top: 20px; color: var(--text-light);">Loading questions...</p>
+</div>
+    
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="screen active">
+        <div class="quiz-card">
+            
+            <!-- Info Bar -->
+            <div class="quiz-info-bar">
+                <div class="question-counter">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Question <span id="current-question">1</span> of <span class="fullq">10</span></span>
+                </div>
+                <div class="score-container">
+                    <div class="score-badge">
+                        <i class="fas fa-star"></i>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="streak-badge hidden" id="streakDisplay">
+                        <i class="fas fa-fire"></i>
+                        <span>0 Streak</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="progress-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-fill" id="progress" style="width: 10%;"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progress-percent">10%</span> complete
+                </div>
+            </div>
+            
+            <!-- Question -->
+            <div class="question-section">
+                <div class="question-text" id="question-text">
+                    Loading question...
+                </div>
+            </div>
+            
+            <!-- Answers -->
+            <div class="answers-section" id="answers-container"></div>
+            
+            <!-- Explanation -->
+            <div id="explanation-container" class="explanation-container hidden">
+                <div class="explanation-header">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Explanation</span>
+                </div>
+                <div class="explanation-text" id="explanation-text"></div>
+            </div>
+            
+            <!-- Next Button -->
+            <div class="next-section">
+                <button class="next-btn hidden" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <!-- Keyboard Hints -->
+            <div class="keyboard-hints">
+                <span><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> to select answer</span>
+                <span><kbd>Enter ↵</kbd> to continue</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="screen result-screen">
+        <div class="quiz-card">
+            
+            <div class="result-header">
+                <div class="result-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h2>Quiz Complete!</h2>
+                <p id="chapter-name-display">Chapter 1: Introduction to Biology</p>
+            </div>
+            
+            <div class="final-score-container">
+                <div class="final-score">
+                    <span id="final-score">0</span><small>/<span class="fullq">10</span></small>
+                </div>
+            </div>
+            
+            <div class="score-details">
+                <div class="detail-item">
+                    <div class="detail-value" id="correct-count">0</div>
+                    <div class="detail-label">Correct</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-value" id="percentage-display">0%</div>
+                    <div class="detail-label">Score</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-value" id="streak-final">0</div>
+                    <div class="detail-label">Best Streak</div>
+                </div>
+            </div>
+            
+            <div class="rating-container">
+                <img class="rating-img" src="" alt="Rating" id="rating-img" onerror="this.style.display='none'">
+            </div>
+            
+            <div class="result-message" id="resultMessage">
+                Great effort! Review the explanations to improve.
+            </div>
+            
+            <div class="result-actions">
+                <button class="result-btn restart-btn" id="restart-btn">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
+                <a href="../../index.html" class="result-btn home-btn">
+                    <i class="fas fa-home"></i> Back to Chapters
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="quiz-footer">
+    <p>© 2026 Bikolos Nur Academy (BNA) | Powered by <a href="#">Arma Education</a></p>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<script type="module" src="script.js"></script>
+
+<script>
+    (function() {
+        // ===== USER UI SETUP =====
+        const sessionData = localStorage.getItem("current_user_session");
+        if (sessionData) {
+            const user = JSON.parse(sessionData);
+            const initial = (user.name || 'S').charAt(0).toUpperCase();
+            
+            document.getElementById('headerUserName').textContent = user.name || 'Student';
+            document.getElementById('headerUserGrade').textContent = `Grade ${user.grade || 9}`;
+            document.getElementById('headerAvatar').textContent = initial;
+            document.getElementById('dropdownUserName').textContent = user.name || 'Student';
+            document.getElementById('dropdownUserGrade').textContent = `Grade ${user.grade || 9} • Section ${user.section || 'A'}`;
+            document.getElementById('dropdownAvatar').textContent = initial;
+        }
+        
+        // ===== THEME =====
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        const themeSelect = document.getElementById('themeSelector');
+        if (themeSelect) {
+            themeSelect.value = savedTheme;
+            themeSelect.addEventListener('change', (e) => {
+                document.body.setAttribute('data-theme', e.target.value);
+                localStorage.setItem('theme', e.target.value);
+            });
+        }
+        
+        // ===== DROPDOWN =====
+        const trigger = document.getElementById('accountTrigger');
+        const dropdown = document.getElementById('accountDropdown');
+        if (trigger && dropdown) {
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('active');
+            });
+            dropdown.addEventListener('click', (e) => e.stopPropagation());
+        }
+        
+        // ===== LOGOUT =====
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem("current_user_session");
+            window.location.href = "../../../../signin.html";
+        });
+        
+        // ===== CHAPTER NAME DISPLAY =====
+        const path = window.location.pathname;
+        let chapterName = 'Chapter 1: Introduction to Biology';
+        if (path.includes('ch-2')) chapterName = 'Chapter 2: Characteristics & Classification';
+        else if (path.includes('ch-3')) chapterName = 'Chapter 3: Cells';
+        else if (path.includes('ch-4')) chapterName = 'Chapter 4: Reproduction';
+        else if (path.includes('ch-5')) chapterName = 'Chapter 5: Health, Nutrition & Diseases';
+        else if (path.includes('ch-6')) chapterName = 'Chapter 6: Ecology';
+        
+        const chapterDisplay = document.getElementById('chapter-name-display');
+        if (chapterDisplay) chapterDisplay.textContent = chapterName;
+        
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            
+            // Answer selection (A, B, C, D)
+            if (['a', 'b', 'c', 'd'].includes(key)) {
+                const index = key.charCodeAt(0) - 97;
+                const btns = document.querySelectorAll('.answer-btn:not(:disabled)');
+                if (btns[index]) {
+                    e.preventDefault();
+                    btns[index].click();
+                }
+            }
+            
+            // Next question (Enter)
+            if (e.key === 'Enter') {
+                const nextBtn = document.getElementById('next-btn');
+                if (nextBtn && !nextBtn.disabled && !nextBtn.classList.contains('hidden')) {
+                    e.preventDefault();
+                    nextBtn.click();
+                }
+            }
+        });
+        
+        // ===== UPDATE RESULT DISPLAY =====
+        const observer = new MutationObserver(() => {
+            const finalScore = document.getElementById('final-score');
+            const percentageDisplay = document.getElementById('percentage-display');
+            const correctCount = document.getElementById('correct-count');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            if (finalScore && percentageDisplay) {
+                const scoreText = finalScore.textContent;
+                const match = scoreText.match(/(\d+)\/(\d+)/);
+                if (match) {
+                    const score = parseInt(match[1]);
+                    const total = parseInt(match[2]);
+                    const percent = Math.round((score / total) * 100);
+                    
+                    percentageDisplay.textContent = percent + '%';
+                    if (correctCount) correctCount.textContent = score;
+                    
+                    if (resultMessage) {
+                        if (percent >= 90) resultMessage.textContent = '🎉 Excellent! You have mastered this chapter!';
+                        else if (percent >= 75) resultMessage.textContent = '🌟 Great job! Keep up the good work!';
+                        else if (percent >= 60) resultMessage.textContent = '👍 Good effort! Review the explanations to improve.';
+                        else if (percent >= 45) resultMessage.textContent = '📚 Keep practicing! You\'re getting there.';
+                        else resultMessage.textContent = '📖 Don\'t give up! Review the notes and try again.';
+                    }
+                }
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        
+        // ===== UPDATE STREAK DISPLAY =====
+        const streakObserver = new MutationObserver(() => {
+            const streakSpan = document.querySelector('#streakDisplay span');
+            const streakDisplay = document.getElementById('streakDisplay');
+            if (streakSpan && streakDisplay) {
+                const streak = parseInt(streakSpan.textContent) || 0;
+                if (streak >= 2) {
+                    streakDisplay.classList.remove('hidden');
+                } else {
+                    streakDisplay.classList.add('hidden');
+                }
+            }
+        });
+        streakObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+    })();
+</script>
+
+</body>
+</html>

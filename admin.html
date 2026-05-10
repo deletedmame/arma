@@ -1,0 +1,3199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin • BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e86a33;
+            --primary-light: #fef2e9;
+            --primary-dark: #c9511f;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="dark"] {
+            --primary: #ff8a5c;
+            --primary-light: #2a241f;
+            --bg: #0f0f12;
+            --card: #1a1a1f;
+            --text: #f1f5f9;
+            --text-light: #a1a5b0;
+            --border: #2a2a30;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--card);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .tab-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .table-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        tr:hover td {
+            background: var(--primary-light);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        [data-theme="dark"] .badge-success {
+            background: #064e3b;
+            color: #a7f3d0;
+        }
+
+        [data-theme="dark"] .badge-warning {
+            background: #78350f;
+            color: #fde68a;
+        }
+
+        [data-theme="dark"] .badge-danger {
+            background: #7f1a1a;
+            color: #fecaca;
+        }
+
+        [data-theme="dark"] .badge-info {
+            background: #1e3a5f;
+            color: #bfdbfe;
+        }
+
+        .btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .panel {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .teacher-status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .teacher-status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+        }
+
+        .popup-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid var(--primary);
+            display: none;
+            z-index: 9999;
+            max-width: 360px;
+            animation: slideIn 0.3s;
+        }
+
+        .popup-alert.show {
+            display: block;
+        }
+
+        .popup-alert.warning {
+            border-left-color: var(--warning);
+        }
+
+        .popup-alert.success {
+            border-left-color: var(--success);
+        }
+
+        .popup-alert.error {
+            border-left-color: var(--danger);
+        }
+
+        .popup-alert .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .helper {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 6px;
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .status-message.show {
+            display: block;
+        }
+
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .schedule-grid {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .schedule-grid th,
+        .schedule-grid td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .schedule-grid select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .chat-container {
+            display: flex;
+            height: 500px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .chat-sidebar {
+            width: 300px;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .chat-user {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .chat-user:hover {
+            background: var(--primary-light);
+        }
+
+        .chat-user.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message-sent {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message-received {
+            background: var(--bg);
+            color: var(--text);
+            align-self: flex-start;
+            border: 1px solid var(--border);
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chat-input-area input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .unread-badge {
+            background: var(--danger);
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0 12px 0;
+            color: var(--primary);
+        }
+
+        hr {
+            margin: 24px 0;
+            border: 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, #ffd70015, transparent);
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #c0c0c015, transparent);
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #cd7f3215, transparent);
+        }
+
+        .file-attach-btn {
+            cursor: pointer;
+            padding: 8px 12px;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+
+        .file-attach-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .attachment-preview {
+            padding: 8px;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            background: var(--card);
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .attachment-item .remove-attach {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 2px 4px;
+        }
+
+        .recipient-count {
+            font-size: 12px;
+            color: var(--text-light);
+            padding: 4px 8px;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="popup-alert" id="popupAlert">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <div id="popupMessage">Notification</div>
+    </div>
+
+    <div class="header">
+        <div class="logo"><i class="fas fa-shield-alt"></i> BNA Admin</div>
+        <div class="admin-info">
+            <div class="avatar" id="adminAvatar">A</div>
+            <span id="adminName">Admin</span>
+            <button class="btn btn-danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            <button class="btn btn-outline" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+                <div>
+                    <div class="stat-value" id="totalStudents">0</div>
+                    <div class="stat-label">Students</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chalkboard-user"></i></div>
+                <div>
+                    <div class="stat-value" id="totalTeachers">0</div>
+                    <div class="stat-label">Teachers</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div>
+                    <div class="stat-value" id="pendingCount">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div>
+                    <div class="stat-value" id="currentQuarterDisplay">Q1</div>
+                    <div class="stat-label">Quarter</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('students')"><i class="fas fa-users"></i>
+                Students</button>
+            <button class="tab-btn" onclick="switchTab('teachers')"><i class="fas fa-person-chalkboard"></i>
+                Teachers</button>
+            <button class="tab-btn" onclick="switchTab('parents')"><i class="fas fa-user-friends"></i> Parents</button>
+            <button class="tab-btn" onclick="switchTab('assign')"><i class="fas fa-user-check"></i> Homeroom</button>
+            <button class="tab-btn" onclick="switchTab('schedule')"><i class="fas fa-calendar-week"></i>
+                Schedule</button>
+            <button class="tab-btn" onclick="switchTab('leaderboard')"><i class="fas fa-trophy"></i>
+                Leaderboard</button>
+            <button class="tab-btn" onclick="switchTab('exam')"><i class="fas fa-file-alt"></i> Exam Mgmt</button>
+            <button class="tab-btn" onclick="switchTab('chat')"><i class="fas fa-comments"></i> Chat</button>
+            <button class="tab-btn" onclick="switchTab('transcripts')"><i class="fas fa-scroll"></i> Transcript
+                Generator</button>
+            <button class="tab-btn" onclick="switchTab('reports')"><i class="fas fa-triangle-exclamation"></i>
+                Reports</button>
+        </div>
+
+        <!-- Students Tab -->
+        <div id="studentsTab" class="tab-content active">
+            <div class="panel">
+                <div class="panel-title"><i class="fas fa-filter"></i> Filter Students</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Grade</label>
+                        <select id="studentFilterGrade" onchange="filterStudents()">
+                            <option value="">All Grades</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Section</label>
+                        <select id="studentFilterSection" onchange="filterStudents()">
+                            <option value="">All Sections</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Search</label>
+                        <input type="text" id="studentSearchInput" placeholder="Search by name or ID..."
+                            oninput="filterStudents()">
+                    </div>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Grade</th>
+                            <th>Section</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Teachers Tab -->
+        <div id="teachersTab" class="tab-content">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Subject</th>
+                            <th>Teaching Grades</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teachersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Parents Tab -->
+        <div id="parentsTab" class="tab-content">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="parentsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Homeroom Assign Tab -->
+        <div id="assignTab" class="tab-content">
+            <div class="panel">
+                <div class="panel-title"><i class="fas fa-user-check"></i> Assign Homeroom Teachers</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Grade</label><select id="assignGrade">
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select></div>
+                    <div class="form-group"><label>Section</label><select id="assignSection">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select></div>
+                    <div class="form-group"><label>Teacher 1</label><select id="assignTeacher1"></select></div>
+                    <div class="form-group"><label>Teacher 2</label><select id="assignTeacher2">
+                            <option value="">None</option>
+                        </select></div>
+                    <div class="form-group"><button class="btn btn-primary" onclick="assignHomeroom()"><i
+                                class="fas fa-save"></i> Assign</button></div>
+                </div>
+                <div class="helper">Each class: up to 2 homeroom teachers. One teacher = one class only.</div>
+                <div id="assignStatus" class="status-message"></div>
+                <div class="section-title">Current Assignments</div>
+                <div id="homeroomList" style="display:flex;flex-direction:column;gap:8px;">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Schedule Tab -->
+        <div id="scheduleTab" class="tab-content">
+            <div class="panel">
+                <div class="panel-title"><i class="fas fa-calendar-week"></i> Class Schedule Editor (8:00 AM - 6:20 PM)
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Select Class</label><select id="scheduleClassSelect"></select></div>
+                    <div class="form-group"><button class="btn btn-primary" onclick="loadScheduleEditor()"><i
+                                class="fas fa-sync-alt"></i> Load</button></div>
+                </div>
+                <div id="scheduleEditor"></div>
+                <div id="scheduleStatus" class="status-message"></div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Tab -->
+        <div id="leaderboardTab" class="tab-content">
+            <div class="panel">
+                <div class="panel-title"><i class="fas fa-trophy"></i> Student Rankings</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Grade</label><select id="leaderboardGradeFilter"
+                            onchange="loadLeaderboard()">
+                            <option value="">All Grades</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select></div>
+                    <div class="form-group"><label>Section</label><select id="leaderboardSectionFilter"
+                            onchange="loadLeaderboard()">
+                            <option value="">All Sections</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select></div>
+                    <div class="form-group"><button class="btn btn-primary" onclick="loadLeaderboard()"><i
+                                class="fas fa-sync-alt"></i> Refresh</button></div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>ID</th>
+                                <th>Student</th>
+                                <th>Grade</th>
+                                <th>Section</th>
+                                <th>Subjects</th>
+                                <th>Overall Avg</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Management Tab -->
+        <div id="examTab" class="tab-content">
+            <div class="panel">
+                <div class="panel-title"><i class="fas fa-file-alt"></i> Exam Management & Quarter Control</div>
+
+                <div class="section-title"><i class="fas fa-check-circle"></i> Step 1: Check Final Exam Status</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Grade</label><select id="checkFinalGrade">
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                        </select></div>
+                    <div class="form-group"><button class="btn btn-primary" onclick="checkAllFinalsStatus()"><i
+                                class="fas fa-search"></i> Check Status</button></div>
+                </div>
+                <div id="allFinalsStatus" style="margin-bottom:20px;"></div>
+
+                <hr>
+
+                <div class="section-title"><i class="fas fa-bolt"></i> Step 2: Force Final Exams (Teachers can force -
+                    Admin overrides)</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Grade</label><select id="forceGrade">
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select></div>
+                    <div class="form-group"><label>Subject</label><select id="forceSubject"></select></div>
+                    <div class="form-group"><button class="btn btn-primary" onclick="loadFinalExamsForGrade()"><i
+                                class="fas fa-search"></i> Find Finals</button></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Select Final Exam</label><select id="finalExamSelect"
+                            style="min-width:300px;"></select></div>
+                    <div class="form-group"><button class="btn btn-success" onclick="forceFinalExamAdmin()"><i
+                                class="fas fa-bolt"></i> Force This Final & Redirect Students</button></div>
+                </div>
+                <div class="helper">⚠️ Forcing a final exam will redirect all students in that grade to their assessment
+                    page. Teachers can also force tests for their subject.</div>
+                <div id="teacherFinalStatus" style="margin-top:16px;">
+                    <h5>Teachers Final Status:</h5>
+                    <div id="teacherFinalStatusList" class="teacher-status-list"></div>
+                </div>
+
+                <hr>
+
+                <div class="section-title"><i class="fas fa-calculator"></i> Step 3: Full Overall Average (Only After
+                    All Finals Forced)</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Grade</label><select id="avgGrade" onchange="checkCanCalculateAvg()">
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select></div>
+                    <div class="form-group"><label>Section</label><select id="avgSection"
+                            onchange="checkCanCalculateAvg()">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select></div>
+                    <div class="form-group"><button class="btn btn-primary" id="calculateAvgBtn"
+                            onclick="calculateFullOverallAverage()" disabled><i class="fas fa-calculator"></i> Calculate
+                            Overall</button></div>
+                </div>
+                <div class="helper" id="avgHelper">⚠️ You must force ALL final exams for this grade before calculating
+                    averages.</div>
+                <div id="averageResult" style="margin-top:16px;"></div>
+
+                <hr>
+
+                <div class="section-title"><i class="fas fa-calendar-alt"></i> Step 4: Change Quarter (After Averages
+                    Calculated)</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Grade</label><select id="quarterChangeGrade"
+                            onchange="checkCanChangeQuarter()">
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select></div>
+                    <div class="form-group"><label>New Quarter</label><select id="newQuarterSelect">
+                            <option value="1">Quarter 1</option>
+                            <option value="2">Quarter 2</option>
+                            <option value="3">Quarter 3</option>
+                            <option value="4">Quarter 4</option>
+                        </select></div>
+                    <div class="form-group"><button class="btn btn-warning" id="changeQuarterBtn"
+                            onclick="changeQuarterForGrade()" disabled><i class="fas fa-arrow-right"></i> Change
+                            Quarter</button></div>
+                </div>
+                <div class="helper" id="quarterChangeHelper">⚠️ Calculate averages for ALL sections first.</div>
+                <div id="quarterStatus" class="status-message"></div>
+            </div>
+        </div>
+
+        <!-- Chat Tab - UPDATED with recipient selection and attachments -->
+        <div id="chatTab" class="tab-content">
+            <div class="panel">
+                <div class="panel-title"><i class="fas fa-comments"></i> Messages</div>
+
+                <!-- Recipient Selection -->
+                <div class="form-row" style="margin-bottom: 16px;">
+                    <div class="form-group">
+                        <label>Recipient Type</label>
+                        <select id="chatRecipientType" onchange="updateChatRecipients()">
+                            <option value="">Select Type</option>
+                            <option value="grade">Broadcast to Grade</option>
+                            <option value="section">Broadcast to Section</option>
+                            <option value="teacher">All Teachers</option>
+                            <option value="parent">All Parents</option>
+                            <option value="individual">Individual Person</option>
+                            <option value="group">Group (Grade + Stream)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="gradeSelectGroup" style="display:none;">
+                        <label>Grade</label>
+                        <select id="chatGradeSelect" onchange="updateChatRecipients()">
+                            <option value="">Select Grade</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="sectionSelectGroup" style="display:none;">
+                        <label>Section</label>
+                        <select id="chatSectionSelect" onchange="updateChatRecipients()">
+                            <option value="">Select Section</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="streamSelectGroup" style="display:none;">
+                        <label>Stream</label>
+                        <select id="chatStreamSelect" onchange="updateChatRecipients()">
+                            <option value="">Select Stream</option>
+                            <option value="Natural">Natural</option>
+                            <option value="Social">Social</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="individualSelectGroup" style="display:none;">
+                        <label>Select Person</label>
+                        <select id="chatIndividualSelect" onchange="updateChatRecipients()"></select>
+                    </div>
+                </div>
+
+                <!-- Chat Container -->
+                <div class="chat-container">
+                    <div class="chat-sidebar" id="chatSidebar"></div>
+                    <div class="chat-main">
+                        <div
+                            style="padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                            <span id="chatWithName">Select a conversation</span>
+                            <span id="chatRecipientCount" class="recipient-count" style="display:none;"></span>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div style="text-align:center;color:var(--text-light);padding:60px 20px;">
+                                <i class="fas fa-comments" style="font-size:48px;margin-bottom:16px;display:block;"></i>
+                                Select a conversation or choose recipients above to send a message
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <div class="chat-input-row">
+                                <label for="fileAttachment" class="file-attach-btn" title="Attach files">
+                                    <i class="fas fa-paperclip"></i> Attach
+                                </label>
+                                <input type="file" id="fileAttachment" style="display:none;" multiple
+                                    onchange="handleFileSelect(event)">
+                                <input type="text" id="messageInput" placeholder="Type message..." disabled
+                                    onkeypress="if(event.key==='Enter')sendChatMessage()">
+                                <button class="btn btn-primary" id="sendMessageBtn" onclick="sendChatMessage()"
+                                    disabled>
+                                    <i class="fas fa-paper-plane"></i> Send
+                                </button>
+                            </div>
+                            <div id="attachmentPreview" class="attachment-preview" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reportsTab" class="tab-content">
+            <div class="panel">
+                <div class="panel-title"><i class="fas fa-triangle-exclamation"></i> Exam Incident Reports</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Filter</label>
+                        <select id="reportTypeFilter" onchange="renderExamReports()">
+                            <option value="all">All incidents</option>
+                            <option value="exam_quit">Quit mid exam</option>
+                            <option value="exam_visibility_exit">Tab switch / hide page</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" onclick="loadExamReports()"><i class="fas fa-sync-alt"></i>
+                            Refresh</button>
+                    </div>
+                </div>
+                <div class="helper">This is a basic testing report feed for exam exits and suspicious page leave
+                    attempts.</div>
+                <div class="table-container" style="margin-top:12px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Student</th>
+                                <th>Grade</th>
+                                <th>Assessment</th>
+                                <th>Event</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <tr>
+                                <td colspan="6">No reports loaded yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this inside the admin.html file, replace the existing Transcripts Tab section -->
+
+        <!-- Transcript Generator Tab -->
+        <div id="transcriptsTab" class="tab-content">
+            <div class="panel">
+                <div class="panel-title"><i class="fas fa-scroll"></i> Student Transcripts - View & Manage</div>
+
+                <!-- Transcript View Section -->
+                <div class="section-title"><i class="fas fa-eye"></i> View Student Transcripts</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Filter by Status</label>
+                        <select id="transcriptStatusFilter" onchange="renderAllTranscripts()">
+                            <option value="all">All Transcripts</option>
+                            <option value="pending">Pending Review</option>
+                            <option value="submitted">Submitted by Teacher</option>
+                            <option value="approved">Approved</option>
+                            <option value="published">Published to Student</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" onclick="loadAllTranscripts()">
+                            <i class="fas fa-sync-alt"></i> Refresh All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grade 9 & 10 Table -->
+                <div class="section-title" style="margin-top:20px;">
+                    <i class="fas fa-school"></i> Grade 9 & 10 Transcripts
+                    <span style="font-size:12px;color:var(--text-light);margin-left:10px;">
+                        Subjects: Amharic, English, Maths, Geography, History, Economics, Physics, Chemistry, HPE, ICT,
+                        Biology, Citizenship
+                    </span>
+                </div>
+                <div class="table-container" style="margin-bottom:30px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Grade</th>
+                                <th>Section</th>
+                                <th>Term</th>
+                                <th>Amharic</th>
+                                <th>English</th>
+                                <th>Maths</th>
+                                <th>Geo</th>
+                                <th>Hist</th>
+                                <th>Econ</th>
+                                <th>Physics</th>
+                                <th>Chem</th>
+                                <th>HPE</th>
+                                <th>ICT</th>
+                                <th>Biology</th>
+                                <th>Citizen</th>
+                                <th>Avg</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transcriptG9G10Body">
+                            <tr>
+                                <td colspan="19" style="text-align:center;padding:20px;">Loading transcripts...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Grade 11 Natural Science Table -->
+                <div class="section-title" style="margin-top:30px;">
+                    <i class="fas fa-flask"></i> Grade 11 Natural Science Transcripts
+                    <span style="font-size:12px;color:var(--text-light);margin-left:10px;">
+                        Subjects: Agriculture, English, Maths, Physics, Chemistry, ICT, Biology
+                    </span>
+                </div>
+                <div class="table-container" style="margin-bottom:30px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Section</th>
+                                <th>Term</th>
+                                <th>Agriculture</th>
+                                <th>English</th>
+                                <th>Maths</th>
+                                <th>Physics</th>
+                                <th>Chemistry</th>
+                                <th>ICT</th>
+                                <th>Biology</th>
+                                <th>Avg</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transcriptG11NatBody">
+                            <tr>
+                                <td colspan="11" style="text-align:center;padding:20px;">Loading transcripts...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Grade 11 Social Science Table -->
+                <div class="section-title" style="margin-top:30px;">
+                    <i class="fas fa-landmark"></i> Grade 11 Social Science Transcripts
+                    <span style="font-size:12px;color:var(--text-light);margin-left:10px;">
+                        Subjects: English, Maths, Geography, History, Economics
+                    </span>
+                </div>
+                <div class="table-container" style="margin-bottom:30px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Section</th>
+                                <th>Term</th>
+                                <th>English</th>
+                                <th>Maths</th>
+                                <th>Geography</th>
+                                <th>History</th>
+                                <th>Economics</th>
+                                <th>Avg</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transcriptG11SocBody">
+                            <tr>
+                                <td colspan="10" style="text-align:center;padding:20px;">Loading transcripts...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Grade 12 Natural Science Table -->
+                <div class="section-title" style="margin-top:30px;">
+                    <i class="fas fa-microscope"></i> Grade 12 Natural Science Transcripts
+                    <span style="font-size:12px;color:var(--text-light);margin-left:10px;">
+                        Subjects: Agriculture, English, Maths, Physics, Chemistry, ICT, Biology
+                    </span>
+                </div>
+                <div class="table-container" style="margin-bottom:30px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Section</th>
+                                <th>Term</th>
+                                <th>Agriculture</th>
+                                <th>English</th>
+                                <th>Maths</th>
+                                <th>Physics</th>
+                                <th>Chemistry</th>
+                                <th>ICT</th>
+                                <th>Biology</th>
+                                <th>Avg</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transcriptG12NatBody">
+                            <tr>
+                                <td colspan="11" style="text-align:center;padding:20px;">Loading transcripts...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Grade 12 Social Science Table -->
+                <div class="section-title" style="margin-top:30px;">
+                    <i class="fas fa-gavel"></i> Grade 12 Social Science Transcripts
+                    <span style="font-size:12px;color:var(--text-light);margin-left:10px;">
+                        Subjects: English, Maths, Geography, History, Economics
+                    </span>
+                </div>
+                <div class="table-container" style="margin-bottom:30px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Section</th>
+                                <th>Term</th>
+                                <th>English</th>
+                                <th>Maths</th>
+                                <th>Geography</th>
+                                <th>History</th>
+                                <th>Economics</th>
+                                <th>Avg</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transcriptG12SocBody">
+                            <tr>
+                                <td colspan="10" style="text-align:center;padding:20px;">Loading transcripts...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Publish Actions -->
+                <div class="section-title" style="margin-top:30px;">
+                    <i class="fas fa-bullhorn"></i> Bulk Actions
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <button class="btn btn-success" onclick="publishAllApprovedTranscripts()">
+                            <i class="fas fa-check-double"></i> Publish All Approved
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" onclick="notifyAllTeachers()">
+                            <i class="fas fa-bell"></i> Notify All Teachers to Submit
+                        </button>
+                    </div>
+                </div>
+                <div id="transcriptActionNotice" class="status-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, Timestamp, signOut, getDoc, setDoc, onSnapshot, orderBy } from './firebase-config.js';
+
+        const session = localStorage.getItem("current_user_session");
+        if (!session) window.location.href = "signin.html";
+        const admin = JSON.parse(session);
+        if (admin.role !== 'admin') window.location.href = "index.html";
+
+        document.getElementById('adminName').innerText = admin.name;
+        document.getElementById('adminAvatar').innerText = admin.name.charAt(0).toUpperCase();
+
+        let allStudents = [], allTeachers = [], allParents = [];
+        let currentQuarter = 1;
+        let currentChatId = null, chatUnsubscribe = null;
+        let selectedChatRecipients = [];
+        let attachedFiles = [];
+        const MAX_ATTACHMENT_SIZE = 200 * 1024;
+        const QUARTER_DOC = doc(db, 'settings', 'currentQuarter');
+        const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const PERIODS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        // Assessment URL mapping
+        const ASSESSMENT_URLS = {
+            '9': '/grade-9/assessment-9.html',
+            '10': '/grade-10/assessment-10.html',
+            '11-Natural': '/grade-11/natural/assessment-11-natural.html',
+            '11-Social': '/grade-11/social/assessment-11-social.html',
+            '12-Natural': '/grade-12/natural/assessment-12-natural.html',
+            '12-Social': '/grade-12/social/assessment-12-social.html'
+        };
+        let examReports = [];
+        let transcriptSubmissions = [];
+
+        async function loadQuarter() {
+            try {
+                const snap = await getDoc(QUARTER_DOC);
+                currentQuarter = snap.exists() ? (snap.data().quarter || 1) : 1;
+                document.getElementById('currentQuarterDisplay').innerText = `Q${currentQuarter}`;
+                document.getElementById('newQuarterSelect').value = currentQuarter;
+            } catch { currentQuarter = 1; }
+        }
+
+        function showPopup(message, type = 'info') {
+            const popup = document.getElementById('popupAlert');
+            popup.className = `popup-alert show ${type}`;
+            document.getElementById('popupMessage').innerText = message;
+            setTimeout(() => popup.classList.remove('show'), 5000);
+        }
+        window.closePopup = () => document.getElementById('popupAlert').classList.remove('show');
+
+        async function loadAll() {
+            const snap = await getDocs(collection(db, "profiles"));
+            allStudents = []; allTeachers = []; allParents = [];
+            snap.forEach(d => {
+                const data = d.data();
+                if (data.role === 'student') allStudents.push({ id: d.id, ...data });
+                else if (data.role === 'teacher') allTeachers.push({ id: d.id, ...data });
+                else if (data.role === 'parent') allParents.push({ id: d.id, ...data });
+            });
+
+            document.getElementById('totalStudents').innerText = allStudents.length;
+            document.getElementById('totalTeachers').innerText = allTeachers.length;
+            document.getElementById('pendingCount').innerText = allStudents.filter(s => !s.approved).length + allTeachers.filter(t => !t.approved).length + allParents.filter(p => !p.approved).length;
+
+            loadStudentsTable();
+            loadTeachersTable();
+            loadParentsTable();
+            populateTeacherDropdowns();
+            loadHomerooms();
+            loadLeaderboard();
+            populateSubjectsDropdown();
+            populateScheduleClassSelect();
+            loadChatSidebar();
+        }
+
+        window.filterStudents = function () {
+            const grade = document.getElementById('studentFilterGrade').value;
+            const section = document.getElementById('studentFilterSection').value;
+            const search = document.getElementById('studentSearchInput').value.toLowerCase();
+            let filtered = allStudents;
+            if (grade) filtered = filtered.filter(s => s.grade == grade);
+            if (section) filtered = filtered.filter(s => s.section == section);
+            if (search) filtered = filtered.filter(s => s.name.toLowerCase().includes(search) || (s.idNumber || '').toLowerCase().includes(search));
+            renderStudentsTable(filtered);
+        };
+
+        function renderStudentsTable(students) {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = students.sort((a, b) => (a.grade - b.grade) || a.name.localeCompare(b.name)).map(s => `
+            <tr>
+                <td>${s.idNumber || '-'}</td>
+                <td>${s.name}</td>
+                <td>Grade ${s.grade}</td>
+                <td>${s.section || '-'}</td>
+                <td>${s.email}</td>
+                <td><span class="badge ${s.approved ? 'badge-success' : 'badge-warning'}">${s.approved ? 'Approved' : 'Pending'}</span></td>
+                <td>
+                    ${!s.approved ? `<button class="btn btn-success" onclick="approveUser('${s.id}')"><i class="fas fa-check"></i> Approve</button> ` : ''}
+                    <button class="btn btn-danger" onclick="deleteUser('${s.id}')"><i class="fas fa-trash"></i> Delete</button>
+                </td>
+            </tr>
+        `).join('');
+        }
+
+        function loadStudentsTable() { renderStudentsTable(allStudents); }
+
+        function loadTeachersTable() {
+            const tbody = document.getElementById('teachersTableBody');
+            tbody.innerHTML = allTeachers.sort((a, b) => a.name.localeCompare(b.name)).map(t => {
+                const grades = Array.isArray(t.teachingGrades) ? t.teachingGrades.join(', ') : 'Not set';
+                return `<tr>
+                <td>${t.idNumber || '-'}</td>
+                <td>${t.name}</td>
+                <td>${t.subject || '-'}</td>
+                <td>${grades}</td>
+                <td>${t.email}</td>
+                <td><span class="badge ${t.approved ? 'badge-success' : 'badge-warning'}">${t.approved ? 'Approved' : 'Pending'}</span></td>
+                <td>
+                    ${!t.approved ? `<button class="btn btn-success" onclick="approveUser('${t.id}')"><i class="fas fa-check"></i> Approve</button> ` : ''}
+                    <button class="btn btn-danger" onclick="deleteUser('${t.id}')"><i class="fas fa-trash"></i> Delete</button>
+                </td>
+            </tr>`;
+            }).join('');
+        }
+
+        function loadParentsTable() {
+            document.getElementById('parentsTableBody').innerHTML = allParents.map(p => `
+            <tr>
+                <td>${p.idNumber || '-'}</td>
+                <td>${p.name}</td>
+                <td>${p.phone || '-'}</td>
+                <td>${p.email}</td>
+                <td><span class="badge ${p.approved ? 'badge-success' : 'badge-warning'}">${p.approved ? 'Approved' : 'Pending'}</span></td>
+                <td>
+                    ${!p.approved ? `<button class="btn btn-success" onclick="approveUser('${p.id}')"><i class="fas fa-check"></i> Approve</button> ` : ''}
+                    <button class="btn btn-danger" onclick="deleteUser('${p.id}')"><i class="fas fa-trash"></i> Delete</button>
+                </td>
+            </tr>
+        `).join('');
+        }
+
+        window.approveUser = async (id) => {
+            await updateDoc(doc(db, 'profiles', id), { approved: true });
+            loadAll();
+            showPopup('User approved successfully', 'success');
+        };
+
+        window.deleteUser = async (id) => {
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
+            await deleteDoc(doc(db, 'profiles', id));
+            loadAll();
+            showPopup('User deleted successfully', 'success');
+        };
+
+        function populateTeacherDropdowns() {
+            const approved = allTeachers.filter(t => t.approved);
+            const options = approved.map(t => `<option value="${t.id}">${t.name} (${t.subject || 'No Subject'})</option>`).join('');
+            document.getElementById('assignTeacher1').innerHTML = '<option value="">Select Teacher 1</option>' + options;
+            document.getElementById('assignTeacher2').innerHTML = '<option value="">None</option>' + options;
+        }
+
+        async function loadHomerooms() {
+            const snap = await getDocs(collection(db, "homeroom"));
+            const container = document.getElementById('homeroomList');
+            let html = '';
+            snap.forEach(d => {
+                const data = d.data();
+                html += `<div class="teacher-status-item">
+                <span><strong>Grade ${data.grade}${data.section}</strong>: ${data.teacherName || data.teacherId}</span>
+                <button class="btn btn-danger" onclick="removeHomeroom('${d.id}')"><i class="fas fa-trash"></i></button>
+            </div>`;
+            });
+            container.innerHTML = html || '<div class="helper">No assignments yet.</div>';
+        }
+
+        window.assignHomeroom = async () => {
+            const grade = document.getElementById('assignGrade').value;
+            const section = document.getElementById('assignSection').value;
+            const t1 = document.getElementById('assignTeacher1').value;
+            const t2 = document.getElementById('assignTeacher2').value;
+            const teachers = [t1, t2].filter(Boolean);
+            if (teachers.length === 0) { alert('Select at least one teacher'); return; }
+
+            for (const tid of teachers) {
+                const q = query(collection(db, 'homeroom'), where('teacherId', '==', tid));
+                const snap = await getDocs(q);
+                if (snap.docs.some(d => d.data().grade != grade || d.data().section != section)) {
+                    alert(`${allTeachers.find(t => t.id === tid)?.name} is already assigned to another class.`);
+                    return;
+                }
+            }
+
+            const classQ = query(collection(db, 'homeroom'), where('grade', '==', parseInt(grade)), where('section', '==', section));
+            const oldSnap = await getDocs(classQ);
+            for (const d of oldSnap.docs) await deleteDoc(d.ref);
+
+            for (const tid of teachers) {
+                const teacher = allTeachers.find(t => t.id === tid);
+                await addDoc(collection(db, 'homeroom'), {
+                    grade: parseInt(grade),
+                    section,
+                    teacherId: tid,
+                    teacherName: teacher?.name,
+                    updatedAt: Timestamp.now()
+                });
+            }
+            loadHomerooms();
+            showPopup(`Homeroom teachers assigned to Grade ${grade}${section}`, 'success');
+        };
+
+        window.removeHomeroom = async (id) => {
+            await deleteDoc(doc(db, 'homeroom', id));
+            loadHomerooms();
+            showPopup('Assignment removed', 'success');
+        };
+
+        function populateScheduleClassSelect() {
+            const select = document.getElementById('scheduleClassSelect');
+            const classes = [];
+            for (let g = 9; g <= 12; g++) for (let s of ['A', 'B', 'C', 'D']) classes.push({ grade: g, section: s });
+            select.innerHTML = classes.map(c => `<option value="${c.grade}-${c.section}">Grade ${c.grade} Section ${c.section}</option>`).join('');
+        }
+
+        window.loadScheduleEditor = async function () {
+            const val = document.getElementById('scheduleClassSelect').value;
+            const [grade, section] = val.split('-');
+            const q = query(collection(db, 'schedules'), where('grade', '==', parseInt(grade)), where('section', '==', section));
+            const snap = await getDocs(q);
+            const existing = {};
+            snap.forEach(d => { const data = d.data(); existing[`${data.day}_${data.period}`] = data; });
+
+            const approvedTeachers = allTeachers.filter(t => t.approved);
+            const gradeTeachers = approvedTeachers.filter(t => Array.isArray(t.teachingGrades) && t.teachingGrades.includes(parseInt(grade)));
+            const teacherOptions = '<option value="">Select Teacher</option>' + gradeTeachers.map(t => `<option value="${t.id}">${t.name} (${t.subject || ''})</option>`).join('');
+
+            let html = `<table class="schedule-grid"><thead><tr><th>Period</th>${WEEK_DAYS.map(d => `<th>${d}</th>`).join('')}</tr></thead><tbody>`;
+            for (const p of PERIODS) {
+                html += `<tr><td><strong>Period ${p}</strong></td>`;
+                for (const day of WEEK_DAYS) {
+                    const key = `${day}_${p}`;
+                    const data = existing[key] || {};
+                    html += `<td>
+                    <select id="sch_${day}_${p}">${teacherOptions}</select>
+                    <input type="text" id="sub_${day}_${p}" placeholder="Subject" value="${data.subject || ''}" style="width:100%;margin-top:4px;" readonly>
+                </td>`;
+                }
+                html += `</tr>`;
+            }
+            html += `</tbody></table><div style="margin-top:16px;"><button class="btn btn-primary" onclick="saveSchedule('${grade}','${section}')"><i class="fas fa-save"></i> Save Schedule</button></div>`;
+            document.getElementById('scheduleEditor').innerHTML = html;
+
+            for (const p of PERIODS) {
+                for (const day of WEEK_DAYS) {
+                    const key = `${day}_${p}`;
+                    const data = existing[key] || {};
+                    const select = document.getElementById(`sch_${day}_${p}`);
+                    if (select && data.teacherId) select.value = data.teacherId;
+                    select?.addEventListener('change', function () {
+                        const teacher = gradeTeachers.find(t => t.id === this.value);
+                        document.getElementById(`sub_${day}_${p}`).value = teacher?.subject || '';
+                    });
+                }
+            }
+        };
+
+        window.saveSchedule = async function (grade, section) {
+            try {
+                const batch = [];
+                for (const p of PERIODS) {
+                    for (const day of WEEK_DAYS) {
+                        const teacherId = document.getElementById(`sch_${day}_${p}`)?.value;
+                        if (!teacherId) continue;
+                        const teacher = allTeachers.find(t => t.id === teacherId);
+                        const subject = teacher?.subject || '';
+                        const q = query(collection(db, 'schedules'),
+                            where('grade', '==', parseInt(grade)),
+                            where('section', '==', section),
+                            where('day', '==', day),
+                            where('period', '==', p));
+                        const snap = await getDocs(q);
+                        const data = {
+                            grade: parseInt(grade),
+                            section,
+                            day,
+                            period: p,
+                            teacherId,
+                            teacher: teacher?.name,
+                            subject,
+                            updatedAt: Timestamp.now()
+                        };
+                        if (snap.empty) batch.push(addDoc(collection(db, 'schedules'), data));
+                        else batch.push(updateDoc(doc(db, 'schedules', snap.docs[0].id), data));
+                    }
+                }
+                await Promise.all(batch);
+                showPopup('Schedule saved successfully!', 'success');
+            } catch (e) {
+                showPopup('Error saving schedule: ' + e.message, 'error');
+            }
+        };
+
+        window.loadLeaderboard = async () => {
+            const gradeFilter = document.getElementById('leaderboardGradeFilter').value;
+            const sectionFilter = document.getElementById('leaderboardSectionFilter').value;
+            let students = allStudents.filter(s => s.approved);
+            if (gradeFilter) students = students.filter(s => s.grade == gradeFilter);
+            if (sectionFilter) students = students.filter(s => s.section == sectionFilter);
+
+            const scoresSnap = await getDocs(collection(db, 'assessment_scores'));
+            const assessmentsSnap = await getDocs(collection(db, 'assessments'));
+            const assessmentMap = new Map();
+            assessmentsSnap.forEach(d => assessmentMap.set(d.id, d.data()));
+
+            const studentSubjectScores = {};
+            scoresSnap.forEach(d => {
+                const score = d.data();
+                const assessment = assessmentMap.get(score.assessmentId);
+                if (!assessment) return;
+                const subject = assessment.subjectCode;
+                if (!subject) return;
+
+                if (!studentSubjectScores[score.studentId]) studentSubjectScores[score.studentId] = {};
+                if (!studentSubjectScores[score.studentId][subject]) studentSubjectScores[score.studentId][subject] = [];
+
+                const earned = Number(score.score) || 0;
+                const total = Number(score.total) || Number(assessment.totalPoints) || 100;
+                const percentage = total > 0 ? (earned / total) * 100 : 0;
+                studentSubjectScores[score.studentId][subject].push(percentage);
+            });
+
+            const ranked = students.map(s => {
+                const subjects = studentSubjectScores[s.id] || {};
+                const subjectAverages = [];
+                for (const subject in subjects) {
+                    const scores = subjects[subject];
+                    if (scores.length > 0) subjectAverages.push(scores.reduce((a, b) => a + b, 0) / scores.length);
+                }
+                const overall = subjectAverages.length > 0 ? Math.round(subjectAverages.reduce((a, b) => a + b, 0) / subjectAverages.length) : 0;
+                return { ...s, avg: overall, subjectCount: subjectAverages.length };
+            }).sort((a, b) => b.avg - a.avg);
+
+            const tbody = document.getElementById('leaderboardBody');
+            tbody.innerHTML = ranked.slice(0, 50).map((s, i) => {
+                let rankClass = '';
+                if (i === 0) rankClass = 'rank-1';
+                else if (i === 1) rankClass = 'rank-2';
+                else if (i === 2) rankClass = 'rank-3';
+                return `<tr class="${rankClass}">
+                <td><strong>${i + 1}</strong></td>
+                <td>${s.idNumber || '-'}</td>
+                <td>${s.name}</td>
+                <td>Grade ${s.grade}</td>
+                <td>${s.section || '-'}</td>
+                <td>${s.subjectCount}</td>
+                <td><span class="badge badge-info" style="font-size:14px;">${s.avg}%</span></td>
+            </tr>`;
+            }).join('') || '<tr><td colspan="7" style="text-align:center;">No data available</td></tr>';
+        };
+
+        function populateSubjectsDropdown() {
+            const subjects = [...new Set(allTeachers.map(t => t.subject).filter(Boolean))];
+            document.getElementById('forceSubject').innerHTML = '<option value="">Select Subject</option>' + subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+        }
+
+        window.checkAllFinalsStatus = async function () {
+            const grade = parseInt(document.getElementById('checkFinalGrade').value);
+            const teachersForGrade = allTeachers.filter(t => t.approved && Array.isArray(t.teachingGrades) && t.teachingGrades.includes(grade));
+            const subjects = [...new Set(teachersForGrade.map(t => t.subject).filter(Boolean))];
+
+            const forcedSnap = await getDocs(query(collection(db, 'assessments'),
+                where('grade', '==', grade),
+                where('type', '==', 'Final'),
+                where('forcedByAdmin', '==', true)));
+            const forcedSubjects = new Set();
+            forcedSnap.forEach(d => forcedSubjects.add(d.data().subjectCode));
+
+            let html = `<h5>Grade ${grade} Final Exam Status</h5>`;
+            html += `<div class="progress-bar"><div class="progress-fill" style="width:${subjects.length > 0 ? (forcedSubjects.size / subjects.length) * 100 : 0}%;"></div></div>`;
+            html += `<p>${forcedSubjects.size} of ${subjects.length} subjects have forced finals.</p><div class="teacher-status-list">`;
+
+            subjects.forEach(subject => {
+                const isForced = forcedSubjects.has(subject);
+                html += `<div class="teacher-status-item">
+                <span><i class="fas fa-book"></i> ${subject}</span>
+                <span class="badge ${isForced ? 'badge-success' : 'badge-danger'}">${isForced ? '✓ Forced' : '✗ Not Forced'}</span>
+            </div>`;
+            });
+            html += `</div>`;
+
+            const allForced = forcedSubjects.size === subjects.length && subjects.length > 0;
+            html += allForced ?
+                `<div class="status-message success show"><i class="fas fa-check-circle"></i> All finals forced! You can change the quarter.</div>` :
+                `<div class="status-message error show"><i class="fas fa-exclamation-triangle"></i> ${subjects.length - forcedSubjects.size} subjects still need finals.</div>`;
+
+            document.getElementById('allFinalsStatus').innerHTML = html;
+
+            const quarterGrade = parseInt(document.getElementById('quarterChangeGrade').value);
+            if (quarterGrade === grade) {
+                document.getElementById('changeQuarterBtn').disabled = !allForced;
+                document.getElementById('quarterChangeHelper').innerHTML = allForced ?
+                    '✅ All finals forced! You can now change the quarter.' :
+                    '⚠️ You must force ALL Final Exams before changing the quarter.';
+            }
+        };
+
+        window.loadFinalExamsForGrade = async () => {
+            const grade = document.getElementById('forceGrade').value;
+            const subject = document.getElementById('forceSubject').value;
+            if (!subject) { alert('Select a subject'); return; }
+
+            const q = query(collection(db, 'assessments'),
+                where('type', '==', 'Final'),
+                where('grade', '==', parseInt(grade)),
+                where('subjectCode', '==', subject));
+            const snap = await getDocs(q);
+            const finals = [];
+            snap.forEach(d => finals.push({ id: d.id, ...d.data() }));
+
+            document.getElementById('finalExamSelect').innerHTML =
+                '<option value="">Select a final exam</option>' +
+                finals.map(f => `<option value="${f.id}">${f.title} - ${f.teacherName || 'Unknown'} (Section ${f.section || 'All'})</option>`).join('');
+
+            const teachersForGrade = allTeachers.filter(t =>
+                t.approved &&
+                Array.isArray(t.teachingGrades) &&
+                t.teachingGrades.includes(parseInt(grade)) &&
+                t.subject === subject
+            );
+
+            const teacherStatus = teachersForGrade.map(t => ({
+                teacher: t,
+                hasFinal: finals.some(f => f.teacherId === t.id)
+            }));
+
+            document.getElementById('teacherFinalStatusList').innerHTML = teacherStatus.map(ts =>
+                `<div class="teacher-status-item">
+                <span><i class="fas fa-user"></i> ${ts.teacher.name}</span>
+                <span class="badge ${ts.hasFinal ? 'badge-success' : 'badge-danger'}">${ts.hasFinal ? '✓ Final Created' : '✗ No Final'}</span>
+            </div>`
+            ).join('');
+        };
+
+        window.loadExamReports = async function () {
+            const snap = await getDocs(collection(db, 'notifications'));
+            examReports = [];
+            snap.forEach(d => {
+                const data = d.data();
+                if (data.type === 'exam_quit' || data.type === 'exam_visibility_exit') {
+                    examReports.push({ id: d.id, ...data });
+                }
+            });
+            renderExamReports();
+        };
+
+        window.renderExamReports = function () {
+            const tbody = document.getElementById('reportsTableBody');
+            const filter = document.getElementById('reportTypeFilter')?.value || 'all';
+            const rows = examReports
+                .filter(r => filter === 'all' ? true : r.type === filter)
+                .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+            if (rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No incidents found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = rows.slice(0, 200).map(r => `
+            <tr>
+                <td>${r.createdAt?.toDate?.().toLocaleString?.() || '-'}</td>
+                <td>${r.studentName || '-'}</td>
+                <td>${r.grade ? `Grade ${r.grade}${r.section || ''}` : '-'}</td>
+                <td>${r.assessmentTitle || r.assessmentId || '-'}</td>
+                <td><span class="badge ${r.type === 'exam_quit' ? 'badge-danger' : 'badge-warning'}">${r.type === 'exam_quit' ? 'Quit Mid Exam' : 'Left Page'}</span></td>
+                <td>${r.message || '-'}</td>
+            </tr>
+        `).join('');
+        };
+
+        window.loadTranscriptSubmissions = async function () {
+            const snap = await getDocs(collection(db, 'transcript_submissions'));
+            transcriptSubmissions = [];
+            snap.forEach(d => transcriptSubmissions.push({ id: d.id, ...d.data() }));
+            renderTranscriptSubmissions();
+        };
+
+        window.renderTranscriptSubmissions = function () {
+            const tbody = document.getElementById('adminTranscriptBody');
+            const filter = document.getElementById('adminTranscriptStatusFilter')?.value || 'pending';
+            const rows = transcriptSubmissions
+                .filter(r => filter === 'all' ? true : (r.status || 'pending') === filter)
+                .sort((a, b) => (b.updatedAt?.toMillis?.() || b.createdAt?.toMillis?.() || 0) - (a.updatedAt?.toMillis?.() || a.createdAt?.toMillis?.() || 0));
+            if (rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No transcript submissions found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map(row => {
+                const items = Array.isArray(row.selectedItems) ? row.selectedItems.join(', ') : '-';
+                const status = row.status || 'pending';
+                return `<tr>
+                <td>${row.studentName || '-'}</td>
+                <td>${row.grade ? `Grade ${row.grade}${row.section || ''}` : '-'}</td>
+                <td>${row.teacherName || '-'}</td>
+                <td>${items}</td>
+                <td><span class="badge ${status === 'published' ? 'badge-success' : status === 'approved' ? 'badge-info' : 'badge-warning'}">${status}</span></td>
+                <td>
+                    ${status === 'pending' ? `<button class="btn btn-success" onclick="approveTranscriptSubmission('${row.id}')"><i class="fas fa-check"></i> Approve</button>` : ''}
+                    ${status === 'approved' ? `<button class="btn btn-primary" onclick="publishTranscriptSubmission('${row.id}')"><i class="fas fa-upload"></i> Publish</button>` : ''}
+                </td>
+            </tr>`;
+            }).join('');
+        };
+
+        window.approveTranscriptSubmission = async function (id) {
+            await updateDoc(doc(db, 'transcript_submissions', id), {
+                status: 'approved',
+                approvedByAdminId: admin.id,
+                approvedByAdminName: admin.name,
+                approvedAt: Timestamp.now(),
+                updatedAt: Timestamp.now()
+            });
+            showPopup('Transcript approved successfully.', 'success');
+            await loadTranscriptSubmissions();
+        };
+
+        window.publishTranscriptSubmission = async function (id) {
+            const ref = doc(db, 'transcript_submissions', id);
+            const snap = await getDoc(ref);
+            if (!snap.exists()) {
+                showPopup('Transcript submission not found.', 'error');
+                return;
+            }
+            const data = snap.data();
+            await updateDoc(ref, {
+                status: 'published',
+                publishedByAdminId: admin.id,
+                publishedByAdminName: admin.name,
+                publishedAt: Timestamp.now(),
+                updatedAt: Timestamp.now()
+            });
+            await setDoc(doc(db, 'published_transcripts', id), {
+                ...data,
+                sourceSubmissionId: id,
+                status: 'published',
+                publishedByAdminId: admin.id,
+                publishedByAdminName: admin.name,
+                publishedAt: Timestamp.now(),
+                updatedAt: Timestamp.now()
+            });
+            showPopup('Transcript published for student and parent.', 'success');
+            await loadTranscriptSubmissions();
+        };
+
+        // UPDATED: Force Final Exam with Student Redirect
+        window.forceFinalExamAdmin = async () => {
+            const assessmentId = document.getElementById('finalExamSelect').value;
+            if (!assessmentId) { alert('Select a final exam'); return; }
+
+            const assessmentRef = doc(db, 'assessments', assessmentId);
+            const assessmentSnap = await getDoc(assessmentRef);
+            if (!assessmentSnap.exists()) { alert('Assessment not found'); return; }
+
+            const assessment = assessmentSnap.data();
+            const grade = assessment.grade;
+            const subject = assessment.subjectCode;
+
+            // Determine stream for grades 11-12
+            let stream = '';
+            if (grade === 11 || grade === 12) {
+                stream = assessment.stream || (subject?.toLowerCase().includes('natural') ? 'Natural' : 'Social');
+            }
+
+            // Get the assessment URL
+            let assessmentUrl;
+            if (grade === 11 || grade === 12) {
+                assessmentUrl = ASSESSMENT_URLS[`${grade}-${stream}`] || `/assessment-${grade}.html`;
+            } else {
+                assessmentUrl = ASSESSMENT_URLS[String(grade)] || `/assessment-${grade}.html`;
+            }
+
+            // Update assessment as forced
+            await updateDoc(assessmentRef, {
+                forcedForAllSections: true,
+                forceAllStudents: true,
+                forcedByAdmin: true,
+                forcedAt: Timestamp.now(),
+                status: 'active',
+                timeLimit: assessment.timeLimit || 60,
+                startTime: Timestamp.now(),
+                assessmentUrl: assessmentUrl
+            });
+
+            let totalStudentsForced = 0;
+
+            // Force for all sections
+            for (const section of ['A', 'B', 'C', 'D']) {
+                const students = allStudents.filter(s => s.grade == grade && s.section === section && s.approved);
+                const today = new Date().toISOString().split('T')[0];
+                const attQ = query(collection(db, 'attendance'),
+                    where('grade', '==', String(grade)),
+                    where('section', '==', section),
+                    where('date', '==', today));
+                const attSnap = await getDocs(attQ);
+                const absentIds = new Set();
+                attSnap.forEach(d => {
+                    d.data().records?.forEach(r => {
+                        if (r.status === 'A') absentIds.add(r.studentId);
+                    });
+                });
+
+                for (const s of students) {
+                    if (absentIds.has(s.id)) continue;
+
+                    const existingQ = query(collection(db, 'assessment_scores'),
+                        where('studentId', '==', s.id),
+                        where('assessmentId', '==', assessmentId));
+                    if (!(await getDocs(existingQ)).empty) continue;
+
+                    // Create assessment score record
+                    await addDoc(collection(db, 'assessment_scores'), {
+                        studentId: s.id,
+                        studentName: s.name,
+                        assessmentId,
+                        assessmentTitle: assessment.title,
+                        score: 0,
+                        total: assessment.totalPoints || 100,
+                        percentage: 0,
+                        status: 'forced',
+                        forced: true,
+                        grade,
+                        section,
+                        assessmentUrl: assessmentUrl,
+                        timeLimit: assessment.timeLimit || 60,
+                        startTime: Timestamp.now(),
+                        includeInAverage: assessment.includeInAverage !== false,
+                        assignedByTeacherId: assessment.teacherId || 'admin',
+                        teacherId: assessment.teacherId || null,
+                        assignedAt: Timestamp.now()
+                    });
+
+                    // Send notification to student
+                    await addDoc(collection(db, 'notifications'), {
+                        userId: s.id,
+                        type: 'forced_exam',
+                        title: 'Final Exam Started - Do Not Exit',
+                        message: `You have been directed to take your ${subject} Final Exam. Do not close or refresh the page until finished.`,
+                        assessmentId: assessmentId,
+                        assessmentUrl: assessmentUrl,
+                        read: false,
+                        priority: 'high',
+                        createdAt: Timestamp.now()
+                    });
+
+                    totalStudentsForced++;
+                }
+            }
+
+            // Notify teachers of the subject
+            const subjectTeachers = allTeachers.filter(t =>
+                t.approved &&
+                t.subject === subject &&
+                Array.isArray(t.teachingGrades) &&
+                t.teachingGrades.includes(grade)
+            );
+
+            for (const teacher of subjectTeachers) {
+                await addDoc(collection(db, 'notifications'), {
+                    userId: teacher.id,
+                    type: 'exam_forced',
+                    title: 'Final Exam Forced by Admin',
+                    message: `The ${subject} Final Exam for Grade ${grade} has been forced by Admin. ${totalStudentsForced} students have been redirected to the assessment.`,
+                    assessmentId: assessmentId,
+                    grade: grade,
+                    read: false,
+                    createdAt: Timestamp.now()
+                });
+            }
+
+            showPopup(`Final exam forced for Grade ${grade} (${subject})! ${totalStudentsForced} students redirected to ${assessmentUrl}`, 'success');
+            await checkAllFinalsStatus();
+        };
+
+        window.changeQuarterForGrade = async function () {
+            const grade = parseInt(document.getElementById('quarterChangeGrade').value);
+            const newQuarter = parseInt(document.getElementById('newQuarterSelect').value);
+
+            const teachersForGrade = allTeachers.filter(t => t.approved && Array.isArray(t.teachingGrades) && t.teachingGrades.includes(grade));
+            const subjects = [...new Set(teachersForGrade.map(t => t.subject).filter(Boolean))];
+            const forcedSnap = await getDocs(query(collection(db, 'assessments'),
+                where('grade', '==', grade),
+                where('type', '==', 'Final'),
+                where('forcedByAdmin', '==', true)));
+
+            if (forcedSnap.size !== subjects.length) {
+                showPopup(`Cannot change quarter: ${subjects.length - forcedSnap.size} subjects still need finals.`, 'error');
+                return;
+            }
+
+            currentQuarter = newQuarter;
+            await setDoc(QUARTER_DOC, { quarter: currentQuarter, updatedAt: Timestamp.now(), grade: grade });
+            document.getElementById('currentQuarterDisplay').innerText = `Q${currentQuarter}`;
+
+            showPopup(`Quarter changed to Q${currentQuarter} for Grade ${grade}!`, 'success');
+
+            await addDoc(collection(db, 'notifications'), {
+                type: 'quarter_change',
+                quarter: currentQuarter,
+                grade: grade,
+                message: `Quarter ${currentQuarter} has started for Grade ${grade}.`,
+                createdAt: Timestamp.now(),
+                read: false
+            });
+
+            document.getElementById('quarterStatus').innerHTML = `<span class="badge badge-success">Quarter changed to Q${currentQuarter} for Grade ${grade}</span>`;
+            document.getElementById('quarterStatus').classList.add('show');
+        };
+
+        window.calculateFullOverallAverage = async () => {
+            const grade = document.getElementById('avgGrade').value;
+            const section = document.getElementById('avgSection').value;
+
+            const students = allStudents.filter(s => s.grade == grade && s.section === section && s.approved);
+            const scoresSnap = await getDocs(collection(db, 'assessment_scores'));
+            const assessmentsSnap = await getDocs(collection(db, 'assessments'));
+            const assessmentMap = new Map();
+            assessmentsSnap.forEach(d => assessmentMap.set(d.id, d.data()));
+
+            const subjectScores = {};
+            scoresSnap.forEach(d => {
+                const score = d.data();
+                const assessment = assessmentMap.get(score.assessmentId);
+                if (!assessment) return;
+                const subject = assessment.subjectCode;
+                if (!subject) return;
+
+                if (!subjectScores[subject]) subjectScores[subject] = {};
+                if (!subjectScores[subject][score.studentId]) subjectScores[subject][score.studentId] = [];
+
+                const earned = Number(score.score) || 0;
+                const total = Number(score.total) || Number(assessment.totalPoints) || 100;
+                const percentage = total > 0 ? (earned / total) * 100 : 0;
+                subjectScores[subject][score.studentId].push(percentage);
+            });
+
+            const allSubjects = Object.keys(subjectScores).sort();
+            const results = [];
+
+            for (const s of students) {
+                const row = { name: s.name, id: s.idNumber || '-', subjectAverages: {}, assessmentCounts: {} };
+                let sumOfSubjectAverages = 0;
+                let numberOfSubjects = 0;
+
+                for (const subject of allSubjects) {
+                    const scores = subjectScores[subject]?.[s.id] || [];
+                    if (scores.length > 0) {
+                        const subjectAvg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+                        row.subjectAverages[subject] = subjectAvg;
+                        row.assessmentCounts[subject] = scores.length;
+                        sumOfSubjectAverages += subjectAvg;
+                        numberOfSubjects++;
+                    } else {
+                        row.subjectAverages[subject] = null;
+                        row.assessmentCounts[subject] = 0;
+                    }
+                }
+
+                row.overall = numberOfSubjects > 0 ? Math.round(sumOfSubjectAverages / numberOfSubjects) : 0;
+                row.subjectCount = numberOfSubjects;
+                results.push(row);
+            }
+
+            results.sort((a, b) => b.overall - a.overall);
+
+            let html = `<h5>Grade ${grade} Section ${section} - Full Overall Average</h5>
+            <div class="helper" style="margin-bottom:12px;">
+                <i class="fas fa-info-circle"></i> Subject Avg = Sum of all assessment % ÷ Number of assessments<br>
+                <strong>Overall = (${allSubjects.join(' + ')}) ÷ ${allSubjects.length}</strong>
+            </div>
+            <div class="table-container"><table><thead><tr><th>Rank</th><th>ID</th><th>Student</th>${allSubjects.map(s => `<th>${s}</th>`).join('')}<th>Overall</th></tr></thead><tbody>`;
+
+            results.forEach((r, i) => {
+                let rankClass = '';
+                if (i === 0) rankClass = 'rank-1';
+                else if (i === 1) rankClass = 'rank-2';
+                else if (i === 2) rankClass = 'rank-3';
+                html += `<tr class="${rankClass}">
+                <td><strong>${i + 1}</strong></td>
+                <td>${r.id}</td>
+                <td>${r.name}</td>
+                ${allSubjects.map(s => `<td style="text-align:center;">${r.subjectAverages[s] !== null ? r.subjectAverages[s] + '%' : '-'}</td>`).join('')}
+                <td><strong><span class="badge badge-info" style="font-size:14px;">${r.overall}%</span></strong></td>
+            </tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+
+            const classOverallAvg = results.length > 0 ? Math.round(results.reduce((sum, r) => sum + r.overall, 0) / results.length) : 0;
+            html += `<div style="margin-top:16px;display:flex;gap:20px;">
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div><div class="stat-value">${results.length}</div><div class="stat-label">Students</div></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-book"></i></div><div><div class="stat-value">${allSubjects.length}</div><div class="stat-label">Subjects</div></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-bar"></i></div><div><div class="stat-value">${classOverallAvg}%</div><div class="stat-label">Class Average</div></div></div>
+        </div>`;
+
+            document.getElementById('averageResult').innerHTML = html;
+        };
+
+        // ==================== CHAT FUNCTIONS ====================
+
+        async function loadChatSidebar() {
+            const sidebar = document.getElementById('chatSidebar');
+            const teachers = allTeachers.filter(t => t.approved);
+            const students = allStudents.filter(s => s.approved);
+
+            let html = '<div style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;">Teachers</div>';
+            for (const t of teachers) {
+                const chatId = ['admin', t.id].sort().join('_');
+                const unreadSnap = await getDocs(query(collection(db, 'private_messages'),
+                    where('chatId', '==', chatId),
+                    where('read', '==', false),
+                    where('receiverId', '==', 'admin')));
+                const unread = unreadSnap.size;
+                html += `<div class="chat-user" onclick="selectChat('${t.id}', 'teacher', '${t.name}')">
+                <i class="fas fa-chalkboard-user"></i>
+                <span>${t.name} (${t.subject || 'No Subject'})</span>
+                ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+            </div>`;
+            }
+
+            html += '<div style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;">Students</div>';
+            for (const s of students.slice(0, 30)) {
+                const chatId = ['admin', s.id].sort().join('_');
+                const unreadSnap = await getDocs(query(collection(db, 'private_messages'),
+                    where('chatId', '==', chatId),
+                    where('read', '==', false),
+                    where('receiverId', '==', 'admin')));
+                const unread = unreadSnap.size;
+                html += `<div class="chat-user" onclick="selectChat('${s.id}', 'student', '${s.name}')">
+                <i class="fas fa-user-graduate"></i>
+                <span>${s.name} (Grade ${s.grade}${s.section || ''})</span>
+                ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+            </div>`;
+            }
+            sidebar.innerHTML = html;
+        }
+
+        window.updateChatRecipients = async function () {
+            const type = document.getElementById('chatRecipientType').value;
+
+            // Hide all select groups
+            document.getElementById('gradeSelectGroup').style.display = 'none';
+            document.getElementById('sectionSelectGroup').style.display = 'none';
+            document.getElementById('streamSelectGroup').style.display = 'none';
+            document.getElementById('individualSelectGroup').style.display = 'none';
+
+            selectedChatRecipients = [];
+            document.getElementById('chatRecipientCount').style.display = 'none';
+
+            switch (type) {
+                case 'grade':
+                    document.getElementById('gradeSelectGroup').style.display = 'block';
+                    const grade = document.getElementById('chatGradeSelect').value;
+                    if (grade) {
+                        selectedChatRecipients = allStudents
+                            .filter(s => s.grade == grade && s.approved)
+                            .map(s => ({ id: s.id, name: `${s.name} (Grade ${s.grade}${s.section})`, role: 'student' }));
+                    }
+                    break;
+
+                case 'section':
+                    document.getElementById('gradeSelectGroup').style.display = 'block';
+                    document.getElementById('sectionSelectGroup').style.display = 'block';
+                    const sGrade = document.getElementById('chatGradeSelect').value;
+                    const section = document.getElementById('chatSectionSelect').value;
+                    if (sGrade && section) {
+                        selectedChatRecipients = allStudents
+                            .filter(s => s.grade == sGrade && s.section === section && s.approved)
+                            .map(s => ({ id: s.id, name: `${s.name} (${s.section})`, role: 'student' }));
+                    }
+                    break;
+
+                case 'teacher':
+                    selectedChatRecipients = allTeachers
+                        .filter(t => t.approved)
+                        .map(t => ({ id: t.id, name: `${t.name} (${t.subject || 'Teacher'})`, role: 'teacher' }));
+                    break;
+
+                case 'parent':
+                    selectedChatRecipients = allParents
+                        .filter(p => p.approved)
+                        .map(p => ({ id: p.id, name: p.name, role: 'parent' }));
+                    break;
+
+                case 'individual':
+                    document.getElementById('individualSelectGroup').style.display = 'block';
+                    const individualSelect = document.getElementById('chatIndividualSelect');
+                    individualSelect.innerHTML = '<option value="">Select a person</option>' +
+                        '<optgroup label="Teachers">' +
+                        allTeachers.filter(t => t.approved).map(t =>
+                            `<option value="${t.id}|teacher|${t.name}">${t.name} (Teacher - ${t.subject || 'No Subject'})</option>`
+                        ).join('') + '</optgroup>' +
+                        '<optgroup label="Students">' +
+                        allStudents.filter(s => s.approved).slice(0, 100).map(s =>
+                            `<option value="${s.id}|student|${s.name}">${s.name} (Grade ${s.grade}${s.section || ''})</option>`
+                        ).join('') + '</optgroup>' +
+                        '<optgroup label="Parents">' +
+                        allParents.filter(p => p.approved).map(p =>
+                            `<option value="${p.id}|parent|${p.name}">${p.name} (Parent)</option>`
+                        ).join('') + '</optgroup>';
+
+                    individualSelect.onchange = function () {
+                        if (this.value) {
+                            const [id, role, name] = this.value.split('|');
+                            selectedChatRecipients = [{ id, name, role }];
+                            document.getElementById('chatRecipientCount').style.display = 'inline-block';
+                            document.getElementById('chatRecipientCount').textContent = '1 recipient';
+                            document.getElementById('chatWithName').textContent = name;
+                            document.getElementById('messageInput').disabled = false;
+                            document.getElementById('sendMessageBtn').disabled = false;
+                        } else {
+                            selectedChatRecipients = [];
+                            document.getElementById('chatRecipientCount').style.display = 'none';
+                            document.getElementById('messageInput').disabled = true;
+                            document.getElementById('sendMessageBtn').disabled = true;
+                        }
+                    };
+                    return; // Don't update further for individual
+
+                case 'group':
+                    document.getElementById('gradeSelectGroup').style.display = 'block';
+                    document.getElementById('streamSelectGroup').style.display = 'block';
+                    const gGrade = document.getElementById('chatGradeSelect').value;
+                    const stream = document.getElementById('chatStreamSelect').value;
+                    if (gGrade && stream) {
+                        const groupId = `group_grade${gGrade}_${stream.toLowerCase()}`;
+                        selectedChatRecipients = [{
+                            id: groupId,
+                            name: `Grade ${gGrade} ${stream} Group`,
+                            role: 'group'
+                        }];
+                    }
+                    break;
+            }
+
+            // Update recipient count
+            if (selectedChatRecipients.length > 0) {
+                document.getElementById('chatRecipientCount').style.display = 'inline-block';
+                document.getElementById('chatRecipientCount').textContent = `${selectedChatRecipients.length} recipient(s)`;
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendMessageBtn').disabled = false;
+
+                if (selectedChatRecipients.length === 1) {
+                    document.getElementById('chatWithName').textContent = selectedChatRecipients[0].name;
+                } else {
+                    document.getElementById('chatWithName').textContent = `Broadcast to ${selectedChatRecipients.length} recipients`;
+                }
+            } else {
+                document.getElementById('chatRecipientCount').style.display = 'none';
+                document.getElementById('messageInput').disabled = true;
+                document.getElementById('sendMessageBtn').disabled = true;
+            }
+        };
+
+        window.handleFileSelect = function (event) {
+            attachedFiles = Array.from(event.target.files);
+            const preview = document.getElementById('attachmentPreview');
+
+            if (attachedFiles.length > 0) {
+                preview.style.display = 'block';
+                preview.innerHTML = `<div style="font-size:12px;font-weight:600;margin-bottom:4px;color:var(--text-light);">
+                <i class="fas fa-paperclip"></i> ${attachedFiles.length} file(s) attached
+            </div>` + attachedFiles.map((file, index) => `
+                <div class="attachment-item">
+                    <i class="fas fa-file"></i>
+                    <span style="flex:1;">${file.name}</span>
+                    <span style="font-size:10px;color:var(--text-light);">${(file.size / 1024).toFixed(1)} KB</span>
+                    <button class="remove-attach" onclick="removeAttachment(${index})" title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+            } else {
+                preview.style.display = 'none';
+            }
+        };
+
+        window.removeAttachment = function (index) {
+            attachedFiles.splice(index, 1);
+            if (attachedFiles.length === 0) {
+                document.getElementById('attachmentPreview').style.display = 'none';
+                document.getElementById('fileAttachment').value = '';
+            } else {
+                // Re-render preview
+                const dt = new DataTransfer();
+                attachedFiles.forEach(f => dt.items.add(f));
+                document.getElementById('fileAttachment').files = dt.files;
+                window.handleFileSelect({ target: { files: dt.files } });
+            }
+        };
+
+        window.sendChatMessage = async function () {
+            const message = document.getElementById('messageInput').value.trim();
+            if (!message && attachedFiles.length === 0) {
+                showPopup('Please type a message or attach a file', 'warning');
+                return;
+            }
+            if (selectedChatRecipients.length === 0) {
+                showPopup('Please select recipients first', 'warning');
+                return;
+            }
+
+            try {
+                const batch = [];
+                let successCount = 0;
+                const attachments = await Promise.all(attachedFiles.map(fileToAttachment));
+
+                for (const recipient of selectedChatRecipients) {
+                    const chatData = {
+                        message: message || '(File attachment)',
+                        senderId: 'admin',
+                        senderName: 'Admin',
+                        receiverId: recipient.id,
+                        receiverName: recipient.name,
+                        receiverRole: recipient.role || 'unknown',
+                        chatId: ['admin', recipient.id].sort().join('_'),
+                        timestamp: Timestamp.now(),
+                        read: false,
+                        hasAttachment: attachments.length > 0,
+                        attachmentCount: attachments.length,
+                        attachmentNames: attachments.map(a => a.name),
+                        attachments
+                    };
+
+                    batch.push(addDoc(collection(db, 'private_messages'), chatData));
+                    successCount++;
+                }
+
+                await Promise.all(batch);
+
+                // Clear inputs
+                document.getElementById('messageInput').value = '';
+                attachedFiles = [];
+                document.getElementById('attachmentPreview').style.display = 'none';
+                document.getElementById('fileAttachment').value = '';
+
+                showPopup(`Message sent to ${successCount} recipient(s) successfully!`, 'success');
+
+                // Refresh chat if individual chat is open
+                if (selectedChatRecipients.length === 1 && currentChatId === selectedChatRecipients[0].id) {
+                    // Chat will auto-refresh via listener
+                }
+            } catch (error) {
+                showPopup('Failed to send message: ' + error.message, 'error');
+            }
+        };
+
+        window.selectChat = function (id, type, name) {
+            if (chatUnsubscribe) chatUnsubscribe();
+            currentChatId = id;
+            document.getElementById('chatWithName').innerText = name;
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendMessageBtn').disabled = false;
+
+            const chatId = ['admin', id].sort().join('_');
+            const q = query(collection(db, 'private_messages'),
+                where('chatId', '==', chatId),
+                orderBy('timestamp', 'asc'));
+
+            chatUnsubscribe = onSnapshot(q, async (snap) => {
+                const container = document.getElementById('chatMessages');
+                const batch = [];
+                const messages = [];
+
+                snap.forEach(d => {
+                    const data = d.data();
+                    messages.push({ id: d.id, ...data });
+                    if (!data.read && data.receiverId === 'admin') {
+                        batch.push(updateDoc(doc(db, 'private_messages', d.id), { read: true }));
+                    }
+                });
+
+                await Promise.all(batch);
+
+                if (messages.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;color:var(--text-light);padding:60px 20px;">No messages yet. Start a conversation!</div>';
+                } else {
+                    container.innerHTML = messages.map(m => `
+                    <div class="message ${m.senderId === 'admin' ? 'message-sent' : 'message-received'}">
+                        <div>${m.message}</div>
+                        ${renderAttachmentLinks(m)}
+                        <div style="font-size:10px;opacity:0.7;margin-top:4px;">${m.timestamp?.toDate?.().toLocaleTimeString() || ''}</div>
+                    </div>
+                `).join('');
+                }
+                container.scrollTop = container.scrollHeight;
+                loadChatSidebar();
+            });
+
+            document.querySelectorAll('.chat-user').forEach(el => el.classList.remove('active'));
+            const activeItem = document.querySelector(`.chat-user[onclick*="${id}"]`);
+            if (activeItem) activeItem.classList.add('active');
+        };
+
+        function renderAttachmentLinks(message) {
+            const files = Array.isArray(message.attachments) ? message.attachments : [];
+            if (files.length === 0) {
+                return message.hasAttachment ? `<div style="font-size:10px;opacity:0.7;margin-top:4px;"><i class="fas fa-paperclip"></i> ${message.attachmentCount || 1} file(s)</div>` : '';
+            }
+            return files.map(file => {
+                const safeName = sanitizeText(file.name || 'Attachment');
+                if (!file.dataUrl) return `<div style="font-size:10px;opacity:0.8;margin-top:4px;"><i class="fas fa-paperclip"></i> ${safeName}</div>`;
+                return `<a href="${file.dataUrl}" download="${safeName}" target="_blank" rel="noopener" style="display:block;font-size:12px;margin-top:4px;"><i class="fas fa-paperclip"></i> ${safeName}</a>`;
+            }).join('');
+        }
+
+        async function fileToAttachment(file) {
+            if (file.size > MAX_ATTACHMENT_SIZE) throw new Error(`${file.name} is too large (max 200 KB)`);
+            const dataUrl = await readAsDataUrl(file);
+            return { name: file.name, type: file.type || 'application/octet-stream', size: file.size, dataUrl };
+        }
+
+        function readAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = () => reject(new Error(`Failed to read ${file.name}`));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function sanitizeText(value) {
+            return String(value || '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.tab-btn[onclick*="${tab}"]`)?.classList.add('active');
+            document.getElementById(tab + 'Tab')?.classList.add('active');
+
+            if (tab === 'leaderboard') loadLeaderboard();
+            if (tab === 'chat') loadChatSidebar();
+            if (tab === 'reports') loadExamReports();
+            if (tab === 'transcripts') loadTranscriptSubmissions();
+            if (tab === 'exam') {
+                document.getElementById('quarterChangeGrade').onchange = async () => {
+                    const g = parseInt(document.getElementById('quarterChangeGrade').value);
+                    const teachersForGrade = allTeachers.filter(t => t.approved && Array.isArray(t.teachingGrades) && t.teachingGrades.includes(g));
+                    const subjects = [...new Set(teachersForGrade.map(t => t.subject).filter(Boolean))];
+                    const forcedSnap = await getDocs(query(collection(db, 'assessments'),
+                        where('grade', '==', g),
+                        where('type', '==', 'Final'),
+                        where('forcedByAdmin', '==', true)));
+                    const allForced = forcedSnap.size === subjects.length && subjects.length > 0;
+                    document.getElementById('changeQuarterBtn').disabled = !allForced;
+                    document.getElementById('quarterChangeHelper').innerHTML = allForced ?
+                        '✅ All finals forced! You can now change the quarter.' :
+                        `⚠️ ${subjects.length - forcedSnap.size} subjects still need finals forced.`;
+                };
+            }
+        };
+
+        window.toggleTheme = () => {
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            localStorage.setItem('theme', html.getAttribute('data-theme'));
+        };
+
+        window.logout = async () => {
+            await signOut(auth);
+            localStorage.removeItem('current_user_session');
+            window.location.href = 'signin.html';
+        };
+
+        // Initialize
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        await loadQuarter();
+        await loadAll();
+        // ==================== COMPREHENSIVE TRANSCRIPT SYSTEM ====================
+
+        // Subject definitions for each grade/stream
+        const GRADE_9_10_SUBJECTS = [
+            'amharic', 'english', 'mathematics', 'geography', 'history',
+            'economics', 'physics', 'chemistry', 'hpe', 'ict', 'biology', 'citizenship'
+        ];
+
+        const GRADE_11_12_NATURAL_SUBJECTS = [
+            'agriculture', 'english', 'mathematics', 'physics', 'chemistry', 'ict', 'biology'
+        ];
+
+        const GRADE_11_12_SOCIAL_SUBJECTS = [
+            'english', 'mathematics', 'geography', 'history', 'economics'
+        ];
+
+        const SUBJECT_DISPLAY_NAMES = {
+            'amharic': 'Amharic',
+            'english': 'English',
+            'mathematics': 'Maths',
+            'maths': 'Maths',
+            'geography': 'Geography',
+            'history': 'History',
+            'economics': 'Economics',
+            'physics': 'Physics',
+            'chemistry': 'Chemistry',
+            'hpe': 'HPE',
+            'ict': 'ICT',
+            'biology': 'Biology',
+            'citizenship': 'Citizenship',
+            'agriculture': 'Agriculture'
+        };
+
+        function getSubjectDisplayName(subjectCode) {
+            if (!subjectCode) return '-';
+            const normalized = subjectCode.toLowerCase().trim();
+            return SUBJECT_DISPLAY_NAMES[normalized] || subjectCode;
+        }
+
+        function getSubjectCodeFromName(subjectName) {
+            if (!subjectName) return '';
+            const normalized = subjectName.toLowerCase().trim();
+            // Check display names first
+            for (const [code, display] of Object.entries(SUBJECT_DISPLAY_NAMES)) {
+                if (display.toLowerCase() === normalized) return code;
+            }
+            // Check common variations
+            if (normalized.includes('amharic')) return 'amharic';
+            if (normalized.includes('english') || normalized.includes('eng')) return 'english';
+            if (normalized.includes('math') || normalized.includes('maths')) return 'mathematics';
+            if (normalized.includes('geography') || normalized.includes('geo')) return 'geography';
+            if (normalized.includes('history') || normalized.includes('hist')) return 'history';
+            if (normalized.includes('economics') || normalized.includes('econ')) return 'economics';
+            if (normalized.includes('physics') || normalized.includes('phy')) return 'physics';
+            if (normalized.includes('chemistry') || normalized.includes('chem')) return 'chemistry';
+            if (normalized.includes('hpe') || normalized.includes('health')) return 'hpe';
+            if (normalized.includes('ict') || normalized.includes('computer') || normalized.includes('tech')) return 'ict';
+            if (normalized.includes('biology') || normalized.includes('bio')) return 'biology';
+            if (normalized.includes('citizenship') || normalized.includes('civic') || normalized.includes('civics')) return 'citizenship';
+            if (normalized.includes('agriculture') || normalized.includes('agri')) return 'agriculture';
+            return normalized.replace(/\s+/g, '_');
+        }
+
+        function getSubjectListForStudent(student) {
+            const grade = parseInt(student.grade);
+            const stream = (student.stream || '').toLowerCase().trim();
+
+            if (grade === 9 || grade === 10) {
+                return GRADE_9_10_SUBJECTS;
+            } else if ((grade === 11 || grade === 12) && stream.includes('natural')) {
+                return GRADE_11_12_NATURAL_SUBJECTS;
+            } else if ((grade === 11 || grade === 12) && stream.includes('social')) {
+                return GRADE_11_12_SOCIAL_SUBJECTS;
+            }
+            return [];
+        }
+
+        function getTableIdForStudent(student) {
+            const grade = parseInt(student.grade);
+            const stream = (student.stream || '').toLowerCase().trim();
+
+            if (grade === 9 || grade === 10) return 'transcriptG9G10Body';
+            if (grade === 11 && stream.includes('natural')) return 'transcriptG11NatBody';
+            if (grade === 11 && stream.includes('social')) return 'transcriptG11SocBody';
+            if (grade === 12 && stream.includes('natural')) return 'transcriptG12NatBody';
+            if (grade === 12 && stream.includes('social')) return 'transcriptG12SocBody';
+            return null;
+        }
+
+        // Load all transcripts from Firestore
+        let allTranscripts = [];
+
+        async function loadAllTranscripts() {
+            try {
+                // Load from multiple collections
+                const sources = [
+                    { collection: 'published_transcripts' },
+                    { collection: 'student_transcripts' },
+                    { collection: 'transcript_submissions' }
+                ];
+
+                allTranscripts = [];
+
+                for (const source of sources) {
+                    const snap = await getDocs(collection(db, source.collection));
+                    snap.forEach(d => {
+                        const data = d.data();
+                        allTranscripts.push({
+                            id: d.id,
+                            source: source.collection,
+                            ...data
+                        });
+                    });
+                }
+
+                // Also check admin_notifications for transcript submissions
+                const notifSnap = await getDocs(query(
+                    collection(db, 'admin_notifications'),
+                    where('type', '==', 'transcript_submitted')
+                ));
+                notifSnap.forEach(d => {
+                    const data = d.data();
+                    // These are submission records, not full transcripts
+                    // We'll use them to track which teachers have submitted
+                });
+
+                // Group transcripts by student
+                const studentTranscripts = {};
+                allTranscripts.forEach(t => {
+                    if (!t.studentId) return;
+                    if (!studentTranscripts[t.studentId]) {
+                        studentTranscripts[t.studentId] = [];
+                    }
+                    studentTranscripts[t.studentId].push(t);
+                });
+
+                // Merge transcripts for each student
+                const mergedTranscripts = [];
+                for (const [studentId, transcripts] of Object.entries(studentTranscripts)) {
+                    const merged = mergeStudentTranscripts(studentId, transcripts);
+                    if (merged) mergedTranscripts.push(merged);
+                }
+
+                allTranscripts = mergedTranscripts;
+                renderAllTranscripts();
+
+                showPopup(`Loaded ${allTranscripts.length} student transcripts`, 'success');
+            } catch (error) {
+                console.error("Error loading transcripts:", error);
+                showPopup('Error loading transcripts: ' + error.message, 'error');
+            }
+        }
+
+        function mergeStudentTranscripts(studentId, transcripts) {
+            if (transcripts.length === 0) return null;
+
+            const student = allStudents.find(s => s.id === studentId);
+            if (!student) return null;
+
+            // Get the latest status
+            const statuses = transcripts.map(t => t.status || 'submitted');
+            let finalStatus = 'submitted';
+            if (statuses.includes('published')) finalStatus = 'published';
+            else if (statuses.includes('approved')) finalStatus = 'approved';
+            else if (statuses.includes('pending')) finalStatus = 'pending';
+
+            // Collect all subject scores
+            const subjectScores = {};
+            const subjectTeachers = {};
+            let term = 'Term 1';
+
+            transcripts.forEach(t => {
+                if (t.term) term = t.term;
+
+                // If this transcript has individual subject scores
+                if (t.subjectScores) {
+                    for (const [subject, score] of Object.entries(t.subjectScores)) {
+                        if (!subjectScores[subject] || t.publishedAt || t.sentAt) {
+                            subjectScores[subject] = score;
+                            if (t.teacherName) subjectTeachers[subject] = t.teacherName;
+                        }
+                    }
+                }
+
+                // If this is a single-subject transcript
+                if (t.subjectCode || t.assessmentType) {
+                    const subject = t.subjectCode || getSubjectCodeFromName(t.assessmentType || '');
+                    if (subject && t.percentage != null) {
+                        if (!subjectScores[subject] || t.publishedAt || t.sentAt) {
+                            subjectScores[subject] = t.percentage;
+                            if (t.teacherName) subjectTeachers[subject] = t.teacherName;
+                        }
+                    }
+                }
+
+                // Check for weighted total
+                if (t.weightedTotal != null && !subjectScores['_weightedTotal']) {
+                    subjectScores['_weightedTotal'] = t.weightedTotal;
+                }
+
+                // Check for behavior/bookmark
+                if (t.behaviorScore != null) subjectScores['behavior'] = t.behaviorScore;
+                if (t.bookmarkScore != null) subjectScores['bookmark'] = t.bookmarkScore;
+
+                // Check for category averages
+                if (t.cwAvg != null) subjectScores['cw'] = t.cwAvg;
+                if (t.hwAvg != null) subjectScores['hw'] = t.hwAvg;
+                if (t.quizAvg != null) subjectScores['quiz'] = t.quizAvg;
+                if (t.finalAvg != null) subjectScores['final'] = t.finalAvg;
+                if (t.testAvg != null) subjectScores['test'] = t.testAvg;
+                if (t.assignmentAvg != null) subjectScores['assignment'] = t.assignmentAvg;
+            });
+
+            // Calculate average from subject scores
+            const subjects = getSubjectListForStudent(student);
+            let totalScore = 0;
+            let subjectCount = 0;
+
+            subjects.forEach(subject => {
+                if (subjectScores[subject] != null) {
+                    totalScore += subjectScores[subject];
+                    subjectCount++;
+                }
+            });
+
+            const average = subjectCount > 0 ? Math.round(totalScore / subjectCount) :
+                (subjectScores['_weightedTotal'] || 0);
+
+            let transcriptId = transcripts[0].id;
+            let transcriptSource = transcripts[0].source;
+
+            // Find the best transcript ID (published > approved > submitted)
+            for (const t of transcripts) {
+                if (t.status === 'published') {
+                    transcriptId = t.id;
+                    transcriptSource = t.source;
+                    break;
+                }
+                if (t.status === 'approved' && finalStatus !== 'published') {
+                    transcriptId = t.id;
+                    transcriptSource = t.source;
+                }
+            }
+
+            return {
+                id: transcriptId,
+                source: transcriptSource,
+                studentId,
+                studentName: student.name,
+                grade: student.grade,
+                section: student.section || '-',
+                stream: student.stream || '',
+                term,
+                subjectScores,
+                subjectTeachers,
+                average,
+                subjectCount,
+                status: finalStatus,
+                originalTranscripts: transcripts
+            };
+        }
+
+        function renderAllTranscripts() {
+            const statusFilter = document.getElementById('transcriptStatusFilter')?.value || 'all';
+
+            // Filter transcripts
+            let filtered = allTranscripts;
+            if (statusFilter !== 'all') {
+                filtered = allTranscripts.filter(t => t.status === statusFilter);
+            }
+
+            // Group by table
+            const groups = {
+                'transcriptG9G10Body': [],
+                'transcriptG11NatBody': [],
+                'transcriptG11SocBody': [],
+                'transcriptG12NatBody': [],
+                'transcriptG12SocBody': []
+            };
+
+            filtered.forEach(t => {
+                const tableId = getTableIdForStudent({ grade: t.grade, stream: t.stream });
+                if (tableId && groups[tableId]) {
+                    groups[tableId].push(t);
+                }
+            });
+
+            // Render each table
+            for (const [tableId, transcripts] of Object.entries(groups)) {
+                const tbody = document.getElementById(tableId);
+                if (!tbody) continue;
+
+                if (transcripts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="20" style="text-align:center;padding:20px;">No transcripts found</td></tr>';
+                    continue;
+                }
+
+                // Sort by grade, section, name
+                transcripts.sort((a, b) => {
+                    if (a.grade !== b.grade) return a.grade - b.grade;
+                    if (a.section !== b.section) return (a.section || '').localeCompare(b.section || '');
+                    return (a.studentName || '').localeCompare(b.studentName || '');
+                });
+
+                const isG9G10 = tableId === 'transcriptG9G10Body';
+                const isNatural = tableId.includes('Nat');
+                const isSocial = tableId.includes('Soc');
+
+                let subjects = [];
+                if (isG9G10) subjects = GRADE_9_10_SUBJECTS;
+                else if (isNatural) subjects = GRADE_11_12_NATURAL_SUBJECTS;
+                else if (isSocial) subjects = GRADE_11_12_SOCIAL_SUBJECTS;
+
+                tbody.innerHTML = transcripts.map(t => {
+                    let row = '';
+
+                    if (isG9G10) {
+                        row = `<tr>
+                    <td><strong>${escapeHtml(t.studentName)}</strong></td>
+                    <td>Grade ${t.grade}</td>
+                    <td>${escapeHtml(t.section)}</td>
+                    <td>${escapeHtml(t.term)}</td>`;
+
+                        subjects.forEach(subject => {
+                            const score = t.subjectScores?.[subject];
+                            row += `<td style="text-align:center;">${score != null ? renderScoreBadge(score) : '-'}</td>`;
+                        });
+
+                        row += `<td><strong>${renderScoreBadge(t.average)}</strong></td>
+                    <td>${renderStatusBadge(t.status)}</td>
+                    <td>${renderActionButtons(t)}</td>
+                </tr>`;
+                    } else if (isNatural) {
+                        row = `<tr>
+                    <td><strong>${escapeHtml(t.studentName)}</strong></td>
+                    <td>${escapeHtml(t.section)}</td>
+                    <td>${escapeHtml(t.term)}</td>`;
+
+                        subjects.forEach(subject => {
+                            const score = t.subjectScores?.[subject];
+                            row += `<td style="text-align:center;">${score != null ? renderScoreBadge(score) : '-'}</td>`;
+                        });
+
+                        row += `<td><strong>${renderScoreBadge(t.average)}</strong></td>
+                    <td>${renderStatusBadge(t.status)}</td>
+                    <td>${renderActionButtons(t)}</td>
+                </tr>`;
+                    } else if (isSocial) {
+                        row = `<tr>
+                    <td><strong>${escapeHtml(t.studentName)}</strong></td>
+                    <td>${escapeHtml(t.section)}</td>
+                    <td>${escapeHtml(t.term)}</td>`;
+
+                        subjects.forEach(subject => {
+                            const score = t.subjectScores?.[subject];
+                            row += `<td style="text-align:center;">${score != null ? renderScoreBadge(score) : '-'}</td>`;
+                        });
+
+                        row += `<td><strong>${renderScoreBadge(t.average)}</strong></td>
+                    <td>${renderStatusBadge(t.status)}</td>
+                    <td>${renderActionButtons(t)}</td>
+                </tr>`;
+                    }
+
+                    return row;
+                }).join('');
+            }
+        }
+
+        function renderScoreBadge(score) {
+            if (score == null || isNaN(score)) return '-';
+            const s = Math.round(score);
+            let colorClass = 'badge-danger';
+            if (s >= 80) colorClass = 'badge-success';
+            else if (s >= 50) colorClass = 'badge-warning';
+            return `<span class="badge ${colorClass}">${s}%</span>`;
+        }
+
+        function renderStatusBadge(status) {
+            const statusMap = {
+                'pending': '<span class="badge badge-warning">Pending</span>',
+                'submitted': '<span class="badge badge-info">Submitted</span>',
+                'approved': '<span class="badge badge-success">Approved</span>',
+                'published': '<span class="badge" style="background:#6f42c1;color:white;">Published</span>'
+            };
+            return statusMap[status] || `<span class="badge">${status}</span>`;
+        }
+
+        function renderActionButtons(transcript) {
+            let buttons = '';
+
+            if (transcript.status === 'submitted' || transcript.status === 'pending') {
+                buttons += `<button class="btn btn-success btn-sm" onclick="approveTranscriptAdmin('${transcript.studentId}', '${escapeHtml(transcript.term || 'Term 1')}')" style="margin:2px;">
+            <i class="fas fa-check"></i> Approve
+        </button>`;
+            }
+
+            if (transcript.status === 'approved') {
+                buttons += `<button class="btn btn-primary btn-sm" onclick="publishTranscriptToStudent('${transcript.studentId}', '${escapeHtml(transcript.term || 'Term 1')}')" style="margin:2px;">
+            <i class="fas fa-upload"></i> Publish
+        </button>`;
+            }
+
+            buttons += `<button class="btn btn-outline btn-sm" onclick="viewTranscriptDetails('${transcript.studentId}')" style="margin:2px;">
+        <i class="fas fa-eye"></i> Details
+    </button>`;
+
+            return buttons;
+        }
+
+        // Approve transcript
+        window.approveTranscriptAdmin = async function (studentId, term) {
+            try {
+                const student = allStudents.find(s => s.id === studentId);
+                if (!student) { showPopup('Student not found', 'error'); return; }
+
+                // Find all transcripts for this student
+                const sources = ['published_transcripts', 'student_transcripts', 'transcript_submissions'];
+                let updated = 0;
+
+                for (const source of sources) {
+                    const q = query(
+                        collection(db, source),
+                        where('studentId', '==', studentId),
+                        where('term', '==', term)
+                    );
+                    const snap = await getDocs(q);
+
+                    for (const d of snap.docs) {
+                        await updateDoc(doc(db, source, d.id), {
+                            status: 'approved',
+                            approvedByAdminId: admin.id,
+                            approvedByAdminName: admin.name,
+                            approvedAt: Timestamp.now(),
+                            updatedAt: Timestamp.now()
+                        });
+                        updated++;
+                    }
+                }
+
+                // Also update student_transcripts
+                const stQ = query(
+                    collection(db, 'student_transcripts'),
+                    where('studentId', '==', studentId)
+                );
+                const stSnap = await getDocs(stQ);
+                for (const d of stSnap.docs) {
+                    await updateDoc(doc(db, 'student_transcripts', d.id), {
+                        status: 'approved',
+                        approvedByAdminId: admin.id,
+                        approvedAt: Timestamp.now()
+                    });
+                }
+
+                showPopup(`Transcript approved for ${student.name} (${updated} records updated)`, 'success');
+                await loadAllTranscripts();
+            } catch (error) {
+                console.error("Error approving transcript:", error);
+                showPopup('Error: ' + error.message, 'error');
+            }
+        };
+
+        // Publish transcript to student
+        window.publishTranscriptToStudent = async function (studentId, term) {
+            try {
+                const student = allStudents.find(s => s.id === studentId);
+                if (!student) { showPopup('Student not found', 'error'); return; }
+
+                if (!confirm(`Publish transcript for ${student.name}? This will make it visible to the student and parent.`)) return;
+
+                const sources = ['published_transcripts', 'student_transcripts', 'transcript_submissions'];
+                let published = 0;
+
+                for (const source of sources) {
+                    const q = query(
+                        collection(db, source),
+                        where('studentId', '==', studentId),
+                        where('term', '==', term)
+                    );
+                    const snap = await getDocs(q);
+
+                    for (const d of snap.docs) {
+                        const data = d.data();
+
+                        // Create published transcript
+                        await setDoc(doc(db, 'published_transcripts', d.id), {
+                            ...data,
+                            status: 'published',
+                            publishedByAdminId: admin.id,
+                            publishedByAdminName: admin.name,
+                            publishedAt: Timestamp.now(),
+                            updatedAt: Timestamp.now(),
+                            visibleToStudent: true,
+                            visibleToParent: true
+                        });
+
+                        // Update source
+                        await updateDoc(doc(db, source, d.id), {
+                            status: 'published',
+                            publishedAt: Timestamp.now()
+                        });
+                        published++;
+                    }
+                }
+
+                // Notify student
+                await addDoc(collection(db, 'notifications'), {
+                    userId: studentId,
+                    type: 'transcript_published',
+                    title: '📜 Your Transcript is Ready!',
+                    message: `Your ${term} transcript has been published. You can now view it on your dashboard.`,
+                    read: false,
+                    createdAt: Timestamp.now()
+                });
+
+                showPopup(`Transcript published for ${student.name}! Student notified.`, 'success');
+                await loadAllTranscripts();
+            } catch (error) {
+                console.error("Error publishing transcript:", error);
+                showPopup('Error: ' + error.message, 'error');
+            }
+        };
+
+        // View transcript details
+        window.viewTranscriptDetails = function (studentId) {
+            const student = allStudents.find(s => s.id === studentId);
+            if (!student) return;
+
+            const transcripts = allTranscripts.filter(t => t.studentId === studentId);
+            if (transcripts.length === 0) {
+                alert('No transcript data found for this student.');
+                return;
+            }
+
+            const t = transcripts[0];
+            const subjects = getSubjectListForStudent(student);
+
+            let details = `📜 Transcript Details\n\n`;
+            details += `Student: ${t.studentName}\n`;
+            details += `Grade: ${t.grade} Section: ${t.section}\n`;
+            details += `Stream: ${student.stream || 'N/A'}\n`;
+            details += `Term: ${t.term}\n`;
+            details += `Status: ${t.status}\n\n`;
+            details += `Subject Scores:\n`;
+            details += `─`.repeat(30) + `\n`;
+
+            subjects.forEach(subject => {
+                const score = t.subjectScores?.[subject];
+                const teacher = t.subjectTeachers?.[subject];
+                details += `${getSubjectDisplayName(subject).padEnd(15)}: ${score != null ? score + '%' : 'Not submitted'}`;
+                if (teacher) details += ` (by ${teacher})`;
+                details += `\n`;
+            });
+
+            details += `─`.repeat(30) + `\n`;
+            details += `Overall Average: ${t.average}%\n`;
+
+            alert(details);
+        };
+
+        // Publish all approved transcripts
+        window.publishAllApprovedTranscripts = async function () {
+            if (!confirm('Publish ALL approved transcripts? This will make them visible to all students and parents.')) return;
+
+            try {
+                const approved = allTranscripts.filter(t => t.status === 'approved');
+                let count = 0;
+
+                for (const t of approved) {
+                    await publishTranscriptToStudent(t.studentId, t.term);
+                    count++;
+                }
+
+                showPopup(`Published ${count} transcripts successfully!`, 'success');
+                await loadAllTranscripts();
+            } catch (error) {
+                showPopup('Error: ' + error.message, 'error');
+            }
+        };
+
+        // Notify all teachers to submit
+        window.notifyAllTeachers = async function () {
+            if (!confirm('Send notification to ALL teachers to submit their transcripts?')) return;
+
+            try {
+                const approvedTeachers = allTeachers.filter(t => t.approved);
+                let count = 0;
+
+                for (const teacher of approvedTeachers) {
+                    await addDoc(collection(db, 'notifications'), {
+                        userId: teacher.id,
+                        type: 'transcript_reminder',
+                        title: '📋 Transcript Submission Reminder',
+                        message: 'Please submit your student transcripts for the current term. Go to Teacher Dashboard > Student Transcript tab to submit.',
+                        read: false,
+                        priority: 'high',
+                        createdAt: Timestamp.now()
+                    });
+                    count++;
+                }
+
+                showPopup(`Notification sent to ${count} teachers!`, 'success');
+            } catch (error) {
+                showPopup('Error: ' + error.message, 'error');
+            }
+        };
+
+        // Update escapeHtml if not already defined
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        // Add to switchTab function for transcript loading
+        const originalSwitchTab = window.switchTab;
+        window.switchTab = function (tab) {
+            if (originalSwitchTab) originalSwitchTab(tab);
+
+            if (tab === 'transcripts') {
+                loadAllTranscripts();
+            }
+        };
+
+        // Load transcripts on page load
+        setTimeout(() => {
+            if (document.getElementById('transcriptsTab')?.classList.contains('active')) {
+                loadAllTranscripts();
+            }
+        }, 2000);
+    </script>
+    <script type="module"></script>
+</body>
+
+</html>

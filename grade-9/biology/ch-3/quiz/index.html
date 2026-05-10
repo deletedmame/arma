@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Quiz - Chapter 1 | BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e86a33;
+            --bg: #f5efe6;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #eadbc8;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        [data-theme="dark"] {
+            --primary: #ff8a5c;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #f0f0f0;
+            --text-light: #b0b0b0;
+            --border: #404040;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        
+        .quiz-container {
+            max-width: 600px;
+            width: 90%;
+            margin: 40px auto;
+            background: var(--card);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+        h1 { color: var(--primary); margin-bottom: 20px; text-align: center; }
+        .quiz-info { display: flex; justify-content: space-between; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        .progress-bar { height: 8px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+        .progress { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
+        #question-text { font-size: 1.2rem; margin-bottom: 20px; line-height: 1.5; }
+        .answers-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .answer-btn {
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg);
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .answer-btn:hover { border-color: var(--primary); transform: translateX(5px); }
+        .answer-btn.correct { background: var(--success); color: white; border-color: var(--success); }
+        .answer-btn.incorrect { background: var(--danger); color: white; border-color: var(--danger); }
+        .explanation-box {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary);
+        }
+        .next-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .result-card { text-align: center; }
+        .final-score { font-size: 3rem; font-weight: bold; color: var(--primary); margin: 20px 0; }
+        .rating-img { width: 150px; margin: 20px auto; }
+        .action-buttons { display: flex; gap: 15px; margin-top: 20px; }
+        .action-buttons button { flex: 1; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; }
+        .restart-btn { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+        .home-btn { background: var(--primary); color: white; border: none; }
+        .hidden { display: none; }
+        
+        .footer { text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-light); }
+        .footer a { color: var(--primary); text-decoration: none; }
+        
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .pulse { animation: pulse 0.3s ease; }
+        .shake { animation: shake 0.3s ease; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <h1><i class="fas fa-dna"></i> Biology Quiz - Chapter 1</h1>
+        <div class="quiz-info">
+            <span>Question <span id="current-question">1</span>/<span id="total-questions">5</span></span>
+            <span>Score: <span id="score">0</span></span>
+        </div>
+        <div class="progress-bar"><div class="progress" id="progress"></div></div>
+        <div id="question-text"></div>
+        <div id="answers-container" class="answers-container"></div>
+        <div id="explanation-container" class="explanation-box hidden"></div>
+        <button id="next-btn" class="next-btn hidden">Next Question →</button>
+    </div>
+    
+    <div id="result-screen" class="hidden result-card">
+        <h1>Quiz Results</h1>
+        <div class="final-score"><span id="final-score">0</span>/<span id="total-questions-final">5</span></div>
+        <img id="rating-img" class="rating-img" src="" alt="Rating">
+        <div class="action-buttons">
+            <button id="restart-btn" class="restart-btn">Restart Quiz</button>
+            <button id="home-btn" class="home-btn">Back to Chapter</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>Bikolos Nur Academy (BNA) | Powered by <a href="https://youtube.com" target="_blank">Arma</a></p>
+</div>
+
+<script type="module">
+    import { auth, db } from '../../../../firebase-config.js';
+    import { getUserProfile, saveQuizResult, escapeHtml } from '../../../../firebase-functions.js';
+    
+    const sessionData = localStorage.getItem("current_user_session");
+    if (!sessionData) { window.location.href = "../../../../signin.html"; }
+    const currentUser = JSON.parse(sessionData);
+    
+    const SUBJECT = '9bio';
+    const CHAPTER = 'ch1';
+    const CHAPTER_NAME = 'Introduction to Biology';
+    
+    const QUESTIONS = [
+        { question: 'What is the definition of Biology?', explanation: 'Biology is the scientific study of life and living organisms.', answers: ['Study of rocks', 'Study of life and living organisms', 'Study of universe', 'Study of matter'], correct: 1 },
+        { question: 'Why do we study Biology?', explanation: 'To understand life and find medical solutions.', answers: ['To learn stars', 'To understand life and find medical solutions', 'To build buildings', 'To study history'], correct: 1 },
+        { question: 'What is the correct order of the Scientific Method?', explanation: 'Observation, Hypothesis, Experiment, Conclusion.', answers: ['Conclusion, Hypothesis', 'Hypothesis, Observation', 'Observation, Hypothesis, Experiment, Conclusion', 'Experiment, Observation'], correct: 2 },
+        { question: 'Which is a laboratory tool?', explanation: 'A microscope is a fundamental lab tool.', answers: ['Compass', 'Microscope', 'GPS', 'Hammer'], correct: 1 },
+        { question: 'Which is a field tool?', explanation: 'Binoculars help observe animals from a distance.', answers: ['Binoculars', 'Petri Dish', 'Test Tube', 'Microscope'], correct: 0 },
+        { question: 'What does the eyepiece do?', explanation: 'It magnifies the image for the viewer.', answers: ['Focuses light', 'Holds slide', 'Magnifies image', 'Adjusts brightness'], correct: 2 },
+        { question: 'What part regulates light?', explanation: 'The diaphragm controls light intensity.', answers: ['Objective lens', 'Diaphragm', 'Stage clips', 'Nosepiece'], correct: 1 },
+        { question: 'How to carry a microscope?', explanation: 'One hand on arm, one on base.', answers: ['By stage', 'Two hands, arm and base', 'By eyepiece', 'Upside down'], correct: 1 },
+        { question: 'What to do if chemical splashes in eyes?', explanation: 'Immediately flush with water.', answers: ['Tell teacher later', 'Rub eyes', 'Flush with water', 'Go to nurse'], correct: 2 },
+        { question: 'What is a hypothesis?', explanation: 'A testable prediction.', answers: ['Final result', 'Testable explanation', 'Random guess', 'Lab tool'], correct: 1 }
+    ];
+    
+    let quizQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let answersLocked = false;
+    
+    function getRandomQuestions(count = 5) {
+        const shuffled = [...QUESTIONS];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled.slice(0, count);
+    }
+    
+    async function saveResults() {
+        const profile = await getUserProfile(currentUser.id);
+        await saveQuizResult({
+            studentId: currentUser.id,
+            studentName: currentUser.name,
+            studentIdNumber: profile?.idNumber || currentUser.idNumber,
+            grade: currentUser.grade,
+            section: currentUser.section,
+            subject: 'Biology',
+            subjectCode: SUBJECT,
+            chapter: CHAPTER,
+            chapterName: CHAPTER_NAME,
+            score: score,
+            totalQuestions: quizQuestions.length,
+            includeInAverage: true,
+            isFinalExam: false
+        });
+    }
+    
+    function loadQuiz() {
+        quizQuestions = getRandomQuestions(5);
+        currentIndex = 0;
+        score = 0;
+        answersLocked = false;
+        document.getElementById('total-questions').innerText = quizQuestions.length;
+        document.getElementById('total-questions-final').innerText = quizQuestions.length;
+        showQuestion();
+    }
+    
+    function showQuestion() {
+        answersLocked = false;
+        document.getElementById('explanation-container').classList.add('hidden');
+        document.getElementById('next-btn').classList.add('hidden');
+        
+        const q = quizQuestions[currentIndex];
+        document.getElementById('question-text').innerText = q.question;
+        document.getElementById('current-question').innerText = currentIndex + 1;
+        document.getElementById('score').innerText = score;
+        document.getElementById('progress').style.width = ((currentIndex + 1) / quizQuestions.length) * 100 + '%';
+        
+        const container = document.getElementById('answers-container');
+        container.innerHTML = '';
+        q.answers.forEach((ans, i) => {
+            const btn = document.createElement('button');
+            btn.textContent = `${String.fromCharCode(65 + i)}. ${escapeHtml(ans)}`;
+            btn.className = 'answer-btn';
+            btn.onclick = () => selectAnswer(i, btn);
+            container.appendChild(btn);
+        });
+    }
+    
+    function selectAnswer(selectedIndex, btn) {
+        if (answersLocked) return;
+        answersLocked = true;
+        
+        const q = quizQuestions[currentIndex];
+        const isCorrect = selectedIndex === q.correct;
+        
+        if (isCorrect) {
+            score++;
+            btn.classList.add('correct', 'pulse');
+        } else {
+            btn.classList.add('incorrect', 'shake');
+            document.querySelectorAll('.answer-btn').forEach((b, i) => {
+                if (i === q.correct) b.classList.add('correct');
+            });
+        }
+        
+        document.getElementById('score').innerText = score;
+        document.getElementById('explanation-container').innerHTML = `<strong><i class="fas fa-lightbulb"></i> Explanation:</strong><br>${escapeHtml(q.explanation)}`;
+        document.getElementById('explanation-container').classList.remove('hidden');
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+    
+    function showResult() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('final-score').innerText = score;
+        
+        const percentage = (score / quizQuestions.length) * 100;
+        const ratingImg = document.getElementById('rating-img');
+        let ratingText = '';
+        let ratingNumber = 0;
+        
+        if (percentage >= 90) { ratingText = 'Excellent'; ratingNumber = 45; }
+        else if (percentage >= 75) { ratingText = 'Very Good'; ratingNumber = 38; }
+        else if (percentage >= 60) { ratingText = 'Good'; ratingNumber = 30; }
+        else if (percentage >= 45) { ratingText = 'Fair'; ratingNumber = 23; }
+        else { ratingText = 'Need Improvement'; ratingNumber = 15; }
+        
+        ratingImg.alt = ratingText;
+        ratingImg.src = `../../../../images/ratings/rating-${ratingNumber}.png`;
+        ratingImg.onerror = () => ratingImg.style.display = 'none';
+    }
+    
+    document.getElementById('next-btn').onclick = async () => {
+        currentIndex++;
+        if (currentIndex < quizQuestions.length) {
+            showQuestion();
+        } else {
+            await saveResults();
+            showResult();
+        }
+    };
+    
+    document.getElementById('restart-btn').onclick = () => {
+        loadQuiz();
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+    };
+    
+    document.getElementById('home-btn').onclick = () => {
+        window.location.href = '../../index.html';
+    };
+    
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    
+    loadQuiz();
+</script>
+</body>
+</html>

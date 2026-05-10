@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 2: Characteristics and Classification</title>
+    <link rel="stylesheet" href="../../../../styles/home.css">
+    <link rel="stylesheet" href="../../../../styles/note.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Layout Wrapper */
+        .main-layout-wrapper {
+            display: flex;
+            max-width: 1200px;
+            width: 95%;
+            gap: 20px;
+            margin: 80px auto 20px;
+            align-items: flex-start;
+        }
+
+        /* Note Container */
+        .note-container {
+            flex: 2;
+            margin: 0; 
+            height: 75vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .note-scroll-box {
+            padding: 20px;
+            overflow-y: auto;
+            background: var(--card-bg);
+            border-radius: 18px;
+            border: 1px solid var(--border);
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        /* Buttons */
+        .quiz-sidebar-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .video-toggle-btn {
+            width: 100%;
+            background: var(--accent);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .video-toggle-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Video Card */
+        .video-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 10px;
+            box-shadow: var(--shadow);
+            display: none; 
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Account Icon & Back Button */
+        .account-dropdown { position: absolute; top: 35px; right: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; width: 220px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 1001; }
+        .account-dropdown.active { display: block; }
+        .custom-back-btn { position: fixed; top: 15px; left: 20px; background: var(--primary); color: white; padding: 10px 15px; border-radius: 12px; cursor: pointer; z-index: 999; }
+
+        @media (max-width: 900px) {
+            .main-layout-wrapper { flex-direction: column; }
+            .note-container { height: auto; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="account-icon" id="accountIcon">
+    <div class="account-icon-link">👤</div>
+    <div class="account-dropdown" id="accountDropdown">
+        <div class="dropdown-header">
+            <div class="current-user">
+                <div class="user-avatar">👤</div>
+                <div class="user-info-dropdown">
+                    <div class="user-name-dropdown">Loading...</div>
+                    <div class="user-grade-dropdown">Grade</div>
+                </div>
+            </div>
+        </div>
+        <div class="dropdown-menu">
+            <div class="dropdown-item">
+                <i class="fas fa-palette"></i>
+                <span>Theme</span>
+                <select id="theme-selector" class="theme-select">
+                    <option value="light">☀️ Light</option>
+                    <option value="dark">🌙 Dark</option>
+                </select>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button onclick="logout()" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+</div>
+
+<div class="custom-back-btn" onclick="goBack()">
+    <i class="fas fa-arrow-left"></i>
+</div>
+
+<div class="main-layout-wrapper">
+    <div class="note-container">
+        <h1>Unit 2: Characteristics and Classification</h1>
+        <div class="note-scroll-box" id="noteScrollBox">
+            <section>
+                <h3>2.1 Characteristics of Living Things</h3>
+                <p>All organisms display seven life processes (MRS GREN): Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, and Nutrition.</p>
+                
+                <h3>2.2 Taxonomy of Living Things</h3>
+                <p>Taxonomy involves the identification, naming, and classification of species.</p>
+
+                <h4>2.2.1 Principles of Classification</h4>
+                <p>Classification is the process by which scientists group living organisms based on how similar they are.</p>
+
+                <h4>2.2.2 Taxonomic Hierarchies</h4>
+                <p>Life is organized into a hierarchy: Kingdom → Phylum → Class → Order → Family → Genus → Species.</p>
+
+                <h3>2.3 Relevance of Classification</h3>
+                <p>Classification provides a common language for biologists and helps track evolutionary relationships.</p>
+
+                <h3>2.4 Linnaean System of Nomenclature</h3>
+                <p>The Binomial system gives every organism a two-part scientific name (e.g., <em>Panthera leo</em> for a lion).</p>
+
+                <h3>2.5 Common Ethiopian Animals and Plants</h3>
+                <p>Examples include the <strong>Gelada Baboon</strong>, <strong>Mountain Nyala</strong>, and the indigenous <strong>Enset</strong> plant.</p>
+
+                <h3>2.6 The Five-Kingdom System</h3>
+                <h4>2.6.1 Kingdom Monera</h4>
+                <p>Prokaryotic organisms like bacteria.</p>
+                <h4>2.6.2 Kingdom Protista</h4>
+                <p>Eukaryotic, mostly unicellular organisms like Amoeba.</p>
+                <h4>2.6.3 Kingdom Fungi</h4>
+                <p>Decomposers like mushrooms and molds.</p>
+                <h4>2.6.4 Kingdom Plantae</h4>
+                <p>Multicellular autotrophs (plants).</p>
+                <h4>2.6.5 Kingdom Animalia</h4>
+                <p>Multicellular heterotrophs (animals).</p>
+
+                <h3>2.7 Renowned Taxonomists in Ethiopia</h3>
+                <p>Ethiopian scholars have played key roles in documenting the local biodiversity, particularly through the Ethiopian Flora Project.</p>
+            </section>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-card">
+            <a href="../quiz/index.html" class="quiz-sidebar-btn">
+                <i class="fas fa-pen-nib"></i> Go to Quiz
+            </a>
+        </div>
+
+        <div class="sidebar-card">
+            <button id="toggleVideoBtn" class="video-toggle-btn">
+                <i class="fas fa-play-circle"></i> See Video
+            </button>
+        </div>
+
+        <div id="videoCard" class="video-card">
+            <div class="video-container">
+                <iframe 
+                    id="videoIframe"
+                    width="100%" 
+                    height="100%" 
+                    src="https://www.youtube.com/embed/DVouQRAKEnk" 
+                    title="Taxonomy Lesson" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+
+    function goBack() {
+        window.history.back();
+    }
+</script>
+<script src="../../../../theme-manager.js"></script>
+<script src="note.js"></script>
+</body>
+</html>
