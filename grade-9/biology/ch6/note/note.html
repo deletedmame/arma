@@ -201,6 +201,10 @@
             .ai-chat-btn { width: 52px; height: 52px; bottom: 20px; right: 20px; }
         }
     </style>
+
+<script>
+(function(){try{if(document.documentElement.dataset.studyAiClientLoaded==="1")return;document.documentElement.dataset.studyAiClientLoaded="1";var p=location.pathname.split("/").filter(Boolean);if(p.length&&/\.html?$/i.test(p[p.length-1]))p.pop();window.__STUDY_AI_ROOT__=p.length?new Array(p.length+1).join("../"):"";var s=document.createElement("script");s.async=false;s.src=window.__STUDY_AI_ROOT__+"study-ai-client.js";document.head.appendChild(s);}catch(e){console.warn(e);}})();
+</script>
 </head>
 <body data-theme="light">
 
@@ -218,12 +222,12 @@
                 <div class="user-avatar-header" id="headerAvatar">S</div>
             </div>
             <div class="account-dropdown" id="accountDropdown">
-                <div class="dropdown-header"><div class="dropdown-user"><div class="dropdown-avatar" id="dropdownAvatar">S</div><div class="dropdown-user-info"><h4 id="dropdownUserName">Student</h4><p id="dropdownUserGrade">Grade 9 • Section A</p></div></div></div>
+                <div class="dropdown-header"><div class="dropdown-user"><div class="dropdown-avatar" id="dropdownAvatar">S</div><div class="dropdown-user-info"><h4 id="dropdownUserName">Student</h4><p id="dropdownUserGrade">Grade 9 â€¢ Section A</p></div></div></div>
                 <div class="dropdown-menu">
                     <a href="../../../../profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
                     <a href="../../../../leaderboard.html" class="dropdown-item"><i class="fas fa-trophy"></i> Leaderboard</a>
                     <div class="dropdown-divider"></div>
-                    <div class="theme-selector"><span><i class="fas fa-palette"></i> Theme</span><select id="themeSelector"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option></select></div>
+                    <div class="theme-selector"><span><i class="fas fa-palette"></i> Theme</span><select id="themeSelector"><option value="light">â˜€ï¸ Light</option><option value="dark">ðŸŒ™ Dark</option></select></div>
                     <div class="dropdown-divider"></div>
                     <button class="dropdown-item danger" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
@@ -333,18 +337,18 @@
 <div id="aiPanel" class="ai-panel">
     <div class="ai-head">
         <div class="ai-head-left"><i class="fas fa-brain"></i><span>BNA Study Assistant</span></div>
-        <div><span class="ai-context-badge" id="aiContextBadge"><i class="fas fa-microchip"></i> Local AI (Ollama)</span><button class="ai-close-btn" id="aiCloseBtn"><i class="fas fa-times"></i></button></div>
+        <div><span class="ai-context-badge" id="aiContextBadge"><i class="fas fa-microchip"></i> Study assistant</span><button class="ai-close-btn" id="aiCloseBtn"><i class="fas fa-times"></i></button></div>
     </div>
     <div id="aiChat" class="ai-chat">
         <div class="ai-msg assistant">
-            🌍 <strong>Welcome to Unit 6: Ecology!</strong><br><br>
+            ðŸŒ <strong>Welcome to Unit 6: Ecology!</strong><br><br>
             I can help you understand:<br>
-            • Abiotic vs. Biotic Factors<br>
-            • Levels of Organization (Population to Biosphere)<br>
-            • Terrestrial Biomes (Deserts, Forests, Tundra)<br>
-            • Aquatic Biomes (Lakes, Rivers, Estuaries)<br>
-            • Ecological Succession (Primary vs. Secondary)<br>
-            • Symbiotic Relationships (Mutualism, Parasitism)<br><br>
+            â€¢ Abiotic vs. Biotic Factors<br>
+            â€¢ Levels of Organization (Population to Biosphere)<br>
+            â€¢ Terrestrial Biomes (Deserts, Forests, Tundra)<br>
+            â€¢ Aquatic Biomes (Lakes, Rivers, Estuaries)<br>
+            â€¢ Ecological Succession (Primary vs. Secondary)<br>
+            â€¢ Symbiotic Relationships (Mutualism, Parasitism)<br><br>
             <em>What ecosystem would you like to explore?</em>
         </div>
     </div>
@@ -355,16 +359,13 @@
 </div>
 
 <footer class="note-footer">
-    <p>© 2026 Bikolos Nur Academy (BNA) | Powered by Arma Education</p>
+    <p>Â© 2026 Bikolos Nur Academy (BNA) | Powered by Arma Education</p>
 </footer>
 
 <script>
-    // Local LLM via Ollama — no API keys. Install https://ollama.com then: ollama pull llama3.2
-    const LOCAL_AI_URL = 'http://127.0.0.1:11434/v1/chat/completions';
-    const LOCAL_AI_MODEL = 'llama3.2';
-
+    // Study AI via proxy (server/). API key only in server `.env`, not in this file.
     // Context updated for Unit 6
-    const SYSTEM_PROMPT = `You are BNA Study Assistant, a helpful AI tutor running on the student's computer via Ollama.
+    const SYSTEM_PROMPT = `You are BNA Study Assistant, a helpful AI tutor for BNA students (answers via the school's secure Study AI service).
 Current context: Student is viewing Biology Unit 6 (Ecology, Biomes, Abiotic/Biotic Factors, Succession, Ecological Relationships).
 Provide accurate, step-by-step help. Be engaging and relate concepts to real-world ecosystems.`;
 
@@ -414,7 +415,7 @@ Provide accurate, step-by-step help. Be engaging and relate concepts to real-wor
                 document.getElementById('headerUserGrade').textContent = `Grade ${user.grade || 9}`;
                 document.getElementById('headerAvatar').textContent = initial;
                 document.getElementById('dropdownUserName').textContent = user.name || 'Student';
-                document.getElementById('dropdownUserGrade').textContent = `Grade ${user.grade || 9} • Section ${user.section || 'A'}`;
+                document.getElementById('dropdownUserGrade').textContent = `Grade ${user.grade || 9} â€¢ Section ${user.section || 'A'}`;
                 document.getElementById('dropdownAvatar').textContent = initial;
             } catch(e) {}
         }
@@ -458,69 +459,56 @@ Provide accurate, step-by-step help. Be engaging and relate concepts to real-wor
 
     async function callLocalAI(userMessage) {
         try {
-            const response = await fetch(LOCAL_AI_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: LOCAL_AI_MODEL,
-                    messages: [...conversationHistory, { role: 'user', content: userMessage }],
-                    temperature: 0.7,
-                    max_tokens: 2000
-                })
-            });
-            if(!response.ok) {
-                const errorData = await response.text();
-                console.error('Local AI error:', response.status, errorData);
-                throw new Error(`API Error: ${response.status}`);
-            }
-            const data = await response.json();
-            return data.choices[0].message.content;
-        } catch(error) {
-            console.error('Error calling local AI:', error);
-            return getLocalResponse(userMessage);
+            if (!window.StudyAi || !StudyAi.fetchChat) return getLocalResponse(userMessage);
+            const data = await StudyAi.fetchChat([...conversationHistory, { role: 'user', content: userMessage }], { temperature: 0.7, max_tokens: 2000 });
+            const text = StudyAi.messageContent(data);
+            if (text && text.trim()) return text;
+        } catch (error) {
+            console.warn('Study AI:', error);
         }
+        return getLocalResponse(userMessage);
     }
 
     function getLocalResponse(question) {
         const q = question.toLowerCase();
         if (q.includes('abiotic') || q.includes('biotic')) {
-            return "🌿 **Biotic factors** are living things (plants, animals, fungi, bacteria).\n\n💧 **Abiotic factors** are non-living (sunlight, temperature, water, soil, air, minerals).\n\nExample: In a pond ecosystem - fish (biotic) + water temperature (abiotic) both affect survival.";
+            return "ðŸŒ¿ **Biotic factors** are living things (plants, animals, fungi, bacteria).\n\nðŸ’§ **Abiotic factors** are non-living (sunlight, temperature, water, soil, air, minerals).\n\nExample: In a pond ecosystem - fish (biotic) + water temperature (abiotic) both affect survival.";
         }
         if (q.includes('succession')) {
-            return "🌱 **Ecological Succession** is how ecosystems change over time:\n\n• **Primary succession** - starts on bare rock with NO soil (lichens first, then mosses, then plants). Takes centuries.\n• **Secondary succession** - starts with soil intact after fire/flood/farming. Much faster (decades).\n• **Climax community** - stable final stage (like a mature forest).";
+            return "ðŸŒ± **Ecological Succession** is how ecosystems change over time:\n\nâ€¢ **Primary succession** - starts on bare rock with NO soil (lichens first, then mosses, then plants). Takes centuries.\nâ€¢ **Secondary succession** - starts with soil intact after fire/flood/farming. Much faster (decades).\nâ€¢ **Climax community** - stable final stage (like a mature forest).";
         }
         if (q.includes('mutualism')) {
-            return "🤝 **Mutualism** (+/+): Both species benefit!\n\nExamples:\n• Bees + flowers (bee gets nectar, flower gets pollinated)\n• Clownfish + sea anemones (protection + food scraps)\n• Lichen (fungus + algae living together)\n• Gut bacteria + humans (we get digestion help, bacteria get home)";
+            return "ðŸ¤ **Mutualism** (+/+): Both species benefit!\n\nExamples:\nâ€¢ Bees + flowers (bee gets nectar, flower gets pollinated)\nâ€¢ Clownfish + sea anemones (protection + food scraps)\nâ€¢ Lichen (fungus + algae living together)\nâ€¢ Gut bacteria + humans (we get digestion help, bacteria get home)";
         }
         if (q.includes('parasitism')) {
-            return "🪱 **Parasitism** (+/-): Parasite benefits, host is harmed.\n\nExamples:\n• Tapeworms in intestines\n• Ticks on dogs/humans\n• Mistletoe on trees\n• Mosquitoes (females need blood for eggs)";
+            return "ðŸª± **Parasitism** (+/-): Parasite benefits, host is harmed.\n\nExamples:\nâ€¢ Tapeworms in intestines\nâ€¢ Ticks on dogs/humans\nâ€¢ Mistletoe on trees\nâ€¢ Mosquitoes (females need blood for eggs)";
         }
         if (q.includes('commensalism')) {
-            return "🐟 **Commensalism** (+/0): One benefits, other unaffected.\n\nExamples:\n• Barnacles on a whale (get transport + food, whale unaffected)\n• Birds nesting in trees (shelter, tree unharmed)\n• Remora fish attached to sharks (eat leftovers)";
+            return "ðŸŸ **Commensalism** (+/0): One benefits, other unaffected.\n\nExamples:\nâ€¢ Barnacles on a whale (get transport + food, whale unaffected)\nâ€¢ Birds nesting in trees (shelter, tree unharmed)\nâ€¢ Remora fish attached to sharks (eat leftovers)";
         }
         if (q.includes('biome') || q.includes('tundra') || q.includes('desert') || q.includes('rainforest')) {
-            return "🌍 **Major Terrestrial Biomes:**\n\n• **Tropical Rainforest** - near equator, high rainfall, highest biodiversity\n• **Desert** - <25cm rain/year, extreme temperatures, cacti/camels\n• **Savanna** - tropical grassland, scattered trees, wet/dry seasons\n• **Temperate Forest** - four seasons, deciduous trees\n• **Taiga/Boreal** - cold, coniferous trees (pine/spruce)\n• **Tundra** - coldest, permafrost, low vegetation\n• **Grassland** - hot summers, cold winters, fertile soil";
+            return "ðŸŒ **Major Terrestrial Biomes:**\n\nâ€¢ **Tropical Rainforest** - near equator, high rainfall, highest biodiversity\nâ€¢ **Desert** - <25cm rain/year, extreme temperatures, cacti/camels\nâ€¢ **Savanna** - tropical grassland, scattered trees, wet/dry seasons\nâ€¢ **Temperate Forest** - four seasons, deciduous trees\nâ€¢ **Taiga/Boreal** - cold, coniferous trees (pine/spruce)\nâ€¢ **Tundra** - coldest, permafrost, low vegetation\nâ€¢ **Grassland** - hot summers, cold winters, fertile soil";
         }
         if (q.includes('estuary') || q.includes('wetland')) {
-            return "💧 **Estuaries & Wetlands:**\n\n• **Estuary** - where river meets sea (brackish water). Highly productive nursery for fish/shrimp.\n• **Wetland** - saturated soil (marshes/swamps). Natural water filters + flood control.\n• Both are critical for biodiversity and water purification!";
+            return "ðŸ’§ **Estuaries & Wetlands:**\n\nâ€¢ **Estuary** - where river meets sea (brackish water). Highly productive nursery for fish/shrimp.\nâ€¢ **Wetland** - saturated soil (marshes/swamps). Natural water filters + flood control.\nâ€¢ Both are critical for biodiversity and water purification!";
         }
         if (q.includes('competition')) {
-            return "⚔️ **Competition** (-/-): Both species harmed.\n\nTypes:\n• **Intraspecific** - within same species (most intense)\n• **Interspecific** - between different species\n\nExample: Lions and hyenas competing for the same prey.";
+            return "âš”ï¸ **Competition** (-/-): Both species harmed.\n\nTypes:\nâ€¢ **Intraspecific** - within same species (most intense)\nâ€¢ **Interspecific** - between different species\n\nExample: Lions and hyenas competing for the same prey.";
         }
         if (q.includes('predation') || q.includes('predator')) {
-            return "🦁 **Predation** (+/-): Predator eats prey.\n\nAdaptations:\n• Predators: sharp teeth/claws, speed, camouflage\n• Prey: warning colors, mimicry, spines/shells, herding behavior\n\nExample: Cheetah hunting gazelle.";
+            return "ðŸ¦ **Predation** (+/-): Predator eats prey.\n\nAdaptations:\nâ€¢ Predators: sharp teeth/claws, speed, camouflage\nâ€¢ Prey: warning colors, mimicry, spines/shells, herding behavior\n\nExample: Cheetah hunting gazelle.";
         }
         if (q.includes('population') || q.includes('community') || q.includes('ecosystem') || q.includes('levels')) {
-            return "📊 **Ecological Levels of Organization** (smallest to largest):\n\n1. **Organism** - single individual\n2. **Population** - same species in same area\n3. **Community** - all populations together\n4. **Ecosystem** - community + abiotic factors\n5. **Biome** - large region with similar climate\n6. **Biosphere** - all ecosystems on Earth";
+            return "ðŸ“Š **Ecological Levels of Organization** (smallest to largest):\n\n1. **Organism** - single individual\n2. **Population** - same species in same area\n3. **Community** - all populations together\n4. **Ecosystem** - community + abiotic factors\n5. **Biome** - large region with similar climate\n6. **Biosphere** - all ecosystems on Earth";
         }
         if (q.includes('food chain') || q.includes('food web') || q.includes('trophic')) {
-            return "🕸️ **Trophic Levels:**\n\n• **Producers** (autotrophs) - make their own food (plants, algae)\n• **Primary consumers** (herbivores) - eat producers\n• **Secondary consumers** - eat herbivores\n• **Tertiary consumers** - eat secondary consumers\n• **Decomposers** - break down dead matter\n\nEnergy flows one direction: Sun → Producer → Consumer → Decomposer";
+            return "ðŸ•¸ï¸ **Trophic Levels:**\n\nâ€¢ **Producers** (autotrophs) - make their own food (plants, algae)\nâ€¢ **Primary consumers** (herbivores) - eat producers\nâ€¢ **Secondary consumers** - eat herbivores\nâ€¢ **Tertiary consumers** - eat secondary consumers\nâ€¢ **Decomposers** - break down dead matter\n\nEnergy flows one direction: Sun â†’ Producer â†’ Consumer â†’ Decomposer";
         }
         if (q.includes('carbon cycle') || q.includes('water cycle') || q.includes('nitrogen')) {
-            return "🔄 **Biogeochemical Cycles:**\n\n• **Water cycle** - evaporation, condensation, precipitation\n• **Carbon cycle** - photosynthesis, respiration, decomposition, burning fossil fuels\n• **Nitrogen cycle** - fixation (bacteria), nitrification, assimilation, denitrification\n\nMatter cycles; energy flows one way through ecosystems.";
+            return "ðŸ”„ **Biogeochemical Cycles:**\n\nâ€¢ **Water cycle** - evaporation, condensation, precipitation\nâ€¢ **Carbon cycle** - photosynthesis, respiration, decomposition, burning fossil fuels\nâ€¢ **Nitrogen cycle** - fixation (bacteria), nitrification, assimilation, denitrification\n\nMatter cycles; energy flows one way through ecosystems.";
         }
         
-        return `🌿 **Ecology Assistant**\n\nI can help you understand:\n• Abiotic vs Biotic factors\n• Ecological levels (organism → biosphere)\n• Biomes (rainforest, desert, tundra, etc.)\n• Succession (primary vs secondary)\n• Symbiotic relationships (mutualism, parasitism, commensalism)\n• Predation, competition, and food webs\n• Aquatic ecosystems (estuaries, wetlands, lakes)\n\nWhat specific ecology topic would you like to learn about?`;
+        return `ðŸŒ¿ **Ecology Assistant**\n\nI can help you understand:\nâ€¢ Abiotic vs Biotic factors\nâ€¢ Ecological levels (organism â†’ biosphere)\nâ€¢ Biomes (rainforest, desert, tundra, etc.)\nâ€¢ Succession (primary vs secondary)\nâ€¢ Symbiotic relationships (mutualism, parasitism, commensalism)\nâ€¢ Predation, competition, and food webs\nâ€¢ Aquatic ecosystems (estuaries, wetlands, lakes)\n\nWhat specific ecology topic would you like to learn about?`;
     }
 
     async function sendMessage() {

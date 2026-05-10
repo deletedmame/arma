@@ -643,6 +643,10 @@
             }
         }
     </style>
+
+<script>
+(function(){try{if(document.documentElement.dataset.studyAiClientLoaded==="1")return;document.documentElement.dataset.studyAiClientLoaded="1";var p=location.pathname.split("/").filter(Boolean);if(p.length&&/\.html?$/i.test(p[p.length-1]))p.pop();window.__STUDY_AI_ROOT__=p.length?new Array(p.length+1).join("../"):"";var s=document.createElement("script");s.async=false;s.src=window.__STUDY_AI_ROOT__+"study-ai-client.js";document.head.appendChild(s);}catch(e){console.warn(e);}})();
+</script>
 </head>
 
 <body data-theme="light">
@@ -671,7 +675,7 @@
                             <div class="dropdown-avatar" id="dropdownAvatar">S</div>
                             <div class="dropdown-user-info">
                                 <h4 id="dropdownUserName">Student</h4>
-                                <p id="dropdownUserGrade">Grade 9 • Section A</p>
+                                <p id="dropdownUserGrade">Grade 9 â€¢ Section A</p>
                             </div>
                         </div>
                     </div>
@@ -684,8 +688,8 @@
                         <div class="theme-selector">
                             <span><i class="fas fa-palette"></i> Theme</span>
                             <select id="themeSelector">
-                                <option value="light">☀️ Light</option>
-                                <option value="dark">🌙 Dark</option>
+                                <option value="light">â˜€ï¸ Light</option>
+                                <option value="dark">ðŸŒ™ Dark</option>
                             </select>
                         </div>
                         <div class="dropdown-divider"></div>
@@ -757,7 +761,7 @@
                         <li><strong>Diaphragm:</strong> Controls light amount</li>
                     </ul>
                     <h4>1.5.2 Total Magnification</h4>
-                    <p><strong>Total = Eyepiece × Objective</strong> (e.g., 10x × 40x = 400x)</p>
+                    <p><strong>Total = Eyepiece Ã— Objective</strong> (e.g., 10x Ã— 40x = 400x)</p>
                     <h4>1.5.3 Handling</h4>
                     <ul>
                         <li>Carry by arm and base</li>
@@ -767,12 +771,12 @@
                     </ul>
                     <h3>1.6 Laboratory Safety Rules</h3>
                     <ul>
-                        <li>✅ Follow instructions carefully</li>
-                        <li>✅ Wear PPE (goggles, lab coat, gloves)</li>
-                        <li>✅ Never eat or drink in lab</li>
-                        <li>✅ Never taste or sniff chemicals</li>
-                        <li>✅ Clean up after experiments</li>
-                        <li>✅ Wash hands thoroughly</li>
+                        <li>âœ… Follow instructions carefully</li>
+                        <li>âœ… Wear PPE (goggles, lab coat, gloves)</li>
+                        <li>âœ… Never eat or drink in lab</li>
+                        <li>âœ… Never taste or sniff chemicals</li>
+                        <li>âœ… Clean up after experiments</li>
+                        <li>âœ… Wash hands thoroughly</li>
                     </ul>
                 </section>
             </div>
@@ -804,24 +808,24 @@
         <div class="ai-head">
             <div class="ai-head-left">
                 <i class="fas fa-brain"></i>
-                <span>ARMA – BNA Study Assistant</span>
+                <span>ARMA â€“ BNA Study Assistant</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
-                <span class="ai-context-badge"><i class="fas fa-microchip"></i> Local AI (Ollama)</span>
+                <span class="ai-context-badge"><i class="fas fa-microchip"></i> Study assistant</span>
                 <button class="ai-close-btn" id="aiCloseBtn"><i class="fas fa-times"></i></button>
             </div>
         </div>
         <div id="aiChat" class="ai-chat">
             <div class="ai-msg assistant">
-                🧠 <strong>Hello! I'm ARMA, your BNA Biology Assistant!</strong><br><br>
+                ðŸ§  <strong>Hello! I'm ARMA, your BNA Biology Assistant!</strong><br><br>
                 I can help you with:<br>
-                • Definition of Biology<br>
-                • Why we study Biology<br>
-                • The Scientific Method<br>
-                • Tools of a Biologist<br>
-                • Microscope parts and functions<br>
-                • Total magnification calculations<br>
-                • Laboratory safety rules<br><br>
+                â€¢ Definition of Biology<br>
+                â€¢ Why we study Biology<br>
+                â€¢ The Scientific Method<br>
+                â€¢ Tools of a Biologist<br>
+                â€¢ Microscope parts and functions<br>
+                â€¢ Total magnification calculations<br>
+                â€¢ Laboratory safety rules<br><br>
                 <em>Ask me anything about Biology Unit 1!</em>
             </div>
         </div>
@@ -832,7 +836,7 @@
     </div>
 
     <footer class="note-footer">
-        <p>© 2026 Bikolos Nur Academy (BNA) | ARMA AI – Biology Unit 1</p>
+        <p>Â© 2026 Bikolos Nur Academy (BNA) | ARMA AI â€“ Biology Unit 1</p>
     </footer>
 
     <script>
@@ -848,17 +852,15 @@ CRITICAL RULES:
 BIOLOGY UNIT 1 TOPICS:
 - Definition of Biology (bios = life, logos = study)
 - Why we study Biology (medicine, conservation, agriculture, forensics)
-- Scientific Method: Observation → Question → Hypothesis → Experiment → Data Analysis → Conclusion → Communication
+- Scientific Method: Observation â†’ Question â†’ Hypothesis â†’ Experiment â†’ Data Analysis â†’ Conclusion â†’ Communication
 - Lab Tools: beakers, flasks, test tubes, petri dishes, autoclave, incubator
 - Field Tools: quadrats, transect lines, GPS devices, collection nets
 - Light Microscope parts: eyepiece/ocular (10x), objective lenses (4x/10x/40x/100x), coarse adjustment, fine adjustment, stage, diaphragm
-- Total Magnification = Eyepiece × Objective (e.g. 10 × 40 = 400x)
+- Total Magnification = Eyepiece Ã— Objective (e.g. 10 Ã— 40 = 400x)
 - Microscope handling: carry by arm and base, start lowest power, use lens paper only
 - Lab Safety: PPE (goggles, lab coat, gloves), no eating/drinking, never taste/sniff chemicals, clean up, wash hands`;
 
-        /** Local LLM via Ollama — no API keys. Install from https://ollama.com then run: ollama pull llama3.2 */
-        const LOCAL_AI_URL = 'http://127.0.0.1:11434/v1/chat/completions';
-        const LOCAL_AI_MODEL = 'llama3.2';
+        // Study AI via OpenRouter proxy (see /server). Never put API keys in this HTML file.
 
         let conversationHistory = [];
         let isProcessing = false;
@@ -907,7 +909,7 @@ BIOLOGY UNIT 1 TOPICS:
                     set('headerUserGrade', `Grade ${user.grade || 9}`);
                     set('headerAvatar', initial);
                     set('dropdownUserName', user.name || 'Student');
-                    set('dropdownUserGrade', `Grade ${user.grade || 9} • Section ${user.section || 'A'}`);
+                    set('dropdownUserGrade', `Grade ${user.grade || 9} â€¢ Section ${user.section || 'A'}`);
                     set('dropdownAvatar', initial);
                 }
             } catch (e) { }
@@ -980,27 +982,20 @@ BIOLOGY UNIT 1 TOPICS:
             conversationHistory.push({ role: 'user', content: userMessage });
             if (conversationHistory.length > 20) conversationHistory = conversationHistory.slice(-20);
 
-            const response = await fetch(LOCAL_AI_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: LOCAL_AI_MODEL,
-                    max_tokens: 1000,
-                    messages: [
-                        { role: 'system', content: SYSTEM_PROMPT },
-                        ...conversationHistory
-                    ]
-                })
-            });
-
-            if (!response.ok) {
-                const errText = await response.text();
-                console.error('Local AI error:', errText);
-                throw new Error('Local AI request failed');
+            if (!window.StudyAi || !StudyAi.fetchChat) {
+                throw new Error('Study AI client not loaded');
             }
 
-            const data = await response.json();
-            const assistantText = data.choices[0].message.content;
+            const data = await StudyAi.fetchChat(
+                [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    ...conversationHistory
+                ],
+                { max_tokens: 1000, temperature: 0.65 }
+            );
+
+            const assistantText = StudyAi.messageContent(data);
+            if (!assistantText) throw new Error('Empty AI response');
 
             conversationHistory.push({ role: 'assistant', content: assistantText });
             return assistantText;
@@ -1028,7 +1023,7 @@ BIOLOGY UNIT 1 TOPICS:
             } catch (err) {
                 console.error('Error:', err);
                 removeTyping();
-                addMessage("⚠️ Could not reach local Ollama. Start it with <code>ollama serve</code>, ensure model <code>" + LOCAL_AI_MODEL + "</code> is installed (<code>ollama pull " + LOCAL_AI_MODEL + "</code>), then try again.", 'assistant');
+                addMessage("Study AI could not respond. Set <code>localStorage.setItem(\"studyAiProxyBase\",\"http://127.0.0.1:8787\")</code> and run the proxy in <code>server/</code> with <code>OPENROUTER_API_KEY</code> in <code>server/.env</code>.", 'assistant');
             } finally {
                 isProcessing = false;
                 if (input) { input.disabled = false; input.focus(); }

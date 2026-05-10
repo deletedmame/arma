@@ -71,8 +71,6 @@ function logout() {
 }
 
 function injectGeneralChat() {
-    const LOCAL_AI_URL = 'http://127.0.0.1:11434/v1/chat/completions';
-    const LOCAL_AI_MODEL = 'llama3.2';
     const REFUSAL_TEXT = "I can only help with school or study-related topics.";
 
     const topicTitle = document.querySelector('h1')?.textContent?.trim() || 'this chapter';
@@ -165,32 +163,21 @@ function injectGeneralChat() {
         return topicKeywords.some((kw) => text.includes(kw)) || schoolKeywords.some((kw) => text.includes(kw));
     }
 
-    async function askLocalAI(question) {
-        const response = await fetch(LOCAL_AI_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: LOCAL_AI_MODEL,
-                messages: [
-                    {
-                        role: 'system',
-                        content: `You are a learning-focused tutor for high-school students. Keep answers concise and clear. Answer only school or study-related topics. Prioritize the current chapter topic: ${topicTitle}. If the user asks something unrelated to school/study topics, output exactly: "${REFUSAL_TEXT}"`
-                    },
-                    { role: 'user', content: question }
-                ],
-                temperature: 0.4,
-                max_tokens: 350
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Local AI request failed');
+    async function askProxyAI(question) {
+        if (!window.StudyAi || !StudyAi.fetchChat) {
+            throw new Error('Study AI client missing');
         }
-
-        const data = await response.json();
-        return data?.choices?.[0]?.message?.content?.trim() || 'Please ask a school-related question.';
+        const data = await StudyAi.fetchChat(
+            [
+                {
+                    role: 'system',
+                    content: `You are a learning-focused tutor for high-school students. Keep answers concise and clear. Answer only school or study-related topics. Prioritize the current chapter topic: ${topicTitle}. If the user asks something unrelated to school/study topics, output exactly: "${REFUSAL_TEXT}"`,
+                },
+                { role: 'user', content: question },
+            ],
+            { temperature: 0.4, max_tokens: 400 }
+        );
+        return (StudyAi.messageContent(data) || '').trim() || 'Please ask a school-related question.';
     }
 
     async function handleSend() {
@@ -214,10 +201,10 @@ function injectGeneralChat() {
         const thinkingMsg = addMsg('Thinking...', 'bot');
 
         try {
-            const answer = await askLocalAI(q);
+            const answer = await askProxyAI(q);
             thinkingMsg.textContent = answer || REFUSAL_TEXT;
         } catch (_) {
-            thinkingMsg.textContent = 'Could not reach local Ollama. Run ollama serve and ollama pull llama3.2, then try again.';
+            thinkingMsg.textContent = 'Study AI offline. Set localStorage studyAiProxyBase to your proxy (e.g. http://127.0.0.1:8787) and run npm start in the server folder.';
         }
 
         chat.scrollTop = chat.scrollHeight;

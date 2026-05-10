@@ -63,14 +63,18 @@
         th { background: var(--primary); color: white; }
         @media (max-width: 768px) { .note-container { margin-top: 100px; } .ai-panel, .general-ai-panel { width: 290px; right: 15px; bottom: 85px; } .ai-bulb-btn { width: 52px; height: 52px; bottom: 20px; right: 20px; } }
     </style>
+
+<script>
+(function(){try{if(document.documentElement.dataset.studyAiClientLoaded==="1")return;document.documentElement.dataset.studyAiClientLoaded="1";var p=location.pathname.split("/").filter(Boolean);if(p.length&&/\.html?$/i.test(p[p.length-1]))p.pop();window.__STUDY_AI_ROOT__=p.length?new Array(p.length+1).join("../"):"";var s=document.createElement("script");s.async=false;s.src=window.__STUDY_AI_ROOT__+"study-ai-client.js";document.head.appendChild(s);}catch(e){console.warn(e);}})();
+</script>
 </head>
 <body data-theme="light">
 
 <div class="account-icon" id="accountIcon">
-    <div class="account-icon-link">👤</div>
+    <div class="account-icon-link">ðŸ‘¤</div>
     <div class="account-dropdown" id="accountDropdown">
-        <div class="dropdown-header"><div class="current-user"><div class="user-avatar" id="dropdownAvatar">👤</div><div><div class="user-name-dropdown" id="dropdownUserName">Student</div><div class="user-grade-dropdown" id="dropdownUserGrade">Grade --</div></div></div></div>
-        <div class="dropdown-menu"><button id="openGeneralChatBtn" class="dropdown-item"><i class="fas fa-robot"></i> <span>General Study Chat</span><i class="fas fa-chevron-right" style="margin-left: auto;"></i></button><div class="dropdown-item"><i class="fas fa-palette"></i> <span>Theme</span><select id="theme-selector" class="theme-select"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option></select></div><div class="dropdown-divider"></div><button id="logoutBtn" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
+        <div class="dropdown-header"><div class="current-user"><div class="user-avatar" id="dropdownAvatar">ðŸ‘¤</div><div><div class="user-name-dropdown" id="dropdownUserName">Student</div><div class="user-grade-dropdown" id="dropdownUserGrade">Grade --</div></div></div></div>
+        <div class="dropdown-menu"><button id="openGeneralChatBtn" class="dropdown-item"><i class="fas fa-robot"></i> <span>General Study Chat</span><i class="fas fa-chevron-right" style="margin-left: auto;"></i></button><div class="dropdown-item"><i class="fas fa-palette"></i> <span>Theme</span><select id="theme-selector" class="theme-select"><option value="light">â˜€ï¸ Light</option><option value="dark">ðŸŒ™ Dark</option></select></div><div class="dropdown-divider"></div><button id="logoutBtn" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
     </div>
 </div>
 
@@ -91,10 +95,10 @@
         <ul><li>Kwashiorkor (protein deficiency) - swollen belly</li><li>Marasmus (energy deficiency) - extreme thinness</li><li>Anemia (iron) - weakness, tiredness</li><li>Rickets (Vitamin D) - soft bones</li><li>Scurvy (Vitamin C) - bleeding gums</li></ul>
         
         <h2>5.4 Malnutrition</h2>
-        <p>Insufficient, excessive, or imbalanced nutrition. Includes undernutrition (wasting, stunting) and obesity (BMI ≥30).</p>
+        <p>Insufficient, excessive, or imbalanced nutrition. Includes undernutrition (wasting, stunting) and obesity (BMI â‰¥30).</p>
         
         <h2>5.5 Substance Abuse</h2>
-        <ul><li><strong>Smoking:</strong> Tar, nicotine, CO → lung cancer, bronchitis</li><li><strong>Alcohol:</strong> Depressant → liver cirrhosis</li><li><strong>Khat:</strong> Stimulant → gastritis, insomnia</li><li><strong>Cannabis/Heroin:</strong> Psychoactive, highly addictive</li></ul>
+        <ul><li><strong>Smoking:</strong> Tar, nicotine, CO â†’ lung cancer, bronchitis</li><li><strong>Alcohol:</strong> Depressant â†’ liver cirrhosis</li><li><strong>Khat:</strong> Stimulant â†’ gastritis, insomnia</li><li><strong>Cannabis/Heroin:</strong> Psychoactive, highly addictive</li></ul>
         
         <h2>5.6 Infectious Diseases</h2>
         <ul><li><strong>HIV/AIDS:</strong> Virus attacks immune system</li><li><strong>Tuberculosis:</strong> Bacterial lung infection</li><li><strong>Malaria:</strong> Plasmodium protozoa from mosquitoes</li><li><strong>COVID-19:</strong> Coronavirus, respiratory droplets</li></ul>
@@ -107,13 +111,13 @@
 <button id="aiBulbBtn" class="ai-bulb-btn" title="Ask about Unit 5 Health & Nutrition"><i class="fas fa-lightbulb"></i></button>
 <div id="aiPanel" class="ai-panel">
     <div class="ai-head"><i class="fas fa-apple-alt"></i> Biology AI (Unit 5: Health & Nutrition)</div>
-    <div id="aiChat" class="ai-chat"><div class="ai-msg bot">🍎 Hello! I answer questions about Unit 5: Nutrients, balanced diet, deficiency diseases, malnutrition, substance abuse, and infectious diseases.</div></div>
+    <div id="aiChat" class="ai-chat"><div class="ai-msg bot">ðŸŽ Hello! I answer questions about Unit 5: Nutrients, balanced diet, deficiency diseases, malnutrition, substance abuse, and infectious diseases.</div></div>
     <div class="ai-input-wrap"><input id="aiInput" type="text" placeholder="Ask about health and nutrition..." /><button id="aiSendBtn">Send</button></div>
 </div>
 
 <div id="generalAiPanel" class="general-ai-panel">
     <div class="general-ai-head"><i class="fas fa-globe"></i> General Study Assistant</div>
-    <div id="generalAiChat" class="general-ai-chat"><div class="general-ai-msg bot">🌍 Hello! I'm your unbounded study assistant for any school subject!</div></div>
+    <div id="generalAiChat" class="general-ai-chat"><div class="general-ai-msg bot">ðŸŒ Hello! I'm your unbounded study assistant for any school subject!</div></div>
     <div class="general-ai-input-wrap"><input id="generalAiInput" type="text" placeholder="Ask any study question..." /><button id="generalAiSendBtn">Send</button></div>
 </div>
 
@@ -131,14 +135,44 @@
     })();
     const bulbBtn = document.getElementById('aiBulbBtn'); const aiPanel = document.getElementById('aiPanel'); const aiChatDiv = document.getElementById('aiChat'); const aiInput = document.getElementById('aiInput'); const aiSendBtn = document.getElementById('aiSendBtn');
     function addAiMessage(text, role) { const msgDiv = document.createElement('div'); msgDiv.className = `ai-msg ${role}`; msgDiv.textContent = text; aiChatDiv.appendChild(msgDiv); aiChatDiv.scrollTop = aiChatDiv.scrollHeight; }
-    function unit5Reply(q) { const question = q.toLowerCase().trim(); if(question.includes('nutrient')) return "🥗 Nutrients: Carbohydrates (energy), Proteins (growth), Fats (energy storage), Vitamins (A,B,C,D,E,K), Minerals (calcium, iron, iodine)."; if(question.includes('balanced diet')) return "⚖️ A balanced diet contains all nutrients in correct proportions based on age, sex, and activity level."; if(question.includes('deficiency')||question.includes('kwashiorkor')) return "⚠️ Kwashiorkor (protein), Marasmus (energy), Anemia (iron), Rickets (Vitamin D), Scurvy (Vitamin C)."; if(question.includes('obesity')||question.includes('bmi')) return "📏 Obesity is BMI ≥30. Causes: excess calories, lack of exercise. Health risks: heart disease, diabetes."; if(question.includes('smoking')||question.includes('alcohol')||question.includes('khat')) return "🚭 Substance abuse: Smoking (tar, nicotine, CO → lung cancer), Alcohol (depressant → cirrhosis), Khat (stimulant → gastritis)."; if(question.includes('hiv')||question.includes('aids')) return "🦠 HIV attacks immune cells → AIDS. Transmission: unprotected sex, blood, mother to child. Prevention: abstinence, condoms."; if(question.includes('malaria')) return "🦟 Malaria caused by Plasmodium, transmitted by female Anopheles mosquito. Prevention: nets, repellent, antimalarials."; if(question.includes('covid')) return "😷 COVID-19: coronavirus, respiratory droplets. Prevention: masks, distancing, vaccination."; return "📘 I specialize in Unit 5: Health & Nutrition. Try asking: 'What are deficiency diseases?', 'Explain substance abuse effects', or 'How is HIV transmitted?'"; }
-    function handleSend() { const query = aiInput.value.trim(); if(!query) return; addAiMessage(query,'user'); aiInput.value = ''; addAiMessage(unit5Reply(query),'bot'); }
+    function unit5Reply(q) { const question = q.toLowerCase().trim(); if(question.includes('nutrient')) return "ðŸ¥— Nutrients: Carbohydrates (energy), Proteins (growth), Fats (energy storage), Vitamins (A,B,C,D,E,K), Minerals (calcium, iron, iodine)."; if(question.includes('balanced diet')) return "âš–ï¸ A balanced diet contains all nutrients in correct proportions based on age, sex, and activity level."; if(question.includes('deficiency')||question.includes('kwashiorkor')) return "âš ï¸ Kwashiorkor (protein), Marasmus (energy), Anemia (iron), Rickets (Vitamin D), Scurvy (Vitamin C)."; if(question.includes('obesity')||question.includes('bmi')) return "ðŸ“ Obesity is BMI â‰¥30. Causes: excess calories, lack of exercise. Health risks: heart disease, diabetes."; if(question.includes('smoking')||question.includes('alcohol')||question.includes('khat')) return "ðŸš­ Substance abuse: Smoking (tar, nicotine, CO â†’ lung cancer), Alcohol (depressant â†’ cirrhosis), Khat (stimulant â†’ gastritis)."; if(question.includes('hiv')||question.includes('aids')) return "ðŸ¦  HIV attacks immune cells â†’ AIDS. Transmission: unprotected sex, blood, mother to child. Prevention: abstinence, condoms."; if(question.includes('malaria')) return "ðŸ¦Ÿ Malaria caused by Plasmodium, transmitted by female Anopheles mosquito. Prevention: nets, repellent, antimalarials."; if(question.includes('covid')) return "ðŸ˜· COVID-19: coronavirus, respiratory droplets. Prevention: masks, distancing, vaccination."; return "ðŸ“˜ I specialize in Unit 5: Health & Nutrition. Try asking: 'What are deficiency diseases?', 'Explain substance abuse effects', or 'How is HIV transmitted?'"; }
+    async function handleSend() {
+        const query = aiInput.value.trim(); if(!query) return;
+        addAiMessage(query,'user'); aiInput.value = '';
+        try {
+            if (window.StudyAi && StudyAi.fetchChat) {
+                const data = await StudyAi.fetchChat([
+                    { role:'system', content: 'You are a Grade 9 Biology Unit 5 tutor (health, nutrition, diseases, substance awareness). Be clear and age-appropriate for Ethiopian high school students.' },
+                    { role:'user', content: query }
+                ], { max_tokens: 900, temperature: 0.55 });
+                const t = StudyAi.messageContent(data);
+                if (t && t.trim()) { addAiMessage(t,'bot'); return; }
+            }
+        } catch(e) { console.warn(e); }
+        addAiMessage(unit5Reply(query),'bot');
+    }
     bulbBtn?.addEventListener('click',(e)=>{ e.stopPropagation(); document.getElementById('generalAiPanel')?.classList.remove('active'); aiPanel.classList.toggle('active'); });
     aiSendBtn?.addEventListener('click',handleSend); aiInput?.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleSend(); });
     const generalPanel = document.getElementById('generalAiPanel'); const openGeneralBtn = document.getElementById('openGeneralChatBtn'); const generalChatDiv = document.getElementById('generalAiChat'); const generalInput = document.getElementById('generalAiInput'); const generalSendBtn = document.getElementById('generalAiSendBtn');
     function addGeneralMsg(text,role){ const d=document.createElement('div'); d.className=`general-ai-msg ${role}`; d.textContent=text; generalChatDiv.appendChild(d); generalChatDiv.scrollTop=generalChatDiv.scrollHeight; }
-    function unboundedReply(q){ return "🌐 I can help with any school subject!"; }
-    function handleGeneralSend(){ const q=generalInput.value.trim(); if(!q) return; addGeneralMsg(q,'user'); generalInput.value=''; addGeneralMsg(unboundedReply(q),'bot'); }
+    function unboundedReply(q){ return "ðŸŒ I can help with any school subject!"; }
+    async function handleGeneralSend(){
+        const q=generalInput.value.trim();
+        if(!q) return;
+        addGeneralMsg(q,'user');
+        generalInput.value='';
+        try {
+            if (window.StudyAi && StudyAi.fetchChat) {
+                const data = await StudyAi.fetchChat([
+                    { role:'system', content: 'You help high school students with school and study topics only. Keep answers concise. If the question is not school-related, reply exactly: I can only help with school or study-related topics.' },
+                    { role:'user', content: q }
+                ], { max_tokens: 500, temperature: 0.45 });
+                const t = StudyAi.messageContent(data);
+                if (t && t.trim()) { addGeneralMsg(t,'bot'); return; }
+            }
+        } catch(e) { console.warn(e); }
+        addGeneralMsg(unboundedReply(q),'bot');
+    }
     openGeneralBtn?.addEventListener('click',(e)=>{ e.stopPropagation(); if(aiPanel) aiPanel.classList.remove('active'); generalPanel.classList.toggle('active'); const dd=document.getElementById('accountDropdown'); if(dd) dd.classList.remove('active'); });
     generalSendBtn?.addEventListener('click',handleGeneralSend); generalInput?.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleGeneralSend(); });
     window.addEventListener('load',()=>{ if(aiPanel) aiPanel.classList.remove('active'); if(generalPanel) generalPanel.classList.remove('active'); });

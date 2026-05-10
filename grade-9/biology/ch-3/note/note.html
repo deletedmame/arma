@@ -201,6 +201,10 @@
             .ai-chat-btn { width: 52px; height: 52px; bottom: 20px; right: 20px; }
         }
     </style>
+
+<script>
+(function(){try{if(document.documentElement.dataset.studyAiClientLoaded==="1")return;document.documentElement.dataset.studyAiClientLoaded="1";var p=location.pathname.split("/").filter(Boolean);if(p.length&&/\.html?$/i.test(p[p.length-1]))p.pop();window.__STUDY_AI_ROOT__=p.length?new Array(p.length+1).join("../"):"";var s=document.createElement("script");s.async=false;s.src=window.__STUDY_AI_ROOT__+"study-ai-client.js";document.head.appendChild(s);}catch(e){console.warn(e);}})();
+</script>
 </head>
 <body data-theme="light">
 
@@ -218,12 +222,12 @@
                 <div class="user-avatar-header" id="headerAvatar">S</div>
             </div>
             <div class="account-dropdown" id="accountDropdown">
-                <div class="dropdown-header"><div class="dropdown-user"><div class="dropdown-avatar" id="dropdownAvatar">S</div><div class="dropdown-user-info"><h4 id="dropdownUserName">Student</h4><p id="dropdownUserGrade">Grade 9 • Section A</p></div></div></div>
+                <div class="dropdown-header"><div class="dropdown-user"><div class="dropdown-avatar" id="dropdownAvatar">S</div><div class="dropdown-user-info"><h4 id="dropdownUserName">Student</h4><p id="dropdownUserGrade">Grade 9 â€¢ Section A</p></div></div></div>
                 <div class="dropdown-menu">
                     <a href="../../../../profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
                     <a href="../../../../leaderboard.html" class="dropdown-item"><i class="fas fa-trophy"></i> Leaderboard</a>
                     <div class="dropdown-divider"></div>
-                    <div class="theme-selector"><span><i class="fas fa-palette"></i> Theme</span><select id="themeSelector"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option></select></div>
+                    <div class="theme-selector"><span><i class="fas fa-palette"></i> Theme</span><select id="themeSelector"><option value="light">â˜€ï¸ Light</option><option value="dark">ðŸŒ™ Dark</option></select></div>
                     <div class="dropdown-divider"></div>
                     <button class="dropdown-item danger" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
@@ -289,14 +293,14 @@
                 <p><strong>Similarities:</strong> Nucleus, cytoplasm, cell membrane, mitochondria, ER, Golgi, ribosomes.</p>
                 <p><strong>Differences (Plant vs. Animal):</strong></p>
                 <ul>
-                    <li>✅ Cell Wall (Cellulose) vs. ❌ No Cell Wall</li>
-                    <li>✅ Chloroplasts vs. ❌ No Chloroplasts</li>
-                    <li>✅ Large Central Vacuole vs. Small/Temporary Vacuoles</li>
-                    <li>❌ No Centrioles vs. ✅ Centrioles</li>
+                    <li>âœ… Cell Wall (Cellulose) vs. âŒ No Cell Wall</li>
+                    <li>âœ… Chloroplasts vs. âŒ No Chloroplasts</li>
+                    <li>âœ… Large Central Vacuole vs. Small/Temporary Vacuoles</li>
+                    <li>âŒ No Centrioles vs. âœ… Centrioles</li>
                 </ul>
 
                 <h3>3.6 Observing Cells Under a Microscope</h3>
-                <p><strong>Total Magnification = Eyepiece Lens × Objective Lens</strong> (e.g., 10x × 40x = 400x).</p>
+                <p><strong>Total Magnification = Eyepiece Lens Ã— Objective Lens</strong> (e.g., 10x Ã— 40x = 400x).</p>
                 <p><strong>Staining:</strong> Iodine solution for plant cells (onion epidermis) to see the nucleus and starch. Methylene blue for animal cells (cheek cells) to see the nucleus clearly.</p>
 
                 <h3>3.7 The Cell and Its Environment</h3>
@@ -318,7 +322,7 @@
                 <h3>3.8 Levels of Biological Organization</h3>
                 <p>Life is organized in a hierarchy:</p>
                 <ol>
-                    <li><strong>Atoms → Molecules → Organelles</strong></li>
+                    <li><strong>Atoms â†’ Molecules â†’ Organelles</strong></li>
                     <li><strong>Cells</strong> (Basic unit of life)</li>
                     <li><strong>Tissues:</strong> Group of similar cells performing a function (e.g., muscle tissue, xylem).</li>
                     <li><strong>Organs:</strong> Group of tissues working together (e.g., heart, leaf).</li>
@@ -356,17 +360,17 @@
 <div id="aiPanel" class="ai-panel">
     <div class="ai-head">
         <div class="ai-head-left"><i class="fas fa-brain"></i><span>BNA Study Assistant</span></div>
-        <div><span class="ai-context-badge" id="aiContextBadge"><i class="fas fa-microchip"></i> Local AI (Ollama)</span><button class="ai-close-btn" id="aiCloseBtn"><i class="fas fa-times"></i></button></div>
+        <div><span class="ai-context-badge" id="aiContextBadge"><i class="fas fa-microchip"></i> Study assistant</span><button class="ai-close-btn" id="aiCloseBtn"><i class="fas fa-times"></i></button></div>
     </div>
     <div id="aiChat" class="ai-chat">
         <div class="ai-msg assistant">
-            🧬 <strong>Welcome to Unit 3: Cells!</strong><br><br>
+            ðŸ§¬ <strong>Welcome to Unit 3: Cells!</strong><br><br>
             I can help you understand:<br>
-            • Cell Theory (Schleiden, Schwann, Virchow)<br>
-            • Organelle Functions (Mitochondria, Nucleus, ER)<br>
-            • Prokaryotic vs. Eukaryotic Cells<br>
-            • Osmosis, Diffusion, and Active Transport<br>
-            • Plant vs. Animal Cell Differences<br><br>
+            â€¢ Cell Theory (Schleiden, Schwann, Virchow)<br>
+            â€¢ Organelle Functions (Mitochondria, Nucleus, ER)<br>
+            â€¢ Prokaryotic vs. Eukaryotic Cells<br>
+            â€¢ Osmosis, Diffusion, and Active Transport<br>
+            â€¢ Plant vs. Animal Cell Differences<br><br>
             <em>What would you like to explore first?</em>
         </div>
     </div>
@@ -377,16 +381,13 @@
 </div>
 
 <footer class="note-footer">
-    <p>© 2026 Bikolos Nur Academy (BNA) | Powered by Arma Education</p>
+    <p>Â© 2026 Bikolos Nur Academy (BNA) | Powered by Arma Education</p>
 </footer>
 
 <script>
-    // Local LLM via Ollama — no API keys. Install https://ollama.com then: ollama pull llama3.2
-    const LOCAL_AI_URL = 'http://127.0.0.1:11434/v1/chat/completions';
-    const LOCAL_AI_MODEL = 'llama3.2';
-
+    // Study AI via proxy (server/). API key only in server `.env`, not in this file.
     // Context updated for Unit 3
-    const SYSTEM_PROMPT = `You are BNA Study Assistant, a helpful AI tutor running on the student's computer via Ollama.
+    const SYSTEM_PROMPT = `You are BNA Study Assistant, a helpful AI tutor for BNA students (answers via the school's secure Study AI service).
 Current context: Student is viewing Biology Unit 3 (Cells, Cell Theory, Organelles, Microscopy, Osmosis, Cell Transport, Levels of Organization).
 Provide accurate, step-by-step help for any academic question. Be encouraging and clear.`;
 
@@ -436,7 +437,7 @@ Provide accurate, step-by-step help for any academic question. Be encouraging an
                 document.getElementById('headerUserGrade').textContent = `Grade ${user.grade || 9}`;
                 document.getElementById('headerAvatar').textContent = initial;
                 document.getElementById('dropdownUserName').textContent = user.name || 'Student';
-                document.getElementById('dropdownUserGrade').textContent = `Grade ${user.grade || 9} • Section ${user.section || 'A'}`;
+                document.getElementById('dropdownUserGrade').textContent = `Grade ${user.grade || 9} â€¢ Section ${user.section || 'A'}`;
                 document.getElementById('dropdownAvatar').textContent = initial;
             } catch(e) {}
         }
@@ -480,22 +481,14 @@ Provide accurate, step-by-step help for any academic question. Be encouraging an
 
     async function callLocalAI(userMessage) {
         try {
-            const response = await fetch(LOCAL_AI_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: LOCAL_AI_MODEL,
-                    messages: [...conversationHistory, { role: 'user', content: userMessage }],
-                    temperature: 0.7,
-                    max_tokens: 2000
-                })
-            });
-            if(!response.ok) throw new Error('API Error');
-            const data = await response.json();
-            return data.choices[0].message.content;
-        } catch(error) {
-            return getLocalResponse(userMessage);
+            if (!window.StudyAi || !StudyAi.fetchChat) return getLocalResponse(userMessage);
+            const data = await StudyAi.fetchChat([...conversationHistory, { role: 'user', content: userMessage }], { temperature: 0.7, max_tokens: 2000 });
+            const text = StudyAi.messageContent(data);
+            if (text && text.trim()) return text;
+        } catch (error) {
+            console.warn(error);
         }
+        return getLocalResponse(userMessage);
     }
 
     function getLocalResponse(question) {

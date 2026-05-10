@@ -38,7 +38,7 @@
         try {
             // Dynamically import Firebase config
             // Adjust this path based on where your firebase-config.js is located
-            const firebasePath = getFirebaseConfigPath();
+            const firebasePath = `${window.location.origin}/firebase-config.js`;
             const { db, collection, query, where, getDocs } = await import(firebasePath);
             
             // Query for forced assessments
@@ -87,22 +87,6 @@
             
         } catch (error) {
             console.warn('Assessment redirect check failed:', error.message);
-        }
-    }
-    
-    function getFirebaseConfigPath() {
-        // Determine correct path to firebase-config.js based on current location
-        const path = window.location.pathname;
-        
-        if (path.includes('/student/') || path.includes('/students/')) {
-            return '../firebase-config.js';
-        } else if (path.includes('/portal/') || path.includes('/dashboard/')) {
-            return '../firebase-config.js';
-        } else if (path.includes('/pages/')) {
-            return '../firebase-config.js';
-        } else {
-            // Default: same directory
-            return './firebase-config.js';
         }
     }
     

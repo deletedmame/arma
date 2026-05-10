@@ -11,3 +11,4 @@ Desktop.ini
 *.log
 .env
 .env.*
+server/.env
