@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f5efe6; height: 100vh; overflow: hidden; }
+        .chat-app { display: flex; height: 100vh; width: 100%; }
+        .chat-sidebar { width: 320px; background: white; border-right: 1px solid #eadbc8; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #eadbc8; }
+        .chat-search { padding: 15px; border-bottom: 1px solid #eadbc8; }
+        .chat-search input { width: 100%; padding: 10px; border: 1px solid #eadbc8; border-radius: 25px; background: #f5efe6; outline: none; }
+        .chats-list { flex: 1; overflow-y: auto; }
+        .chat-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eadbc8; position: relative; }
+        .chat-item:hover { background: #f5efe6; }
+        .chat-item.active { background: #e86a33; }
+        .chat-item.active .chat-name { color: white; }
+        .chat-avatar { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+        .admin-avatar { background: #28a745; color: white; }
+        .teacher-avatar { background: #17a2b8; color: white; }
+        .group-avatar { background: #6c757d; color: white; }
+        .chat-info { flex: 1; }
+        .chat-name { font-weight: 600; color: #333; }
+        .chat-last-message { font-size: 11px; color: #666; }
+        .unread-badge { background: #dc3545; color: white; font-size: 10px; padding: 2px 6px; border-radius: 20px; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); min-width: 18px; text-align: center; }
+        .chat-main { flex: 1; display: flex; flex-direction: column; background: #f5efe6; }
+        .chat-main-header { padding: 20px; background: white; border-bottom: 1px solid #eadbc8; display: flex; align-items: center; gap: 15px; }
+        .chat-main-avatar { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; background: #e86a33; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 70%; padding: 10px 16px; border-radius: 18px; word-wrap: break-word; }
+        .message-sent { background: #e86a33; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .message-received { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #eadbc8; }
+        .message-time { font-size: 10px; opacity: 0.7; margin-top: 5px; }
+        .chat-input { padding: 20px; background: white; border-top: 1px solid #eadbc8; display: flex; flex-direction: column; gap: 8px; }
+        .chat-input-row { display: flex; gap: 10px; }
+        .chat-input input[type="text"] { flex: 1; padding: 12px; border: 1px solid #eadbc8; border-radius: 25px; background: #f5efe6; outline: none; }
+        .chat-input button { background: #e86a33; color: white; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; }
+        .attach-btn { background: #f5efe6 !important; color: #333 !important; border: 1px solid #eadbc8 !important; padding: 12px 16px !important; }
+        .attachment-preview { display: none; background: #f5efe6; border: 1px solid #eadbc8; border-radius: 10px; padding: 8px; font-size: 12px; }
+        .attachment-chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; }
+        .remove-attach { border: none; background: transparent; cursor: pointer; color: #e86a33; }
+        .attachment-link { display: block; margin-top: 5px; font-size: 12px; }
+        .empty-chat { text-align: center; color: #999; padding: 60px 20px; }
+        .back-btn { position: fixed; bottom: 20px; left: 20px; background: #e86a33; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; z-index: 100; }
+        .readonly-badge { font-size: 9px; background: #ffc107; color: #333; padding: 2px 6px; border-radius: 10px; margin-left: 6px; }
+        .footer { text-align: center; padding: 10px; font-size: 10px; color: #999; background: white; border-top: 1px solid #eadbc8; }
+        @media (max-width: 768px) { .chat-sidebar { width: 280px; } }
+    </style>
+</head>
+<body>
+
+<button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+
+<div class="chat-app">
+    <div class="chat-sidebar">
+        <div class="sidebar-header"><h2><i class="fas fa-comment-dots"></i> Messages</h2></div>
+        <div class="chat-search"><input type="text" id="searchChats" placeholder="Search..."></div>
+        <div class="chats-list" id="chatsList">Loading...</div>
+    </div>
+    <div class="chat-main">
+        <div class="chat-main-header">
+            <div class="chat-main-avatar" id="chatAvatar">👤</div>
+            <div><h3 id="chatName">Select a chat</h3><p id="chatStatus" style="font-size:12px;color:#666;"></p></div>
+        </div>
+        <div class="chat-messages" id="chatMessages"><div class="empty-chat">Select a chat to start messaging</div></div>
+        <div class="chat-input">
+            <div class="chat-input-row">
+                <input type="text" id="messageInput" placeholder="Type a message..." disabled>
+                <input type="file" id="fileAttachment" multiple style="display:none;" onchange="handleFileSelect(event)">
+                <button class="attach-btn" onclick="document.getElementById('fileAttachment').click()" id="attachBtn" disabled><i class="fas fa-paperclip"></i></button>
+                <button onclick="sendMessage()" id="sendBtn" disabled>Send</button>
+            </div>
+            <div id="attachmentPreview" class="attachment-preview"></div>
+        </div>
+    </div>
+</div>
+<div class="footer"><p>Bikolos Nur Academy (BNA) | Powered by <a href="https://youtube.com" target="_blank">Arma</a></p></div>
+
+<script type="module">
+    import { auth, db, collection, getDocs, addDoc, query, where, onSnapshot, Timestamp, orderBy, updateDoc, writeBatch, doc, setDoc, deleteDoc } from './firebase-config.js';
+    import { escapeHtml, getRelativeTime } from './firebase-functions.js';
+
+    let currentUser = null;
+    let currentReceiverId = null;
+    let currentChatType = null;
+    let currentChatReadOnly = false;
+    let messagesUnsubscribe = null;
+    let typingUnsubscribe = null;
+    let allContacts = [];
+    let unreadCounts = new Map();
+    let allCurrentMessages = [];
+    let attachedFiles = [];
+    const MAX_ATTACHMENT_SIZE = 200 * 1024;
+    let typingTimeout = null;
+
+    const sessionData = localStorage.getItem("current_user_session");
+    if (!sessionData) { window.location.href = "signin.html"; }
+    currentUser = JSON.parse(sessionData);
+
+    if (currentUser.role === 'admin') { window.location.href = "admin.html"; }
+
+    const groups = [
+        { id: 'group_grade9', name: 'Grade 9 Announcements', grade: 9 },
+        { id: 'group_grade10', name: 'Grade 10 Announcements', grade: 10 },
+        { id: 'group_grade11_natural', name: 'Grade 11 Natural Announcements', grade: 11, stream: 'Natural' },
+        { id: 'group_grade11_social', name: 'Grade 11 Social Announcements', grade: 11, stream: 'Social' },
+        { id: 'group_grade12_natural', name: 'Grade 12 Natural Announcements', grade: 12, stream: 'Natural' },
+        { id: 'group_grade12_social', name: 'Grade 12 Social Announcements', grade: 12, stream: 'Social' }
+    ];
+
+    async function loadContacts() {
+        const profilesSnap = await getDocs(collection(db, "profiles"));
+        allContacts = [];
+        allContacts.push({ id: 'admin', name: 'Admin', role: 'admin', avatar: '👑', readOnly: false });
+
+        if (currentUser.role === 'student') {
+            profilesSnap.forEach(doc => {
+                const data = doc.data();
+                if (data.role === 'teacher' && data.approved === true && data.teachingGrades?.includes(currentUser.grade)) {
+                    allContacts.push({ id: doc.id, name: data.name, role: 'teacher', subject: data.subject, avatar: '👨‍🏫', readOnly: false });
+                }
+            });
+            const availableGroups = groups.filter(g => g.grade === currentUser.grade && (!g.stream || g.stream === currentUser.stream));
+            availableGroups.forEach(g => { allContacts.push({ id: g.id, name: g.name, role: 'group', avatar: '👥', readOnly: true }); });
+        } else if (currentUser.role === 'teacher') {
+            profilesSnap.forEach(doc => {
+                const data = doc.data();
+                if (data.role === 'student' && data.approved === true && currentUser.teachingGrades?.includes(data.grade)) {
+                    allContacts.push({ id: doc.id, name: data.name, role: 'student', subject: `Grade ${data.grade}${data.section ? `-${data.section}` : ''}`, avatar: '👤', readOnly: false });
+                }
+            });
+        } else if (currentUser.role === 'parent') {
+            const childLinks = await getDocs(query(collection(db, "parent_children"), where("parentId", "==", currentUser.id)));
+            const childIds = [];
+            childLinks.forEach(d => {
+                const row = d.data();
+                if (row.childId) childIds.push(row.childId);
+            });
+
+            const teacherMap = new Map();
+            if (childIds.length > 0) {
+                const childGrades = new Set();
+                profilesSnap.forEach(docSnap => {
+                    if (!childIds.includes(docSnap.id)) return;
+                    const p = docSnap.data();
+                    if (p.grade) childGrades.add(p.grade);
+                });
+                profilesSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.role !== 'teacher' || data.approved !== true) return;
+                    const teaches = Array.isArray(data.teachingGrades) && data.teachingGrades.some(g => childGrades.has(g));
+                    if (!teaches) return;
+                    teacherMap.set(docSnap.id, {
+                        id: docSnap.id,
+                        name: data.name,
+                        role: 'teacher',
+                        subject: data.subject || 'Teacher',
+                        avatar: '👨‍🏫',
+                        readOnly: false
+                    });
+                });
+            }
+
+            teacherMap.forEach(v => allContacts.push(v));
+        }
+
+        displayChats();
+        setupUnreadListeners();
+    }
+
+    function setupUnreadListeners() {
+        for (const contact of allContacts) {
+            if (contact.role === 'group') continue;
+            let q;
+            if (contact.role === 'admin') {
+                const chatId = [currentUser.id, 'admin'].sort().join('_');
+                q = query(collection(db, "private_messages"), where("chatId", "==", chatId), where("read", "==", false), where("receiverId", "==", currentUser.id));
+            } else if (contact.role === 'teacher' || contact.role === 'student') {
+                const chatId = [currentUser.id, contact.id].sort().join('_');
+                q = query(collection(db, "private_messages"), where("chatId", "==", chatId), where("read", "==", false), where("receiverId", "==", currentUser.id));
+            }
+            if (q) {
+                onSnapshot(q, (snapshot) => {
+                    unreadCounts.set(contact.id, snapshot.size);
+                    updateChatBadge(contact.id, snapshot.size);
+                });
+            }
+        }
+    }
+
+    function updateChatBadge(contactId, count) {
+        const chatItem = document.querySelector(`.chat-item[data-id="${contactId}"]`);
+        if (!chatItem) return;
+        const existingBadge = chatItem.querySelector('.unread-badge');
+        if (count > 0) {
+            if (existingBadge) existingBadge.textContent = count > 99 ? '99+' : count;
+            else { const badge = document.createElement('div'); badge.className = 'unread-badge'; badge.textContent = count > 99 ? '99+' : count; chatItem.appendChild(badge); }
+        } else if (existingBadge) existingBadge.remove();
+    }
+
+    function displayChats() {
+        const container = document.getElementById('chatsList');
+        const searchTerm = document.getElementById('searchChats')?.value.toLowerCase() || '';
+        let filtered = allContacts.filter(c => {
+            if (!searchTerm) return true;
+            const nameMatch = c.name.toLowerCase().includes(searchTerm);
+            const messageMatch = allCurrentMessages.some(m => String(m.message || '').toLowerCase().includes(searchTerm));
+            return nameMatch || messageMatch;
+        });
+        if (filtered.length === 0) { container.innerHTML = '<div class="empty-chat">No chats found</div>'; return; }
+        container.innerHTML = filtered.map(c => {
+            const unreadCount = unreadCounts.get(c.id) || 0;
+            return `<div class="chat-item" data-id="${c.id}" onclick="selectChat('${c.id}', '${c.role}', '${escapeHtml(c.name)}', ${c.readOnly})">
+                <div class="chat-avatar ${c.role === 'admin' ? 'admin-avatar' : c.role === 'teacher' ? 'teacher-avatar' : 'group-avatar'}">${c.avatar}</div>
+                <div class="chat-info"><div class="chat-name">${escapeHtml(c.name)}${c.readOnly ? '<span class="readonly-badge"><i class="fas fa-eye"></i> Read Only</span>' : ''}</div><div class="chat-last-message">${c.role === 'admin' ? 'School Admin' : c.role === 'group' ? 'Announcements' : c.subject || c.role}</div></div>
+                ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount > 99 ? '99+' : unreadCount}</div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    window.selectChat = async function(id, role, name, readOnly) {
+        if (messagesUnsubscribe) messagesUnsubscribe();
+        if (typingUnsubscribe) typingUnsubscribe();
+        allCurrentMessages = [];
+        currentReceiverId = id; currentChatType = role; currentChatReadOnly = readOnly;
+        document.getElementById('chatName').innerText = name;
+        document.getElementById('chatAvatar').innerText = role === 'admin' ? '👑' : role === 'teacher' ? '👨‍🏫' : '👥';
+        document.getElementById('chatStatus').innerHTML = readOnly ? 'Read-only channel' : `Chat with ${name}`;
+        const msgInput = document.getElementById('messageInput'), sendBtn = document.getElementById('sendBtn');
+        const attachBtn = document.getElementById('attachBtn');
+        msgInput.disabled = readOnly; sendBtn.disabled = readOnly;
+        if (attachBtn) attachBtn.disabled = readOnly;
+        msgInput.placeholder = readOnly ? 'Read-only channel' : 'Type a message...';
+        if (readOnly) clearAttachments();
+
+        let q;
+        if (role === 'admin') {
+            const chatId = [currentUser.id, 'admin'].sort().join('_');
+            q = query(collection(db, "private_messages"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
+        } else if (role === 'group') {
+            q = query(collection(db, "admin_messages"), where("recipient", "==", id), orderBy("timestamp", "asc"));
+        } else {
+            const chatId = [currentUser.id, id].sort().join('_');
+            q = query(collection(db, "private_messages"), where("chatId", "==", chatId), orderBy("timestamp", "asc"));
+        }
+
+        setupTypingListener(id, role);
+        messagesUnsubscribe = onSnapshot(q, async (snapshot) => {
+            const msgs = [];
+            const batch = writeBatch(db);
+            let markCount = 0;
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                msgs.push(data);
+                if (data.receiverId === currentUser.id && !data.read && role !== 'group') {
+                    batch.update(doc.ref, { read: true });
+                    markCount += 1;
+                }
+            });
+            if (markCount > 0) await batch.commit();
+            allCurrentMessages = msgs;
+            if (unreadCounts.get(id) > 0) { unreadCounts.set(id, 0); updateChatBadge(id, 0); }
+            const container = document.getElementById('chatMessages');
+            if (msgs.length === 0) { container.innerHTML = '<div class="empty-chat">No messages yet</div>'; return; }
+            container.innerHTML = msgs.map(msg => {
+                const isSent = msg.senderId === currentUser.id;
+                const time = msg.timestamp?.toDate?.() || new Date(msg.timestamp);
+                const sender = !isSent && msg.senderName !== 'Admin' ? `<div style="font-size:11px;margin-bottom:3px;">${escapeHtml(msg.senderName)}</div>` : '';
+                const files = Array.isArray(msg.attachments) ? msg.attachments : [];
+                const attachmentHtml = files.map(file => {
+                    const safeName = escapeHtml(file.name || 'Attachment');
+                    if (!file.dataUrl) return `<div class="attachment-link"><i class="fas fa-paperclip"></i> ${safeName}</div>`;
+                    return `<a class="attachment-link" href="${file.dataUrl}" download="${safeName}" target="_blank" rel="noopener"><i class="fas fa-paperclip"></i> ${safeName}</a>`;
+                }).join('');
+                return `<div class="message ${isSent ? 'message-sent' : 'message-received'}">${sender}<div>${escapeHtml(msg.message)}</div>${attachmentHtml}<div class="message-time">${getRelativeTime(time)}</div></div>`;
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        });
+        document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+        const activeItem = document.querySelector(`.chat-item[data-id="${id}"]`);
+        if (activeItem) activeItem.classList.add('active');
+    };
+
+    window.sendMessage = async function() {
+        const message = document.getElementById('messageInput').value.trim();
+        if (!message && attachedFiles.length === 0) { alert('Enter a message or attach a file'); return; }
+        if (currentChatReadOnly) { alert('Cannot send in read-only channel'); return; }
+        try {
+            const attachments = await Promise.all(attachedFiles.map(fileToAttachment));
+            const payload = {
+                message: message || '(File attachment)',
+                senderId: currentUser.id,
+                senderName: currentUser.name,
+                timestamp: Timestamp.now(),
+                read: false,
+                hasAttachment: attachments.length > 0,
+                attachmentCount: attachments.length,
+                attachmentNames: attachments.map(a => a.name),
+                attachments
+            };
+            if (currentChatType === 'admin') {
+                const chatId = [currentUser.id, 'admin'].sort().join('_');
+                await addDoc(collection(db, "private_messages"), { ...payload, receiverId: 'admin', chatId });
+            } else if (currentChatType !== 'group' && currentReceiverId) {
+                const chatId = [currentUser.id, currentReceiverId].sort().join('_');
+                await addDoc(collection(db, "private_messages"), { ...payload, receiverId: currentReceiverId, chatId });
+            }
+            document.getElementById('messageInput').value = '';
+            clearAttachments();
+            await clearTypingStatus();
+        } catch (error) { alert('Failed: ' + error.message); }
+    };
+
+    window.handleFileSelect = function(event) {
+        attachedFiles = Array.from(event.target.files || []);
+        renderAttachmentPreview();
+    };
+
+    window.removeAttachment = function(index) {
+        attachedFiles.splice(index, 1);
+        const dt = new DataTransfer();
+        attachedFiles.forEach(f => dt.items.add(f));
+        document.getElementById('fileAttachment').files = dt.files;
+        renderAttachmentPreview();
+    };
+
+    function renderAttachmentPreview() {
+        const preview = document.getElementById('attachmentPreview');
+        if (!preview) return;
+        if (attachedFiles.length === 0) {
+            preview.style.display = 'none';
+            preview.innerHTML = '';
+            return;
+        }
+        preview.style.display = 'block';
+        preview.innerHTML = attachedFiles.map((file, index) => `
+            <div class="attachment-chip">
+                <span><i class="fas fa-file"></i> ${escapeHtml(file.name)} (${(file.size / 1024).toFixed(1)} KB)</span>
+                <button class="remove-attach" onclick="removeAttachment(${index})"><i class="fas fa-times"></i></button>
+            </div>
+        `).join('');
+    }
+
+    function clearAttachments() {
+        attachedFiles = [];
+        const input = document.getElementById('fileAttachment');
+        if (input) input.value = '';
+        renderAttachmentPreview();
+    }
+
+    async function fileToAttachment(file) {
+        if (file.size > MAX_ATTACHMENT_SIZE) throw new Error(`${file.name} is too large (max 200 KB)`);
+        const dataUrl = await readAsDataUrl(file);
+        return { name: file.name, type: file.type || 'application/octet-stream', size: file.size, dataUrl };
+    }
+
+    function readAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result || ''));
+            reader.onerror = () => reject(new Error(`Failed to read ${file.name}`));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function getTypingDocId(contactId, role) {
+        const base = role === 'group' ? `${currentUser.id}_${contactId}` : [currentUser.id, contactId].sort().join('_');
+        return `typing_${base}`;
+    }
+
+    async function setTypingStatus(isTyping) {
+        if (!currentReceiverId || currentChatReadOnly || currentChatType === 'group') return;
+        const typingRef = doc(db, "typing_status", getTypingDocId(currentReceiverId, currentChatType));
+        if (isTyping) {
+            await setDoc(typingRef, {
+                chatWith: currentReceiverId,
+                fromUserId: currentUser.id,
+                fromUserName: currentUser.name,
+                isTyping: true,
+                updatedAt: Timestamp.now()
+            }, { merge: true });
+            return;
+        }
+        await clearTypingStatus();
+    }
+
+    async function clearTypingStatus() {
+        if (!currentReceiverId || currentChatType === 'group') return;
+        const typingRef = doc(db, "typing_status", getTypingDocId(currentReceiverId, currentChatType));
+        try { await deleteDoc(typingRef); } catch (_) {}
+    }
+
+    function setupTypingListener(contactId, role) {
+        if (role === 'group') return;
+        const typingRef = doc(db, "typing_status", getTypingDocId(contactId, role));
+        typingUnsubscribe = onSnapshot(typingRef, (snap) => {
+            const typingData = snap.exists() ? snap.data() : null;
+            const statusEl = document.getElementById('chatStatus');
+            const isOtherTyping = typingData && typingData.isTyping && typingData.fromUserId !== currentUser.id;
+            statusEl.innerHTML = isOtherTyping ? `${typingData.fromUserName || 'User'} is typing...` : (currentChatReadOnly ? 'Read-only channel' : `Chat with ${document.getElementById('chatName').innerText}`);
+        });
+    }
+
+    function goBack() {
+        if (currentUser.role === 'teacher') {
+            window.location.href = 'teacher-dashboard.html';
+            return;
+        }
+        if (currentUser.role === 'parent') {
+            window.location.href = 'parent.html';
+            return;
+        }
+        window.location.href = 'subject-portal.html';
+    }
+
+    document.getElementById('searchChats')?.addEventListener('input', () => displayChats());
+    document.getElementById('messageInput')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    document.getElementById('messageInput')?.addEventListener('input', async (e) => {
+        const hasText = (e.target.value || '').trim().length > 0;
+        await setTypingStatus(hasText);
+        if (typingTimeout) clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => clearTypingStatus(), 1500);
+    });
+
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    loadContacts();
+</script>
+</body>
+</html>

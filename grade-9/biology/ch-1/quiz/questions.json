@@ -1,0 +1,147 @@
+{
+    "chapter": "ch1",
+    "chapterName": "Introduction to Biology",
+    "totalQuestions": 20,
+    "questions": [
+      {
+        "id": 1,
+        "question": "What is the definition of Biology?",
+        "explanation": "Biology is the scientific study of life and living organisms.",
+        "options": ["Study of rocks", "Study of life and living organisms", "Study of universe", "Study of matter"],
+        "correct": 1
+      },
+      {
+        "id": 2,
+        "question": "Why do we study Biology?",
+        "explanation": "Biology helps us understand life processes, find medical solutions, conserve environment, and improve agriculture.",
+        "options": ["To learn about stars", "To understand life and find medical solutions", "To build buildings", "To study history"],
+        "correct": 1
+      },
+      {
+        "id": 3,
+        "question": "What is the first step in the scientific method?",
+        "explanation": "The scientific method begins with making observations about the natural world.",
+        "options": ["Hypothesis", "Experiment", "Observation", "Conclusion"],
+        "correct": 2
+      },
+      {
+        "id": 4,
+        "question": "What is a hypothesis?",
+        "explanation": "A hypothesis is a testable explanation or prediction that can be verified through experimentation.",
+        "options": ["Final result", "Testable prediction", "Random guess", "Laboratory tool"],
+        "correct": 1
+      },
+      {
+        "id": 5,
+        "question": "What is the correct order of the Scientific Method?",
+        "explanation": "Observation → Question → Hypothesis → Experiment → Conclusion → Communication.",
+        "options": ["Hypothesis → Experiment → Observation", "Observation → Hypothesis → Experiment → Conclusion", "Conclusion → Hypothesis → Observation", "Experiment → Observation → Hypothesis"],
+        "correct": 1
+      },
+      {
+        "id": 6,
+        "question": "Which of these is a laboratory tool used in Biology?",
+        "explanation": "A microscope is the most important tool for biologists to observe small organisms and cells.",
+        "options": ["Compass", "Microscope", "GPS device", "Hammer"],
+        "correct": 1
+      },
+      {
+        "id": 7,
+        "question": "Which tool is used for field observations?",
+        "explanation": "Binoculars help biologists observe animals and plants from a safe distance.",
+        "options": ["Binoculars", "Petri dish", "Test tube", "Centrifuge"],
+        "correct": 0
+      },
+      {
+        "id": 8,
+        "question": "What does the eyepiece of a microscope do?",
+        "explanation": "The eyepiece (ocular lens) magnifies the image formed by the objective lens.",
+        "options": ["Focuses light", "Holds the slide", "Magnifies the image", "Adjusts brightness"],
+        "correct": 2
+      },
+      {
+        "id": 9,
+        "question": "Which part of the microscope regulates the amount of light?",
+        "explanation": "The diaphragm controls the intensity and amount of light reaching the specimen.",
+        "options": ["Objective lens", "Diaphragm", "Stage clips", "Nosepiece"],
+        "correct": 1
+      },
+      {
+        "id": 10,
+        "question": "What is the correct way to carry a microscope?",
+        "explanation": "Always use two hands: one hand on the arm and one hand supporting the base.",
+        "options": ["By the stage only", "One hand on arm, one on base", "By the eyepiece", "Upside down"],
+        "correct": 1
+      },
+      {
+        "id": 11,
+        "question": "What should you do if a chemical splashes in your eyes?",
+        "explanation": "Immediately flush eyes with water for at least 15 minutes and inform the teacher.",
+        "options": ["Tell teacher later", "Rub your eyes", "Flush with water immediately", "Continue working"],
+        "correct": 2
+      },
+      {
+        "id": 12,
+        "question": "What is magnification?",
+        "explanation": "Magnification is the process of making an object appear larger than its actual size.",
+        "options": ["Making objects smaller", "Making objects appear larger", "Changing object color", "Measuring objects"],
+        "correct": 1
+      },
+      {
+        "id": 13,
+        "question": "Total magnification of a microscope is calculated by:",
+        "explanation": "Total magnification = Eyepiece magnification × Objective lens magnification.",
+        "options": ["Eyepiece + Objective", "Eyepiece × Objective", "Eyepiece ÷ Objective", "Objective - Eyepiece"],
+        "correct": 1
+      },
+      {
+        "id": 14,
+        "question": "Which objective lens provides the highest magnification?",
+        "explanation": "The oil immersion lens (usually 100x) provides the highest magnification.",
+        "options": ["4x (Scanning)", "10x (Low power)", "40x (High power)", "100x (Oil immersion)"],
+        "correct": 3
+      },
+      {
+        "id": 15,
+        "question": "What is the function of the stage on a microscope?",
+        "explanation": "The stage is the flat platform where the microscope slide is placed.",
+        "options": ["Magnify image", "Hold the slide", "Adjust focus", "Control light"],
+        "correct": 1
+      },
+      {
+        "id": 16,
+        "question": "Which knob should you use first when focusing a microscope?",
+        "explanation": "Always start with the coarse adjustment knob to bring the specimen into general focus.",
+        "options": ["Fine adjustment", "Coarse adjustment", "Diaphragm", "Stage clips"],
+        "correct": 1
+      },
+      {
+        "id": 17,
+        "question": "What is resolution in microscopy?",
+        "explanation": "Resolution is the ability to distinguish two close objects as separate entities.",
+        "options": ["Magnification power", "Ability to distinguish details", "Light intensity", "Lens size"],
+        "correct": 1
+      },
+      {
+        "id": 18,
+        "question": "Which of these is NOT a laboratory safety rule?",
+        "explanation": "Eating and drinking in the lab is strictly prohibited due to contamination risks.",
+        "options": ["Wear safety goggles", "Tie back long hair", "Eat snacks during experiment", "Wash hands after lab"],
+        "correct": 2
+      },
+      {
+        "id": 19,
+        "question": "What does the term 'Biology' literally mean?",
+        "explanation": "Bios = life, Logos = study. Biology means the study of life.",
+        "options": ["Study of Earth", "Study of life", "Study of chemicals", "Study of animals only"],
+        "correct": 1
+      },
+      {
+        "id": 20,
+        "question": "Who is considered the 'Father of Biology'?",
+        "explanation": "Aristotle made extensive observations and classifications of living organisms.",
+        "options": ["Aristotle", "Charles Darwin", "Gregor Mendel", "Louis Pasteur"],
+        "correct": 0
+      }
+    ]
+  }

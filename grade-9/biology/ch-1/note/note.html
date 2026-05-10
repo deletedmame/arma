@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 1: Introduction to Biology | BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e86a33;
+            --primary-dark: #d3541f;
+            --primary-light: #ff9f7a;
+            --bg: #f5efe6;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #eadbc8;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        [data-theme="dark"] {
+            --primary: #ff8a5c;
+            --primary-dark: #e86a33;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #f0f0f0;
+            --text-light: #b0b0b0;
+            --border: #404040;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.2s;
+        }
+
+        .note-header {
+            background: var(--card);
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .account-wrapper {
+            position: relative;
+        }
+
+        .account-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 8px 4px 12px;
+            background: var(--bg);
+            border-radius: 40px;
+            border: 1px solid var(--border);
+        }
+
+        .user-info-header {
+            text-align: right;
+        }
+
+        .user-name-header {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-grade-header {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+
+        .user-avatar-header {
+            width: 34px;
+            height: 34px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .account-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 280px;
+            box-shadow: var(--shadow-hover);
+            display: none;
+            z-index: 200;
+        }
+
+        .account-dropdown.active {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .dropdown-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dropdown-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .dropdown-user-info h4 {
+            font-size: 1rem;
+        }
+
+        .dropdown-user-info p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .dropdown-menu {
+            padding: 8px 0;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            color: var(--primary);
+        }
+
+        .dropdown-item.danger {
+            color: #dc3545;
+        }
+
+        .theme-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+        }
+
+        .theme-selector select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 8px 0;
+        }
+
+        .main-layout-wrapper {
+            display: flex;
+            max-width: 1400px;
+            width: 95%;
+            gap: 25px;
+            margin: 30px auto;
+            align-items: flex-start;
+        }
+
+        .note-container {
+            flex: 2.5;
+            background: var(--card);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .note-header-title {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .note-header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .note-header-title p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .note-scroll-box {
+            padding: 25px;
+            overflow-y: auto;
+            max-height: 70vh;
+            line-height: 1.7;
+        }
+
+        .note-scroll-box h3 {
+            color: var(--primary);
+            margin: 20px 0 10px 0;
+            font-size: 1.3rem;
+        }
+
+        .note-scroll-box h4 {
+            margin: 15px 0 8px 0;
+            font-size: 1.1rem;
+        }
+
+        .note-scroll-box p {
+            margin-bottom: 12px;
+        }
+
+        .note-scroll-box ul,
+        .note-scroll-box ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .note-scroll-box li {
+            margin-bottom: 5px;
+        }
+
+        .note-scroll-box strong {
+            color: var(--primary-dark);
+        }
+
+        .sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .quiz-sidebar-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 14px 25px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .quiz-sidebar-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .video-toggle-btn {
+            width: 100%;
+            background: var(--bg);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .video-toggle-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .video-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 10px;
+            display: none;
+        }
+
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .ai-chat-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(232, 106, 51, 0.4);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: white;
+            transition: 0.3s;
+            animation: pulse-glow 2s infinite;
+        }
+
+        .ai-chat-btn:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 8px 25px rgba(232, 106, 51, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 8px 35px rgba(232, 106, 51, 0.7);
+            }
+        }
+
+        .ai-panel {
+            position: fixed;
+            bottom: 100px;
+            right: 28px;
+            width: 420px;
+            max-height: 600px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: none;
+            flex-direction: column;
+            z-index: 1150;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .ai-panel.active {
+            display: flex;
+        }
+
+        .ai-head {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-head-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .ai-close-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .ai-context-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .ai-chat {
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 420px;
+            background: var(--bg);
+        }
+
+        .ai-msg {
+            padding: 10px 14px;
+            border-radius: 18px;
+            max-width: 85%;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .ai-msg.user {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 6px;
+        }
+
+        .ai-msg.assistant {
+            background: var(--card);
+            border: 1px solid var(--border);
+            align-self: flex-start;
+            border-bottom-left-radius: 6px;
+            color: var(--text);
+        }
+
+        .ai-typing {
+            align-self: flex-start;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 18px;
+            border-bottom-left-radius: 6px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .ai-typing span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .ai-typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .ai-typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+
+        .ai-input-wrap {
+            display: flex;
+            gap: 10px;
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            background: var(--card);
+        }
+
+        .ai-input-wrap input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .ai-input-wrap input:focus {
+            border-color: var(--primary);
+        }
+
+        .ai-input-wrap button {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 30px;
+            padding: 0 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+        }
+
+        .ai-input-wrap button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .note-footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout-wrapper {
+                flex-direction: column;
+            }
+
+            .ai-panel {
+                width: 380px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ai-panel {
+                width: calc(100% - 30px);
+            }
+
+            .user-info-header {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body data-theme="light">
+
+    <header class="note-header">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-dna"></i></div>
+            <div class="logo-text">
+                <h1>BNA <span>Academy</span></h1>
+                <p>Grade 9 Biology</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a class="back-btn" onclick="history.back()" href="#"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <div class="account-wrapper">
+                <div class="account-trigger" id="accountTrigger">
+                    <div class="user-info-header">
+                        <div class="user-name-header" id="headerUserName">Student</div>
+                        <div class="user-grade-header" id="headerUserGrade">Grade 9</div>
+                    </div>
+                    <div class="user-avatar-header" id="headerAvatar">S</div>
+                </div>
+                <div class="account-dropdown" id="accountDropdown">
+                    <div class="dropdown-header">
+                        <div class="dropdown-user">
+                            <div class="dropdown-avatar" id="dropdownAvatar">S</div>
+                            <div class="dropdown-user-info">
+                                <h4 id="dropdownUserName">Student</h4>
+                                <p id="dropdownUserGrade">Grade 9 • Section A</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown-menu">
+                        <a href="../../../../profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My
+                            Profile</a>
+                        <a href="../../../../leaderboard.html" class="dropdown-item"><i class="fas fa-trophy"></i>
+                            Leaderboard</a>
+                        <div class="dropdown-divider"></div>
+                        <div class="theme-selector">
+                            <span><i class="fas fa-palette"></i> Theme</span>
+                            <select id="themeSelector">
+                                <option value="light">☀️ Light</option>
+                                <option value="dark">🌙 Dark</option>
+                            </select>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item danger" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>
+                            Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout-wrapper">
+        <div class="note-container">
+            <div class="note-header-title">
+                <h1>Unit 1: Introduction to Biology</h1>
+                <p><i class="fas fa-book-open"></i> Based on textbook pages 1-18</p>
+            </div>
+            <div class="note-scroll-box">
+                <section>
+                    <h3>1.1 Definition of Biology</h3>
+                    <p>Biology is the branch of science that deals with the study of living organisms and their vital
+                        processes. The word comes from Greek: <strong>bios</strong> (life) and <strong>logos</strong>
+                        (study). It explores how life works, from the molecular level in cells to the complex
+                        interactions in entire ecosystems.</p>
+                    <h3>1.2 Why do we study Biology?</h3>
+                    <p>Understanding biology is crucial for:</p>
+                    <ul>
+                        <li><strong>Medical advancement</strong> - developing drugs and treatments</li>
+                        <li><strong>Environmental conservation</strong> - protecting ecosystems</li>
+                        <li><strong>Agriculture</strong> - improving crop yields and food production</li>
+                        <li><strong>Understanding human impact</strong> on the planet</li>
+                        <li><strong>Forensic science</strong> - solving crimes using DNA evidence</li>
+                    </ul>
+                    <h3>1.3 The Scientific Method</h3>
+                    <p>Biologists use a structured process to solve problems and answer questions:</p>
+                    <ol>
+                        <li><strong>Observation:</strong> Identifying a pattern or problem</li>
+                        <li><strong>Question:</strong> Formulating a specific question</li>
+                        <li><strong>Hypothesis:</strong> Proposing a testable explanation</li>
+                        <li><strong>Experiment:</strong> Testing under controlled variables</li>
+                        <li><strong>Data Analysis:</strong> Collecting and interpreting results</li>
+                        <li><strong>Conclusion:</strong> Determining if hypothesis is supported</li>
+                        <li><strong>Communication:</strong> Sharing findings</li>
+                    </ol>
+                    <h3>1.4 Tools of a Biologist</h3>
+                    <h4>1.4.1 Laboratory Tools</h4>
+                    <ul>
+                        <li><strong>Beakers & Flasks:</strong> For mixing and heating solutions</li>
+                        <li><strong>Test Tubes:</strong> For small-scale reactions</li>
+                        <li><strong>Petri Dishes:</strong> For culturing microorganisms</li>
+                        <li><strong>Autoclave:</strong> For sterilizing equipment</li>
+                        <li><strong>Incubator:</strong> For maintaining optimal temperatures</li>
+                    </ul>
+                    <h4>1.4.2 Field Tools</h4>
+                    <ul>
+                        <li><strong>Quadrats:</strong> For sampling plant populations</li>
+                        <li><strong>Transect lines:</strong> For studying distribution patterns</li>
+                        <li><strong>GPS devices:</strong> For location mapping</li>
+                        <li><strong>Collection nets:</strong> For capturing insects</li>
+                    </ul>
+                    <h3>1.5 The Light Microscope</h3>
+                    <h4>1.5.1 Parts and Functions</h4>
+                    <ul>
+                        <li><strong>Eyepiece (Ocular):</strong> 10x magnification</li>
+                        <li><strong>Objective Lenses:</strong> 4x, 10x, 40x, 100x</li>
+                        <li><strong>Coarse Adjustment:</strong> Rough focus</li>
+                        <li><strong>Fine Adjustment:</strong> Sharp focus</li>
+                        <li><strong>Stage:</strong> Holds the slide</li>
+                        <li><strong>Diaphragm:</strong> Controls light amount</li>
+                    </ul>
+                    <h4>1.5.2 Total Magnification</h4>
+                    <p><strong>Total = Eyepiece × Objective</strong> (e.g., 10x × 40x = 400x)</p>
+                    <h4>1.5.3 Handling</h4>
+                    <ul>
+                        <li>Carry by arm and base</li>
+                        <li>Start with lowest power (4x)</li>
+                        <li>Use coarse then fine adjustment</li>
+                        <li>Clean lenses with lens paper only</li>
+                    </ul>
+                    <h3>1.6 Laboratory Safety Rules</h3>
+                    <ul>
+                        <li>✅ Follow instructions carefully</li>
+                        <li>✅ Wear PPE (goggles, lab coat, gloves)</li>
+                        <li>✅ Never eat or drink in lab</li>
+                        <li>✅ Never taste or sniff chemicals</li>
+                        <li>✅ Clean up after experiments</li>
+                        <li>✅ Wash hands thoroughly</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-card">
+                <a href="../quiz/index.html" class="quiz-sidebar-btn"><i class="fas fa-pen-nib"></i> Take Chapter
+                    Quiz</a>
+            </div>
+            <div class="sidebar-card">
+                <button id="toggleVideoBtn" class="video-toggle-btn"><i class="fas fa-play-circle"></i> Watch Video
+                    Lesson</button>
+            </div>
+            <div id="videoCard" class="video-card">
+                <div class="video-container">
+                    <iframe id="videoIframe" src="https://www.youtube.com/embed/3tisOnOkwzo"
+                        title="Introduction to Biology" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="aiChatBtn" class="ai-chat-btn" title="Ask ARMA AI Assistant">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <div id="aiPanel" class="ai-panel">
+        <div class="ai-head">
+            <div class="ai-head-left">
+                <i class="fas fa-brain"></i>
+                <span>ARMA – BNA Study Assistant</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="ai-context-badge"><i class="fas fa-microchip"></i> Local AI (Ollama)</span>
+                <button class="ai-close-btn" id="aiCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div id="aiChat" class="ai-chat">
+            <div class="ai-msg assistant">
+                🧠 <strong>Hello! I'm ARMA, your BNA Biology Assistant!</strong><br><br>
+                I can help you with:<br>
+                • Definition of Biology<br>
+                • Why we study Biology<br>
+                • The Scientific Method<br>
+                • Tools of a Biologist<br>
+                • Microscope parts and functions<br>
+                • Total magnification calculations<br>
+                • Laboratory safety rules<br><br>
+                <em>Ask me anything about Biology Unit 1!</em>
+            </div>
+        </div>
+        <div class="ai-input-wrap">
+            <input id="aiInput" type="text" placeholder="Ask about Biology Unit 1..." />
+            <button id="aiSendBtn"><i class="fas fa-paper-plane"></i> Send</button>
+        </div>
+    </div>
+
+    <footer class="note-footer">
+        <p>© 2026 Bikolos Nur Academy (BNA) | ARMA AI – Biology Unit 1</p>
+    </footer>
+
+    <script>
+        const SYSTEM_PROMPT = `You are ARMA, a friendly and enthusiastic Biology Unit 1 teaching assistant for Grade 9 students at BNA Academy.
+
+CRITICAL RULES:
+1. ONLY answer questions about Biology Unit 1 topics listed below.
+2. If asked about ANY other subject, respond EXACTLY: "I'm sorry, I can only help with Biology Unit 1. Please ask me about: Definition of Biology, Why we study Biology, Scientific Method, Tools of a Biologist, Microscope parts, Total magnification, or Lab safety rules."
+3. Give detailed, helpful answers based on the Grade 9 Biology textbook.
+4. Use simple language appropriate for Grade 9 students.
+5. Be encouraging and supportive.
+
+BIOLOGY UNIT 1 TOPICS:
+- Definition of Biology (bios = life, logos = study)
+- Why we study Biology (medicine, conservation, agriculture, forensics)
+- Scientific Method: Observation → Question → Hypothesis → Experiment → Data Analysis → Conclusion → Communication
+- Lab Tools: beakers, flasks, test tubes, petri dishes, autoclave, incubator
+- Field Tools: quadrats, transect lines, GPS devices, collection nets
+- Light Microscope parts: eyepiece/ocular (10x), objective lenses (4x/10x/40x/100x), coarse adjustment, fine adjustment, stage, diaphragm
+- Total Magnification = Eyepiece × Objective (e.g. 10 × 40 = 400x)
+- Microscope handling: carry by arm and base, start lowest power, use lens paper only
+- Lab Safety: PPE (goggles, lab coat, gloves), no eating/drinking, never taste/sniff chemicals, clean up, wash hands`;
+
+        /** Local LLM via Ollama — no API keys. Install from https://ollama.com then run: ollama pull llama3.2 */
+        const LOCAL_AI_URL = 'http://127.0.0.1:11434/v1/chat/completions';
+        const LOCAL_AI_MODEL = 'llama3.2';
+
+        let conversationHistory = [];
+        let isProcessing = false;
+
+        (function initUI() {
+            const videoBtn = document.getElementById('toggleVideoBtn');
+            const videoCard = document.getElementById('videoCard');
+            const videoIframe = document.getElementById('videoIframe');
+            if (videoBtn && videoCard) {
+                videoBtn.addEventListener('click', () => {
+                    const hidden = videoCard.style.display === 'none' || videoCard.style.display === '';
+                    if (hidden) {
+                        videoCard.style.display = 'block';
+                        videoBtn.innerHTML = '<i class="fas fa-times-circle"></i> Hide Video';
+                    } else {
+                        videoCard.style.display = 'none';
+                        videoBtn.innerHTML = '<i class="fas fa-play-circle"></i> Watch Video Lesson';
+                        if (videoIframe) { const s = videoIframe.src; videoIframe.src = ''; videoIframe.src = s; }
+                    }
+                });
+            }
+            const trigger = document.getElementById('accountTrigger');
+            const dropdown = document.getElementById('accountDropdown');
+            if (trigger && dropdown) {
+                trigger.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+                document.addEventListener('click', () => dropdown.classList.remove('active'));
+                dropdown.addEventListener('click', (e) => e.stopPropagation());
+            }
+            const themeSelect = document.getElementById('themeSelector');
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            if (themeSelect) {
+                themeSelect.value = savedTheme;
+                themeSelect.addEventListener('change', (e) => {
+                    document.body.setAttribute('data-theme', e.target.value);
+                    localStorage.setItem('theme', e.target.value);
+                });
+            }
+            try {
+                const sessionData = localStorage.getItem("current_user_session");
+                if (sessionData) {
+                    const user = JSON.parse(sessionData);
+                    const initial = (user.name || 'S').charAt(0).toUpperCase();
+                    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+                    set('headerUserName', user.name || 'Student');
+                    set('headerUserGrade', `Grade ${user.grade || 9}`);
+                    set('headerAvatar', initial);
+                    set('dropdownUserName', user.name || 'Student');
+                    set('dropdownUserGrade', `Grade ${user.grade || 9} • Section ${user.section || 'A'}`);
+                    set('dropdownAvatar', initial);
+                }
+            } catch (e) { }
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem("current_user_session");
+                window.location.href = '../../../../signin.html';
+            });
+            const aiBtn = document.getElementById('aiChatBtn');
+            const aiPanel = document.getElementById('aiPanel');
+            const aiCloseBtn = document.getElementById('aiCloseBtn');
+            const aiInput = document.getElementById('aiInput');
+            const aiSendBtn = document.getElementById('aiSendBtn');
+            if (aiBtn && aiPanel) {
+                aiBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    aiPanel.classList.toggle('active');
+                    if (aiPanel.classList.contains('active') && aiInput) setTimeout(() => aiInput.focus(), 100);
+                });
+            }
+            if (aiCloseBtn) aiCloseBtn.addEventListener('click', () => aiPanel.classList.remove('active'));
+            document.addEventListener('click', (e) => {
+                if (aiPanel && aiPanel.classList.contains('active')) {
+                    if (!aiPanel.contains(e.target) && aiBtn && !aiBtn.contains(e.target)) {
+                        aiPanel.classList.remove('active');
+                    }
+                }
+            });
+            if (aiSendBtn) aiSendBtn.addEventListener('click', sendMessage);
+            if (aiInput) aiInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+            });
+        })();
+
+        function addMessage(text, role) {
+            const chatDiv = document.getElementById('aiChat');
+            if (!chatDiv) return;
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `ai-msg ${role}`;
+            msgDiv.innerHTML = formatMessage(text);
+            chatDiv.appendChild(msgDiv);
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+
+        function formatMessage(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function showTyping() {
+            const chatDiv = document.getElementById('aiChat');
+            if (!chatDiv) return;
+            const d = document.createElement('div');
+            d.className = 'ai-typing';
+            d.id = 'typingIndicator';
+            d.innerHTML = '<span></span><span></span><span></span>';
+            chatDiv.appendChild(d);
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+
+        function removeTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+
+        async function callLocalAI(userMessage) {
+            conversationHistory.push({ role: 'user', content: userMessage });
+            if (conversationHistory.length > 20) conversationHistory = conversationHistory.slice(-20);
+
+            const response = await fetch(LOCAL_AI_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: LOCAL_AI_MODEL,
+                    max_tokens: 1000,
+                    messages: [
+                        { role: 'system', content: SYSTEM_PROMPT },
+                        ...conversationHistory
+                    ]
+                })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                console.error('Local AI error:', errText);
+                throw new Error('Local AI request failed');
+            }
+
+            const data = await response.json();
+            const assistantText = data.choices[0].message.content;
+
+            conversationHistory.push({ role: 'assistant', content: assistantText });
+            return assistantText;
+        }
+
+        async function sendMessage() {
+            if (isProcessing) return;
+            const input = document.getElementById('aiInput');
+            const sendBtn = document.getElementById('aiSendBtn');
+            const message = input ? input.value.trim() : '';
+            if (!message) return;
+
+            addMessage(message, 'user');
+            if (input) input.value = '';
+
+            isProcessing = true;
+            if (input) input.disabled = true;
+            if (sendBtn) sendBtn.disabled = true;
+            showTyping();
+
+            try {
+                const reply = await callLocalAI(message);
+                removeTyping();
+                addMessage(reply, 'assistant');
+            } catch (err) {
+                console.error('Error:', err);
+                removeTyping();
+                addMessage("⚠️ Could not reach local Ollama. Start it with <code>ollama serve</code>, ensure model <code>" + LOCAL_AI_MODEL + "</code> is installed (<code>ollama pull " + LOCAL_AI_MODEL + "</code>), then try again.", 'assistant');
+            } finally {
+                isProcessing = false;
+                if (input) { input.disabled = false; input.focus(); }
+                if (sendBtn) sendBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

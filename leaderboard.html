@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #e86a33; --bg: #f5efe6; --card: #ffffff; --text: #333333; --text-light: #666666; --border: #eadbc8; }
+        [data-theme="dark"] { --primary: #ff8a5c; --bg: #121212; --card: #1e1e1e; --text: #f0f0f0; --text-light: #b0b0b0; --border: #404040; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; }
+        .leaderboard-container { max-width: 1000px; margin: 80px auto 40px; background: var(--card); border-radius: 28px; padding: 35px; border: 1px solid var(--border); }
+        .leaderboard-header { text-align: center; margin-bottom: 30px; }
+        .leaderboard-header h1 { color: var(--primary); margin-bottom: 10px; }
+        .filters { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .filters select, .filters button { padding: 10px 20px; border: 1px solid var(--border); border-radius: 40px; background: var(--bg); color: var(--text); cursor: pointer; }
+        .filters button { background: var(--primary); color: white; border: none; }
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: var(--bg); padding: 20px; border-radius: 20px; text-align: center; }
+        .stat-card .value { font-size: 28px; font-weight: bold; color: var(--primary); }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg); }
+        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333; }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #e0e0e0); color: #333; }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32, #e8a870); color: #333; }
+        .medal { font-size: 20px; }
+        .back-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 30px; width: 100%; margin-top: 30px; cursor: pointer; }
+        .footer { text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-light); }
+        .footer a { color: var(--primary); text-decoration: none; }
+        @media (max-width: 768px) { .leaderboard-container { padding: 20px; } .stats-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="leaderboard-container">
+    <div class="leaderboard-header"><h1><i class="fas fa-trophy"></i> Leaderboard</h1><p>Ranked by average score across all assessments (minimum 3 assessments)</p></div>
+    <div class="filters">
+        <select id="gradeFilter"><option value="">All Grades</option><option value="9">Grade 9</option><option value="10">Grade 10</option><option value="11">Grade 11</option><option value="12">Grade 12</option></select>
+        <select id="sectionFilter"><option value="">All Sections</option><option value="A">Section A</option><option value="B">Section B</option><option value="C">Section C</option><option value="D">Section D</option></select>
+        <button onclick="loadLeaderboard()">Apply Filter</button><button onclick="resetFilters()">Reset</button>
+    </div>
+    <div class="stats-row">
+        <div class="stat-card"><div class="value" id="topStudent">-</div><div>🥇 Top Student</div></div>
+        <div class="stat-card"><div class="value" id="topAverage">0%</div><div>📊 Highest Average</div></div>
+        <div class="stat-card"><div class="value" id="totalStudents">0</div><div>👥 Qualified Students</div></div>
+    </div>
+    <div class="table-container"><table><thead><tr><th>Rank</th><th>Student</th><th>Grade</th><th>Section</th><th>Average Score</th><th>Assessments</th></tr></thead><tbody id="leaderboardBody"><tr><td colspan="6" style="text-align:center;">Loading...</td></tr></tbody></table></div>
+    <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+</div>
+<div class="footer"><p>Bikolos Nur Academy (BNA) | Powered by <a href="https://youtube.com" target="_blank">Arma</a></p></div>
+
+<script type="module">
+    import { getLeaderboard } from './firebase-functions.js';
+
+    async function loadLeaderboard() {
+        const gradeFilter = document.getElementById('gradeFilter').value;
+        const sectionFilter = document.getElementById('sectionFilter').value;
+        const rankedStudents = await getLeaderboard(gradeFilter || null, sectionFilter || null, 3);
+
+        document.getElementById('totalStudents').innerText = rankedStudents.length;
+        if (rankedStudents.length > 0) {
+            document.getElementById('topStudent').innerText = rankedStudents[0].name;
+            document.getElementById('topAverage').innerText = rankedStudents[0].average + '%';
+        } else {
+            document.getElementById('topStudent').innerText = '-';
+            document.getElementById('topAverage').innerText = '0%';
+        }
+
+        const tbody = document.getElementById('leaderboardBody');
+        if (rankedStudents.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No students with minimum 3 assessments yet</td></tr>';
+            return;
+        }
+        tbody.innerHTML = rankedStudents.map((s, i) => {
+            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1);
+            return `<tr class="${i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : ''}">
+                <td class="medal">${medal}</td><td><strong>${escapeHtml(s.name)}</strong></td>
+                <td>Grade ${s.grade}</td><td>Section ${s.section || '-'}</td>
+                <td><strong>${s.average}%</strong></td><td>${s.assessmentCount} assessments</td>
+            </tr>`;
+        }).join('');
+    }
+
+    function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+    function resetFilters() { document.getElementById('gradeFilter').value = ''; document.getElementById('sectionFilter').value = ''; loadLeaderboard(); }
+    function goBack() {
+        const session = localStorage.getItem("current_user_session");
+        if (session) { const user = JSON.parse(session); if (user.role === 'teacher') window.location.href = 'teacher-dashboard.html'; else if (user.role === 'admin') window.location.href = 'admin.html'; else if (user.role === 'parent') window.location.href = 'parent.html'; else window.location.href = 'subject-portal.html'; }
+        else { window.location.href = 'index.html'; }
+    }
+
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    loadLeaderboard();
+</script>
+</body>
+</html>

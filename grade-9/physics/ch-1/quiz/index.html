@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology - Grade 9</title>
+    <link rel="stylesheet" href="../../../../styles/home.css">
+    <link rel="stylesheet" href="../../../../styles/quiz.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Restored your Account Dropdown Styles */
+        .account-icon { position: fixed; top: 15px; right: 20px; cursor: pointer; z-index: 9999; }
+        .account-dropdown {
+            position: absolute; top: 35px; right: 0; background: var(--card);
+            border: 1px solid var(--border); border-radius: 12px; width: 220px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none;
+        }
+        .account-dropdown.active { display: block; }
+        .dropdown-header { padding: 12px; border-bottom: 1px solid var(--border-soft); }
+        .current-user { display: flex; align-items: center; gap: 10px; }
+        .user-avatar {
+            background: var(--primary-soft); width: 32px; height: 32px;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-weight: bold; color: var(--primary);
+        }
+        .user-info-dropdown { display: flex; flex-direction: column; }
+        .dropdown-menu { display: flex; flex-direction: column; }
+        .dropdown-item {
+            padding: 10px 12px; display: flex; align-items: center;
+            gap: 8px; font-weight: 500; cursor: pointer; border: none;
+            background: none; text-align: left; color: var(--text);
+        }
+        .dropdown-item:hover { background: var(--primary-soft); }
+        .theme-select { margin-left: auto; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; }
+        .dropdown-divider { height: 1px; background: var(--border-soft); margin: 5px 0; }
+
+        /* Quiz specific animations */
+        .pulse { animation: pulse 0.5s ease; }
+        .shake { animation: shake 0.4s ease; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.02);} 100% {transform: scale(1);} }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+    </style>
+</head>
+<body>
+
+<div class="account-icon" id="accountIcon">
+    <div class="account-icon-link">👤</div>
+    <div class="account-dropdown" id="accountDropdown">
+        <div class="dropdown-header">
+            <div class="current-user">
+                <div class="user-avatar">👤</div>
+                <div class="user-info-dropdown">
+                    <div class="user-name-dropdown">Loading...</div>
+                    <div class="user-grade-dropdown">Grade</div>
+                </div>
+            </div>
+        </div>
+        <div class="dropdown-menu">
+            <div class="dropdown-item">
+                <i class="fas fa-palette"></i>
+                <span>Theme</span>
+                <select id="theme-selector" class="theme-select">
+                    <option value="light">☀️ Light</option>
+                    <option value="dark">🌙 Dark</option>
+                </select>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button onclick="logout()" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="quiz-screen" class="screen active">
+        <div class="quiz-header">
+            <div id="streak-display" style="color: #ff4500; font-weight: bold; height: 24px;"></div>
+            <div class="quiz-info">
+                <span>Question <span id="current-question">1</span>/<span class="fullq">5</span></span>
+                <span>Score: <span id="score">0</span></span>
+            </div>
+            <div class="progress-bar-container" style="background: var(--border-soft); height: 8px; border-radius: 4px; margin-top: 10px;">
+                <div id="progress" style="background: var(--primary); height: 100%; width: 0%; border-radius: 4px; transition: width 0.3s ease;"></div>
+            </div>
+        </div>
+
+        <h2 id="question-text" style="margin-top: 20px;"></h2>
+        <div id="answers-container" class="answers-container"></div>
+
+        <div id="explain-link-container" class="hidden" style="margin-top: 15px;">
+            <a href="#" id="show-explain-link" style="color: var(--primary); text-decoration: none; font-weight: bold;">
+                <i class="fas fa-lightbulb"></i> Show Explanation
+            </a>
+        </div>
+        <div id="explanation-container" class="explanation-box hidden" style="background: var(--primary-soft); padding: 15px; border-radius: 8px; margin-top: 10px;">
+            <p id="explanation-text"></p>
+        </div>
+
+        <div id="next-container" class="hidden" style="margin-top: 20px;">
+            <button id="next-btn" class="btn-primary" style="width: 100%; padding: 12px; cursor: pointer;">
+                Next Question <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <div class="result-card" style="text-align: center; padding: 40px 20px;">
+            <h2>Quiz Results</h2>
+            <div class="result-info">
+                <p style="font-size: 1.5rem;">Score: <span id="final-score">0</span> / <span class="fullq">5</span></p>
+                <img src="../../../../images/ratings/" alt="" class="rating-img">
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                <button id="restart-btn" class="btn-secondary">Restart</button>
+                <button id="home-btn" class="btn-primary">Dashboard</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+</script>
+<script src="script.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 2: Characteristics & Classification | BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== EXACT STYLES FROM UNIT 1 (PRESERVED) ===== */
+        :root {
+            --primary: #e86a33;
+            --primary-dark: #d3541f;
+            --primary-light: #ff9f7a;
+            --bg: #f5efe6;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #eadbc8;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+            --shadow-hover: 0 10px 30px rgba(0,0,0,0.12);
+            --ai-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        [data-theme="dark"] {
+            --primary: #ff8a5c;
+            --primary-dark: #e86a33;
+            --primary-light: #ffb49a;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #f0f0f0;
+            --text-light: #b0b0b0;
+            --border: #404040;
+            --shadow: 0 4px 15px rgba(0,0,0,0.3);
+            --shadow-hover: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.2s, color 0.2s;
+        }
+        .note-header {
+            background: var(--card);
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.4rem;
+        }
+        .logo-text h1 { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+        .logo-text span { color: var(--primary); }
+        .logo-text p { font-size: 0.7rem; color: var(--text-light); }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .back-btn {
+            color: var(--text-light); text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 6px; padding: 8px 16px;
+            border-radius: 30px; transition: all 0.2s; background: var(--bg);
+            border: 1px solid var(--border); cursor: pointer;
+        }
+        .back-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .account-wrapper { position: relative; }
+        .account-trigger {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            padding: 4px 8px 4px 12px; background: var(--bg); border-radius: 40px;
+            border: 1px solid var(--border); transition: all 0.2s;
+        }
+        .account-trigger:hover { border-color: var(--primary); }
+        .user-info-header { text-align: right; }
+        .user-name-header { font-weight: 600; color: var(--text); font-size: 0.85rem; }
+        .user-grade-header { font-size: 0.7rem; color: var(--text-light); }
+        .user-avatar-header {
+            width: 34px; height: 34px; background: var(--primary); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white;
+            font-weight: 600; font-size: 0.9rem;
+        }
+        .account-dropdown {
+            position: absolute; top: 50px; right: 0; background: var(--card);
+            border: 1px solid var(--border); border-radius: 16px; width: 280px;
+            box-shadow: var(--shadow-hover); display: none; overflow: hidden; z-index: 200;
+        }
+        .account-dropdown.active { display: block; }
+        .dropdown-header { padding: 16px; background: linear-gradient(135deg, var(--primary-light)15, var(--primary)80); color: white; }
+        .dropdown-user { display: flex; align-items: center; gap: 12px; }
+        .dropdown-avatar {
+            width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            font-weight: 600; border: 2px solid rgba(255,255,255,0.3);
+        }
+        .dropdown-user-info h4 { font-size: 1rem; margin-bottom: 3px; }
+        .dropdown-user-info p { font-size: 0.8rem; opacity: 0.9; }
+        .dropdown-menu { padding: 8px 0; }
+        .dropdown-item {
+            padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: var(--text); cursor: pointer; background: none;
+            border: none; width: 100%; font-size: 0.9rem; transition: background 0.2s;
+            text-align: left;
+        }
+        .dropdown-item:hover { background: var(--bg); }
+        .dropdown-item i { width: 20px; color: var(--primary); }
+        .dropdown-item.danger { color: var(--danger); }
+        .dropdown-item.danger i { color: var(--danger); }
+        .theme-selector { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
+        .theme-selector select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; color: var(--text); font-size: 0.8rem; cursor: pointer; }
+        .dropdown-divider { height: 1px; background: var(--border); margin: 8px 0; }
+        .main-layout-wrapper { display: flex; max-width: 1400px; width: 95%; gap: 25px; margin: 30px auto; align-items: flex-start; }
+        .note-container { flex: 2.5; margin: 0; display: flex; flex-direction: column; background: var(--card); border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+        .note-header-title { padding: 20px 25px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, var(--primary-light)10, transparent 90%); }
+        .note-header-title h1 { font-size: 1.8rem; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+        .note-header-title p { color: var(--text-light); font-size: 0.9rem; }
+        .note-scroll-box { padding: 25px; overflow-y: auto; max-height: 70vh; line-height: 1.7; }
+        .note-scroll-box h3 { color: var(--primary); margin: 20px 0 10px 0; font-size: 1.3rem; }
+        .note-scroll-box h3:first-child { margin-top: 0; }
+        .note-scroll-box h4 { color: var(--text); margin: 15px 0 8px 0; font-size: 1.1rem; }
+        .note-scroll-box p { margin-bottom: 12px; color: var(--text); }
+        .note-scroll-box ul, .note-scroll-box ol { margin-left: 20px; margin-bottom: 15px; }
+        .note-scroll-box li { margin-bottom: 5px; }
+        .note-scroll-box strong { color: var(--primary-dark); }
+        .sidebar { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); text-align: center; }
+        .quiz-sidebar-btn {
+            display: inline-block; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; padding: 14px 25px; border-radius: 14px; text-decoration: none;
+            font-weight: 600; transition: 0.3s; width: 100%; box-sizing: border-box;
+            font-size: 1rem; box-shadow: var(--shadow);
+        }
+        .quiz-sidebar-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+        .video-toggle-btn {
+            width: 100%; background: var(--bg); color: var(--primary); border: 2px solid var(--primary);
+            padding: 14px; border-radius: 14px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.3s; font-size: 1rem;
+        }
+        .video-toggle-btn:hover { background: var(--primary); color: white; }
+        .video-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 10px; box-shadow: var(--shadow); display: none; animation: fadeIn 0.4s ease forwards; }
+        .video-container { width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; background: #000; }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
+        .ai-chat-btn {
+            position: fixed; bottom: 28px; right: 28px; width: 60px; height: 60px;
+            background: var(--ai-gradient); border: none; border-radius: 50%; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); z-index: 1100;
+            display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+            color: white; transition: 0.3s; animation: pulse-glow 2s infinite;
+        }
+        .ai-chat-btn:hover { transform: scale(1.1); }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 8px 35px rgba(102, 126, 234, 0.7); }
+        }
+        .ai-panel {
+            position: fixed; bottom: 100px; right: 28px; width: 420px; max-height: 600px;
+            background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+            display: none; flex-direction: column; z-index: 1150; box-shadow: var(--shadow-hover);
+            overflow: hidden; animation: slideUp 0.3s ease;
+        }
+        .ai-panel.active { display: flex; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .ai-head { padding: 16px 20px; background: var(--ai-gradient); color: white; font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; }
+        .ai-head-left { display: flex; align-items: center; gap: 10px; }
+        .ai-close-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .ai-close-btn:hover { background: rgba(255,255,255,0.3); }
+        .ai-context-badge { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+        .ai-chat { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; height: 420px; background: var(--bg); }
+        .ai-msg { padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; line-height: 1.5; animation: messageIn 0.2s ease; }
+        @keyframes messageIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .ai-msg.user { background: var(--ai-gradient); color: white; align-self: flex-end; border-bottom-right-radius: 6px; }
+        .ai-msg.assistant { background: var(--card); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 6px; color: var(--text); }
+        .ai-typing { align-self: flex-start; background: var(--card); border: 1px solid var(--border); padding: 10px 14px; border-radius: 18px; border-bottom-left-radius: 6px; display: flex; gap: 4px; }
+        .ai-typing span { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: typing 1.4s infinite; }
+        .ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-8px); opacity: 1; } }
+        .ai-input-wrap { display: flex; gap: 10px; padding: 16px; border-top: 1px solid var(--border); background: var(--card); }
+        .ai-input-wrap input { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 30px; background: var(--bg); color: var(--text); outline: none; font-size: 0.9rem; transition: border 0.2s; }
+        .ai-input-wrap input:focus { border-color: var(--primary); }
+        .ai-input-wrap button { background: var(--ai-gradient); border: none; border-radius: 30px; padding: 0 20px; color: white; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
+        .ai-input-wrap button:hover { opacity: 0.9; transform: scale(1.02); }
+        .ai-input-wrap button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .note-footer { text-align: center; padding: 20px; margin-top: 20px; color: var(--text-light); font-size: 0.8rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 900px) { .main-layout-wrapper { flex-direction: column; } .note-container { width: 100%; } .sidebar { width: 100%; } .ai-panel { width: 380px; right: 15px; bottom: 85px; } }
+        @media (max-width: 480px) {
+            .note-header { padding: 12px 15px; } .logo-text h1 { font-size: 1rem; } .logo-text p { display: none; }
+            .user-info-header { display: none; } .ai-panel { width: calc(100% - 30px); right: 15px; max-height: 550px; }
+            .ai-chat-btn { width: 52px; height: 52px; bottom: 20px; right: 20px; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+<!-- Header (Identical to Unit 1) -->
+<header class="note-header">
+    <div class="logo">
+        <div class="logo-icon"><i class="fas fa-dna"></i></div>
+        <div class="logo-text"><h1>BNA <span>Academy</span></h1><p>Grade 9 Biology</p></div>
+    </div>
+    <div class="header-actions">
+        <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i><span>Back</span></button>
+        <div class="account-wrapper">
+            <div class="account-trigger" id="accountTrigger">
+                <div class="user-info-header"><div class="user-name-header" id="headerUserName">Student</div><div class="user-grade-header" id="headerUserGrade">Grade 9</div></div>
+                <div class="user-avatar-header" id="headerAvatar">S</div>
+            </div>
+            <div class="account-dropdown" id="accountDropdown">
+                <div class="dropdown-header"><div class="dropdown-user"><div class="dropdown-avatar" id="dropdownAvatar">S</div><div class="dropdown-user-info"><h4 id="dropdownUserName">Student</h4><p id="dropdownUserGrade">Grade 9 • Section A</p></div></div></div>
+                <div class="dropdown-menu">
+                    <a href="../../../../profile.html" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="../../../../leaderboard.html" class="dropdown-item"><i class="fas fa-trophy"></i> Leaderboard</a>
+                    <div class="dropdown-divider"></div>
+                    <div class="theme-selector"><span><i class="fas fa-palette"></i> Theme</span><select id="themeSelector"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option></select></div>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item danger" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="main-layout-wrapper">
+    <div class="note-container">
+        <div class="note-header-title">
+            <h1>Unit 2: Characteristics & Classification of Organisms</h1>
+            <p><i class="fas fa-book-open"></i> Based on textbook pages 19-48</p>
+        </div>
+        <div class="note-scroll-box">
+            <!-- ===== CONTENT UPDATED BASED ON PDF ===== -->
+            <section>
+                <h3>2.1 Characteristics of Living Things</h3>
+                <p>What makes something "alive"? Biologists recognize life by common characteristics:</p>
+                <ul>
+                    <li><strong>Cellular Organization:</strong> All living things are composed of one or more cells (unicellular like bacteria, or multicellular like plants).</li>
+                    <li><strong>Energy Requirement:</strong> Organisms need energy for metabolic activities. <strong>Autotrophs</strong> (plants) make their own food; <strong>Heterotrophs</strong> (animals) consume others.</li>
+                    <li><strong>Response to Stimuli:</strong> Organisms detect and respond to changes in their internal or external environment.</li>
+                    <li><strong>Growth:</strong> Permanent increase in size and mass due to cell division or enlargement.</li>
+                    <li><strong>Reproduction:</strong> Production of offspring (sexually or asexually).</li>
+                    <li><strong>Excretion:</strong> Removal of metabolic wastes (e.g., carbon dioxide).</li>
+                    <li><strong>Ordered Complexity:</strong> High level of organization from atoms to molecules to cells.</li>
+                    <li><strong>Homeostasis:</strong> Maintenance of stable internal conditions (e.g., body temperature).</li>
+                    <li><strong>Evolutionary Adaptation:</strong> Populations evolve over time to suit their environment.</li>
+                </ul>
+
+                <h3>2.2 Taxonomy of Living Things</h3>
+                <h4>2.2.1 Principles of Classification</h4>
+                <p><strong>Taxonomy</strong> is the science of naming, identifying, and classifying organisms. Taxonomists group organisms based on similarities in structure, genetics, and evolutionary relationships.</p>
+                <p><strong>Why classify?</strong> It makes studying the vast diversity of life manageable and reveals evolutionary links.</p>
+
+                <h4>2.2.2 Taxonomic Hierarchies</h4>
+                <p>Carolus Linnaeus (1707-1778), the "Father of Taxonomy," introduced the hierarchical system:</p>
+                <ol>
+                    <li><strong>Domain</strong> (Broadest: Bacteria, Archaea, Eukarya)</li>
+                    <li><strong>Kingdom</strong></li>
+                    <li><strong>Phylum</strong> (or Division for plants)</li>
+                    <li><strong>Class</strong></li>
+                    <li><strong>Order</strong></li>
+                    <li><strong>Family</strong></li>
+                    <li><strong>Genus</strong></li>
+                    <li><strong>Species</strong> (Most specific: group of organisms that can interbreed and produce fertile offspring)</li>
+                </ol>
+
+                <h3>2.3 Relevance of Classification</h3>
+                <p>Classification provides a framework to study relationships between living and extinct organisms. It has practical applications in:</p>
+                <ul>
+                    <li><strong>Agriculture & Forestry:</strong> Identifying useful plant varieties.</li>
+                    <li><strong>Medicine:</strong> Discovering new sources of drugs (e.g., related plant species may share medicinal properties).</li>
+                </ul>
+
+                <h3>2.4 Linnaean System of Nomenclature</h3>
+                <p><strong>Binomial Nomenclature:</strong> The two-name system (Genus + species).</p>
+                <ul>
+                    <li><strong>Rules:</strong> Genus is capitalized, species is lowercase. Both are <em>italicized</em> in print or underlined when handwritten.</li>
+                    <li><strong>Examples:</strong> Humans: <em>Homo sapiens</em>; Lion: <em>Panthera leo</em>; Maize: <em>Zea mays</em>.</li>
+                    <li><strong>Purpose:</strong> Avoids confusion caused by local names (e.g., "Bekkolo" vs. "Corn").</li>
+                </ul>
+
+                <h3>2.5 Common Ethiopian Animals and Plants</h3>
+                <p>Ethiopia is a biodiversity hotspot with many endemic species.</p>
+                <ul>
+                    <li><strong>Endemic Animals:</strong> Ethiopian Wolf (<em>Canis simensis</em>), Walia Ibex (<em>Capra walie</em>), Gelada Baboon (<em>Theropithecus gelada</em>).</li>
+                    <li><strong>Endemic Plants:</strong> Tef (<em>Eragrostis tef</em>), Noug (<em>Guizotia abyssinica</em>), Enset (<em>Ensete ventricosum</em>).</li>
+                </ul>
+                <h4>Dichotomous Keys</h4>
+                <p>A tool used to identify unknown organisms by making a series of choices between two contrasting characteristics (e.g., "Is it warm-blooded or cold-blooded?").</p>
+
+                <h3>2.6 The Five-Kingdom System</h3>
+                <p>Proposed by Whittaker (1969) to address limitations of the two-kingdom (Plant/Animal) system. Based on cell structure, nutrition, and organization.</p>
+                <h4>Kingdom Monera</h4>
+                <ul><li><strong>Prokaryotic</strong> (no nucleus). Includes <strong>Eubacteria</strong> (true bacteria) and <strong>Archaebacteria</strong> (extremophiles). Some are autotrophs, others heterotrophs.</li></ul>
+                <h4>Kingdom Protista</h4>
+                <ul><li><strong>Eukaryotic</strong>, mostly unicellular. Includes protozoans (animal-like), algae (plant-like), and slime molds (fungus-like).</li></ul>
+                <h4>Kingdom Fungi</h4>
+                <ul><li><strong>Eukaryotic</strong>, heterotrophic (absorb nutrients). Cell walls made of <strong>chitin</strong>. Includes yeasts, molds, and mushrooms. Reproduce via spores.</li></ul>
+                <h4>Kingdom Plantae</h4>
+                <ul><li><strong>Multicellular eukaryotes</strong>, autotrophic (photosynthesis). Cell walls of <strong>cellulose</strong>. Divided into Bryophytes, Pteridophytes, Gymnosperms, and Angiosperms.</li></ul>
+                <h4>Kingdom Animalia</h4>
+                <ul><li><strong>Multicellular eukaryotes</strong>, heterotrophic (ingest food). Lack cell walls. Divided into <strong>Invertebrates</strong> (no backbone) and <strong>Vertebrates</strong> (backbone).</li></ul>
+
+                <h3>2.7 Renowned Taxonomists in Ethiopia</h3>
+                <p>Despite limited resources, Ethiopia has produced distinguished taxonomists:</p>
+                <ul>
+                    <li><strong>Prof. Sebsebe Demissew:</strong> Renowned for work on the Flora of Ethiopia and Eritrea.</li>
+                    <li><strong>Dr. Mesfin Tadesse:</strong> Expert in plant systematics.</li>
+                    <li><strong>Prof. Ensermu Kelbessa:</strong> Contributions to plant taxonomy.</li>
+                    <li><strong>Prof. Abebe Getahun:</strong> Contributions to freshwater fish taxonomy.</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-card">
+            <a href="../quiz/index.html" class="quiz-sidebar-btn">
+                <i class="fas fa-pen-nib"></i> Take Chapter Quiz
+            </a>
+        </div>
+        <div class="sidebar-card">
+            <button id="toggleVideoBtn" class="video-toggle-btn">
+                <i class="fas fa-play-circle"></i> Watch Video Lesson
+            </button>
+        </div>
+        <div id="videoCard" class="video-card">
+            <div class="video-container">
+                <!-- Relevant video for Classification -->
+                <iframe id="videoIframe" src="https://www.youtube.com/embed/F38BmgPcZ_I?si=3pXZ9Lg1R8kF2JmT" title="Classification of Living Things" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chat Button -->
+<button id="aiChatBtn" class="ai-chat-btn" title="Ask AI Assistant"><i class="fas fa-robot"></i></button>
+
+<!-- AI Chat Panel -->
+<div id="aiPanel" class="ai-panel">
+    <div class="ai-head">
+        <div class="ai-head-left"><i class="fas fa-brain"></i><span>BNA Study Assistant</span></div>
+        <div><span class="ai-context-badge" id="aiContextBadge"><i class="fas fa-microchip"></i> Local AI (Ollama)</span><button class="ai-close-btn" id="aiCloseBtn"><i class="fas fa-times"></i></button></div>
+    </div>
+    <div id="aiChat" class="ai-chat">
+        <div class="ai-msg assistant">
+            🧠 <strong>Hello! This assistant uses your local AI (Ollama).</strong><br><br>
+            I'm ready for Unit 2 questions:<br>
+            • MRS GREN (Characteristics of Life)<br>
+            • Binomial Nomenclature (Scientific Names)<br>
+            • The 5 Kingdoms (Monera, Protista, Fungi, Plantae, Animalia)<br>
+            • Ethiopian Endemic Species<br><br>
+            <em>Ask me anything about classification!</em>
+        </div>
+    </div>
+    <div class="ai-input-wrap">
+        <input id="aiInput" type="text" placeholder="Ask me anything..." />
+        <button id="aiSendBtn"><i class="fas fa-paper-plane"></i> Send</button>
+    </div>
+</div>
+
+<footer class="note-footer">
+    <p>© 2026 Bikolos Nur Academy (BNA) | Powered by Arma Education</p>
+</footer>
+
+<script>
+    // Local LLM via Ollama — no API keys. Install https://ollama.com then: ollama pull llama3.2
+    const LOCAL_AI_URL = 'http://127.0.0.1:11434/v1/chat/completions';
+    const LOCAL_AI_MODEL = 'llama3.2';
+
+    // Context updated for Unit 2
+    const SYSTEM_PROMPT = `You are BNA Study Assistant, a helpful AI tutor running on the student's computer via Ollama.
+Current context: Student is viewing Biology Unit 2 (Characteristics of Life, Taxonomy, 5 Kingdoms, Binomial Nomenclature, Ethiopian Species).
+Provide accurate, step-by-step help for any academic question. Be encouraging and clear.`;
+
+    let conversationHistory = [{ role: "system", content: SYSTEM_PROMPT }];
+
+    function goBack() { window.history.back(); }
+    function logout() { localStorage.removeItem("current_user_session"); window.location.href = '../../../../signin.html'; }
+
+    (function initUI() {
+        const videoBtn = document.getElementById('toggleVideoBtn');
+        const videoCard = document.getElementById('videoCard');
+        const videoIframe = document.getElementById('videoIframe');
+        if(videoBtn && videoCard) {
+            videoBtn.addEventListener('click', () => {
+                if(window.getComputedStyle(videoCard).display === 'none') {
+                    videoCard.style.display = 'block';
+                    videoBtn.innerHTML = '<i class="fas fa-times-circle"></i> Hide Video';
+                } else {
+                    videoCard.style.display = 'none';
+                    videoBtn.innerHTML = '<i class="fas fa-play-circle"></i> Watch Video Lesson';
+                    const currentSrc = videoIframe.src;
+                    videoIframe.src = '';
+                    videoIframe.src = currentSrc;
+                }
+            });
+        }
+        const trigger = document.getElementById('accountTrigger');
+        const dropdown = document.getElementById('accountDropdown');
+        if(trigger && dropdown) {
+            trigger.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', () => dropdown.classList.remove('active'));
+            dropdown.addEventListener('click', (e) => e.stopPropagation());
+        }
+        const themeSelect = document.getElementById('themeSelector');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        if(themeSelect) {
+            themeSelect.value = savedTheme;
+            themeSelect.addEventListener('change', (e) => { document.body.setAttribute('data-theme', e.target.value); localStorage.setItem('theme', e.target.value); });
+        }
+        const sessionData = localStorage.getItem("current_user_session");
+        if(sessionData) {
+            try {
+                const user = JSON.parse(sessionData);
+                const initial = (user.name || 'S').charAt(0).toUpperCase();
+                document.getElementById('headerUserName').textContent = user.name || 'Student';
+                document.getElementById('headerUserGrade').textContent = `Grade ${user.grade || 9}`;
+                document.getElementById('headerAvatar').textContent = initial;
+                document.getElementById('dropdownUserName').textContent = user.name || 'Student';
+                document.getElementById('dropdownUserGrade').textContent = `Grade ${user.grade || 9} • Section ${user.section || 'A'}`;
+                document.getElementById('dropdownAvatar').textContent = initial;
+            } catch(e) {}
+        }
+        document.getElementById('logoutBtn')?.addEventListener('click', logout);
+        const aiBtn = document.getElementById('aiChatBtn');
+        const aiPanel = document.getElementById('aiPanel');
+        const aiCloseBtn = document.getElementById('aiCloseBtn');
+        const aiInput = document.getElementById('aiInput');
+        const aiSendBtn = document.getElementById('aiSendBtn');
+        if(aiBtn && aiPanel) {
+            aiBtn.addEventListener('click', (e) => { e.stopPropagation(); aiPanel.classList.toggle('active'); if(aiPanel.classList.contains('active')) aiInput.focus(); });
+        }
+        if(aiCloseBtn && aiPanel) aiCloseBtn.addEventListener('click', () => aiPanel.classList.remove('active'));
+        document.addEventListener('click', (e) => { if(aiPanel && aiPanel.classList.contains('active') && !aiPanel.contains(e.target) && !aiBtn.contains(e.target)) aiPanel.classList.remove('active'); });
+        if(aiSendBtn && aiInput) {
+            aiSendBtn.addEventListener('click', sendMessage);
+            aiInput.addEventListener('keypress', (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+        }
+    })();
+
+    function addMessage(text, role) {
+        const chatDiv = document.getElementById('aiChat');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `ai-msg ${role}`;
+        msgDiv.innerHTML = formatMessage(text);
+        chatDiv.appendChild(msgDiv);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+        return msgDiv;
+    }
+    function formatMessage(text) { return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/`(.*?)`/g, '<code>$1</code>').replace(/\n/g, '<br>'); }
+    function showTypingIndicator() {
+        const chatDiv = document.getElementById('aiChat');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'ai-typing';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = '<span></span><span></span><span></span>';
+        chatDiv.appendChild(typingDiv);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+    function removeTypingIndicator() { const indicator = document.getElementById('typingIndicator'); if(indicator) indicator.remove(); }
+
+    async function callLocalAI(userMessage) {
+        try {
+            const response = await fetch(LOCAL_AI_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: LOCAL_AI_MODEL,
+                    messages: [...conversationHistory, { role: 'user', content: userMessage }],
+                    temperature: 0.7,
+                    max_tokens: 2000
+                })
+            });
+            if(!response.ok) throw new Error('API Error');
+            const data = await response.json();
+            return data.choices[0].message.content;
+        } catch(error) {
+            return getLocalResponse(userMessage);
+        }
+    }
+
+    function getLocalResponse(question) {
+        const q = question.toLowerCase();
+        if (q.includes('characteristic') || q.includes('mrs gren')) return "Living things share key characteristics: Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, and Nutrition.";
+        if (q.includes('binomial') || q.includes('scientific name')) return "The Binomial System uses two names: Genus (Capitalized) + species (lowercase). Example: <em>Homo sapiens</em> (Humans).";
+        if (q.includes('kingdom')) return "Whittaker's 5 Kingdoms are: Monera (bacteria), Protista (amoeba, algae), Fungi (mushrooms, yeast), Plantae (plants), and Animalia (animals).";
+        if (q.includes('ethiopian wolf') || q.includes('endemic')) return "Ethiopian endemic species include the Ethiopian Wolf (<em>Canis simensis</em>), Walia Ibex, Gelada Baboon, and plants like Tef (<em>Eragrostis tef</em>).";
+        return "I'm your Unit 2 assistant! Ask me about the 5 Kingdoms, Binomial Nomenclature, or Characteristics of Life.";
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('aiInput');
+        const sendBtn = document.getElementById('aiSendBtn');
+        const message = input.value.trim();
+        if(!message) return;
+        addMessage(message, 'user');
+        input.value = '';
+        input.disabled = true; sendBtn.disabled = true;
+        showTypingIndicator();
+        try {
+            let response = await callLocalAI(message);
+            conversationHistory.push({ role: 'user', content: message }, { role: 'assistant', content: response });
+            if(conversationHistory.length > 15) conversationHistory = [conversationHistory[0], ...conversationHistory.slice(-10)];
+            removeTypingIndicator();
+            addMessage(response, 'assistant');
+        } catch(error) {
+            removeTypingIndicator();
+            addMessage("Sorry, I encountered an error. " + getLocalResponse(message), 'assistant');
+        } finally {
+            input.disabled = false; sendBtn.disabled = false; input.focus();
+        }
+    }
+</script>
+</body>
+</html>

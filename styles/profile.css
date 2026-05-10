@@ -1,0 +1,573 @@
+:root {
+    --primary: #e86a33;
+    --primary-dark: #d3541f;
+    --primary-light: #fbe9e7;
+    --bg: #f5efe6;
+    --card: #ffffff;
+    --text: #333333;
+    --text-light: #666666;
+    --border: #eadbc8;
+    --success: #4caf50;
+    --danger: #f44336;
+    --danger-dark: #d32f2f;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+}
+
+[data-theme="dark"] {
+    --primary: #ff8a5c;
+    --primary-dark: #ff7b4a;
+    --primary-light: #442f28;
+    --bg: #121212;
+    --card: #1e1e1e;
+    --text: #f0f0f0;
+    --text-light: #b0b0b0;
+    --border: #404040;
+    --success: #66bb6a;
+    --danger: #ef5350;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    transition: all 0.2s;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.profile-container {
+    max-width: 750px;
+    width: calc(100% - 40px);
+    margin: 80px auto 30px;
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.profile-header {
+    padding: 30px;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-header h1 i {
+    color: var(--primary);
+}
+
+.header-subtitle {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.account-grid {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: var(--bg);
+}
+
+.acc-card {
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.acc-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+}
+
+.acc-card.active {
+    border: 2px solid var(--primary);
+}
+
+.acc-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.acc-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.acc-name {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.acc-grade {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.acc-menu {
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+
+.acc-card:hover .acc-menu {
+    opacity: 1;
+}
+
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: var(--card);
+    color: var(--text-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+}
+
+.edit-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.delete-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+.active-indicator {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 12px;
+    height: 12px;
+    background: var(--success);
+    border-radius: 50%;
+    border: 2px solid var(--card);
+}
+
+.create-account-btn {
+    width: calc(100% - 60px);
+    margin: 0 30px 30px;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.create-account-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.create-account-btn:disabled {
+    background: var(--border);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.settings-section {
+    padding: 25px 30px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+}
+
+.settings-section h3 {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-section h3 i {
+    color: var(--primary);
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.setting-info label {
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.setting-info small {
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+.no-accounts {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px 20px;
+    background: var(--card);
+    border-radius: var(--radius-md);
+    border: 2px dashed var(--border);
+}
+
+.no-accounts i {
+    color: var(--primary);
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.no-accounts h3 {
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.no-accounts p {
+    color: var(--text-light);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.3rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-header h2 i {
+    color: var(--primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-light);
+    cursor: pointer;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: var(--bg);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: var(--bg);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.form-group label i {
+    margin-right: 8px;
+    color: var(--primary);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    background: var(--card);
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(232, 106, 51, 0.1);
+}
+
+.pin-input {
+    font-family: monospace;
+    font-size: 1.5rem;
+    letter-spacing: 4px;
+    text-align: center;
+}
+
+.input-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    background: var(--bg);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: var(--danger-dark);
+}
+
+.warning-icon {
+    text-align: center;
+    font-size: 3rem;
+    color: var(--danger);
+    margin-bottom: 15px;
+}
+
+.warning-text {
+    color: var(--danger);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.error-message {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--danger-light);
+    color: var(--danger);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 14px 24px;
+    background: var(--card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 3000;
+    border-left: 4px solid var(--success);
+    min-width: 280px;
+}
+
+.toast.error {
+    border-left-color: var(--danger);
+}
+
+.toast.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        width: calc(100% - 30px);
+        margin: 70px auto 20px;
+    }
+
+    .profile-header {
+        padding: 20px;
+    }
+
+    .profile-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .account-grid {
+        padding: 20px;
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .toast {
+        left: 20px;
+        right: 20px;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .acc-card {
+        padding: 14px;
+    }
+
+    .acc-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+
+    .create-account-btn {
+        width: calc(100% - 40px);
+        margin: 0 20px 20px;
+        padding: 14px;
+    }
+
+    .settings-section {
+        padding: 20px;
+    }
+}

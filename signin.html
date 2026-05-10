@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - BNA Academy</title>
+    <link rel="stylesheet" href="styles/signin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container" id="signinContainer">
+    <h1>📚 BNA Academy</h1>
+    <div id="loginForm">
+        <div class="form-title">Sign In</div>
+        <div class="input-group"><input type="email" id="loginEmail" placeholder="Email Address" autocomplete="email"></div>
+        <div class="input-group"><input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password"></div>
+        <button id="doLogin" type="button">Sign In</button>
+        <button class="toggle-btn forgot-pwd" id="forgotPassword" type="button">Forgot Password?</button>
+        <button class="toggle-btn" id="showSignup" type="button">Create New Account →</button>
+        <div id="loginError" class="error"></div>
+        <div id="pendingCard" class="pending-card hidden"><h3><i class="fas fa-clock"></i> Account Pending Approval</h3><div class="pending-detail"><span class="label">👤 Name:</span><span class="value" id="pendingName">-</span></div><div class="pending-detail"><span class="label">🆔 ID Number:</span><span class="value" id="pendingIdNumber">-</span></div><div class="pending-detail"><span class="label">📧 Email:</span><span class="value" id="pendingEmail">-</span></div><div class="pending-detail"><span class="label">📚 Role:</span><span class="value" id="pendingRole">-</span></div><div class="pending-note"><i class="fas fa-info-circle"></i> Waiting for admin approval.</div><button class="refresh-btn" id="pendingCheckBtn" type="button"><i class="fas fa-sync-alt"></i> Check Status</button></div>
+    </div>
+
+    <div id="signupForm" class="hidden">
+        <div class="form-title">Create Account</div>
+        <div class="input-group"><input type="text" id="signupIdNumber" placeholder="ID Number (e.g., 988)"></div>
+        <div class="input-group"><input type="text" id="signupName" placeholder="Full Name"></div>
+        <div class="input-group"><input type="email" id="signupEmail" placeholder="Email Address" autocomplete="email"></div>
+        <div class="input-group"><input type="password" id="signupPassword" placeholder="Password (min 6 characters)" autocomplete="new-password"></div>
+        <div class="input-group"><select id="signupRole"><option value="student">🎓 Student</option><option value="teacher">👨‍🏫 Teacher</option><option value="parent">👪 Parent</option></select></div>
+        <div id="studentFields"><div class="input-group"><select id="signupGrade"><option value="9">Grade 9</option><option value="10">Grade 10</option><option value="11">Grade 11</option><option value="12">Grade 12</option></select></div><div class="input-group" id="sectionGroup"><select id="signupSection"><option value="A">Section A</option><option value="B">Section B</option><option value="C">Section C</option><option value="D">Section D</option></select></div><div class="input-group" id="streamGroup" style="display: none;"><select id="signupStream"><option value="Natural">Natural Science</option><option value="Social">Social Science</option></select></div></div>
+        <div id="teacherFields" style="display: none;"><div class="input-group"><select id="signupSubject"><option value="Biology">Biology</option><option value="Physics">Physics</option><option value="Chemistry">Chemistry</option><option value="Mathematics">Mathematics</option><option value="Geography">Geography</option><option value="Economics">Economics</option></select></div><div class="input-group"><div class="checkbox-group" id="teachingGrades"><label><input type="checkbox" value="9"> Grade 9</label><label><input type="checkbox" value="10"> Grade 10</label><label><input type="checkbox" value="11"> Grade 11</label><label><input type="checkbox" value="12"> Grade 12</label></div></div></div>
+        <div id="parentFields" style="display: none;"><div class="input-group"><input type="text" id="parentPhone" placeholder="Phone Number (optional)"></div></div>
+        <button id="doSignup" type="button">Sign Up</button>
+        <button class="toggle-btn" id="showLogin" type="button">← Back to Sign In</button>
+        <div id="signupError" class="error"></div><div id="signupSuccess" class="success"></div>
+    </div>
+</div>
+<div class="footer"><p>&copy; 2026 Bikolos Nur Academy (BNA). All rights reserved.</p></div>
+
+<script type="module">
+    import { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, doc, setDoc, getDoc, collection, query, where, getDocs, signOut, sendPasswordResetEmail } from './firebase-config.js';
+
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const showSignup = document.getElementById('showSignup');
+    const showLogin = document.getElementById('showLogin');
+    const doLogin = document.getElementById('doLogin');
+    const doSignup = document.getElementById('doSignup');
+    const forgotPassword = document.getElementById('forgotPassword');
+    const signupRole = document.getElementById('signupRole');
+    const studentFields = document.getElementById('studentFields');
+    const teacherFields = document.getElementById('teacherFields');
+    const parentFields = document.getElementById('parentFields');
+    const gradeSelect = document.getElementById('signupGrade');
+    const streamGroup = document.getElementById('streamGroup');
+    const pendingCard = document.getElementById('pendingCard');
+    let pendingUserData = null;
+
+    showSignup.onclick = () => { loginForm.classList.add('hidden'); signupForm.classList.remove('hidden'); if(pendingCard) pendingCard.classList.add('hidden'); };
+    showLogin.onclick = () => { signupForm.classList.add('hidden'); loginForm.classList.remove('hidden'); if(pendingCard) pendingCard.classList.add('hidden'); };
+
+    forgotPassword.onclick = async () => {
+        const email = document.getElementById('loginEmail').value.trim();
+        if (!email) { document.getElementById('loginError').textContent = 'Please enter your email address'; return; }
+        try {
+            await sendPasswordResetEmail(auth, email);
+            document.getElementById('loginError').textContent = '✅ Password reset email sent! Check your inbox.';
+            document.getElementById('loginError').style.color = '#28a745';
+        } catch (error) {
+            document.getElementById('loginError').textContent = 'Email not found. Please check and try again.';
+            document.getElementById('loginError').style.color = '#dc3545';
+        }
+    };
+
+    signupRole.onchange = () => {
+        studentFields.style.display = 'none'; teacherFields.style.display = 'none'; parentFields.style.display = 'none';
+        if (signupRole.value === 'student') studentFields.style.display = 'block';
+        else if (signupRole.value === 'teacher') teacherFields.style.display = 'block';
+        else if (signupRole.value === 'parent') parentFields.style.display = 'block';
+    };
+
+    gradeSelect.onchange = () => { streamGroup.style.display = parseInt(gradeSelect.value) >= 11 ? 'block' : 'none'; };
+
+    function showPendingCard(userData) {
+        pendingUserData = userData;
+        document.getElementById('pendingName').textContent = userData.name || '-';
+        document.getElementById('pendingIdNumber').textContent = userData.idNumber || '-';
+        document.getElementById('pendingEmail').textContent = userData.email || '-';
+        document.getElementById('pendingRole').textContent = userData.role === 'teacher' ? '👨‍🏫 Teacher' : userData.role === 'parent' ? '👪 Parent' : '🎓 Student';
+        pendingCard.classList.remove('hidden');
+    }
+
+    window.checkApprovalStatus = async function() {
+        if (!pendingUserData) return;
+        const btn = document.querySelector('#pendingCard .refresh-btn');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...'; }
+        try {
+            const profileRef = doc(db, 'profiles', pendingUserData.userId);
+            const profileSnap = await getDoc(profileRef);
+            if (profileSnap.exists() && profileSnap.data().approved === true) {
+                const userData = profileSnap.data();
+                const sessionData = { id: pendingUserData.userId, idNumber: userData.idNumber, name: userData.name, email: userData.email, role: userData.role, grade: userData.grade, section: userData.section, stream: userData.stream, subject: userData.subject, teachingGrades: userData.teachingGrades };
+                localStorage.setItem("current_user_session", JSON.stringify(sessionData));
+                if (userData.role === 'teacher') window.location.href = 'teacher-dashboard.html';
+                else if (userData.role === 'parent') window.location.href = 'parent.html';
+                else window.location.href = 'subject-portal.html';
+            } else { alert('Still pending approval.'); }
+        } catch(e) { alert('Error: ' + e.message); }
+        finally { if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sync-alt"></i> Check Status'; } }
+    };
+
+    async function isIdNumberTaken(idNumber) {
+        try { const q = query(collection(db, "profiles"), where("idNumber", "==", idNumber)); const snapshot = await getDocs(q); return !snapshot.empty; } catch { return false; }
+    }
+
+    const pendingCheckBtn = document.getElementById('pendingCheckBtn');
+    if (pendingCheckBtn) pendingCheckBtn.addEventListener('click', () => window.checkApprovalStatus());
+
+    doLogin.onclick = async () => {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const errorDiv = document.getElementById('loginError');
+        errorDiv.textContent = ''; if(pendingCard) pendingCard.classList.add('hidden');
+        errorDiv.style.color = '#dc3545';
+        if (!email || !password) { errorDiv.textContent = 'Please enter email and password'; return; }
+        doLogin.disabled = true; doLogin.textContent = 'Signing in...';
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const profileRef = doc(db, 'profiles', userCredential.user.uid);
+            const profileSnap = await getDoc(profileRef);
+            if (!profileSnap.exists()) { errorDiv.textContent = 'Profile not found.'; doLogin.disabled = false; doLogin.textContent = 'Sign In'; return; }
+            const userData = profileSnap.data();
+            if (!userData.approved) { showPendingCard({ userId: userCredential.user.uid, name: userData.name, idNumber: userData.idNumber, email: userData.email, role: userData.role }); await signOut(auth); doLogin.disabled = false; doLogin.textContent = 'Sign In'; return; }
+            const sessionData = { id: userCredential.user.uid, idNumber: userData.idNumber, name: userData.name, email: email, role: userData.role, grade: userData.grade, section: userData.section, stream: userData.stream, subject: userData.subject, teachingGrades: userData.teachingGrades };
+            localStorage.setItem("current_user_session", JSON.stringify(sessionData));
+            if (userData.role === 'teacher') window.location.href = 'teacher-dashboard.html';
+            else if (userData.role === 'parent') window.location.href = 'parent.html';
+            else window.location.href = 'subject-portal.html';
+        } catch (error) {
+            errorDiv.textContent = 'Invalid email or password';
+            errorDiv.style.color = '#dc3545';
+        }
+        finally { doLogin.disabled = false; doLogin.textContent = 'Sign In'; }
+    };
+
+    doSignup.onclick = async () => {
+        const idNumber = document.getElementById('signupIdNumber').value.trim();
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        const role = document.getElementById('signupRole').value;
+        const errorDiv = document.getElementById('signupError');
+        const successDiv = document.getElementById('signupSuccess');
+        errorDiv.textContent = ''; successDiv.textContent = '';
+        if (!idNumber || !name || !email || !password) { errorDiv.textContent = 'Please fill all fields'; return; }
+        if (password.length < 6) { errorDiv.textContent = 'Password must be 6+ characters'; return; }
+        const taken = await isIdNumberTaken(idNumber);
+        if (taken) { errorDiv.textContent = 'ID Number already taken'; return; }
+        let profileData = { idNumber, name, email, role, approved: false, createdAt: new Date().toISOString() };
+        if (role === 'student') { const grade = document.getElementById('signupGrade').value; const section = document.getElementById('signupSection').value; const stream = parseInt(grade) >= 11 ? document.getElementById('signupStream').value : null; profileData = { ...profileData, grade: parseInt(grade), section, stream, subject: null, teachingGrades: null }; }
+        else if (role === 'teacher') { const subject = document.getElementById('signupSubject').value; const teachingGrades = []; document.querySelectorAll('#teachingGrades input:checked').forEach(cb => teachingGrades.push(parseInt(cb.value))); if (teachingGrades.length === 0) { errorDiv.textContent = 'Select at least one grade to teach'; return; } profileData = { ...profileData, grade: null, section: null, stream: null, subject, teachingGrades }; }
+        else if (role === 'parent') { const phone = document.getElementById('parentPhone').value; profileData = { ...profileData, grade: null, section: null, stream: null, phone, children: [] }; }
+        doSignup.disabled = true; doSignup.textContent = 'Creating account...';
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await setDoc(doc(db, 'profiles', userCredential.user.uid), profileData);
+            await signOut(auth);
+            successDiv.textContent = `✅ Account created! Waiting for admin approval.`;
+            document.getElementById('signupIdNumber').value = ''; document.getElementById('signupName').value = ''; document.getElementById('signupEmail').value = ''; document.getElementById('signupPassword').value = '';
+            doSignup.disabled = false; doSignup.textContent = 'Sign Up';
+            setTimeout(() => { loginForm.classList.remove('hidden'); signupForm.classList.add('hidden'); successDiv.textContent = ''; }, 2000);
+        } catch (error) { errorDiv.textContent = error.message; doSignup.disabled = false; doSignup.textContent = 'Sign Up'; }
+    };
+
+    gradeSelect.dispatchEvent(new Event('change'));
+    signupRole.dispatchEvent(new Event('change'));
+</script>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="description"
+    content="Arma — AI school platform for admins, teachers, students, and parents. Manage multiple institutions, assessments, real-time collaboration.">
+  <title>Arma · AI School Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ========== Consistent color system ========== */
+    :root {
+      --primary: #e86a33;
+      --primary-dark: #d45a28;
+      --primary-light: #f08a5c;
+      --bg: #f5efe6;
+      --card: #ffffff;
+      --text: #333333;
+      --text-light: #666666;
+      --border: #eadbc8;
+      --success: #28a745;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --primary: #ff8a5c;
+      --primary-dark: #ff9a6e;
+      --primary-light: #ffa87e;
+      --bg: #121212;
+      --card: #1e1e1e;
+      --text: #f0f0f0;
+      --text-light: #b0b0b0;
+      --border: #404040;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.2s, color 0.2s;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    .site-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    .logo h2 {
+      color: var(--primary);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-weight: 500;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .theme-toggle {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      width: 36px;
+      height: 36px;
+      border-radius: 36px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    /* Hero - minimal */
+    .hero {
+      padding: 60px 0 40px;
+    }
+
+    .hero-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .hero-left {
+      flex: 1.2;
+    }
+
+    .hero-right {
+      flex: 0.9;
+    }
+
+    .badge {
+      background: rgba(232, 106, 51, 0.12);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      color: var(--text-light);
+      margin: 16px 0 24px;
+      font-size: 0.95rem;
+      max-width: 90%;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .hero-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: var(--primary);
+    }
+
+    .feature-list {
+      list-style: none;
+    }
+
+    .feature-list li {
+      margin-bottom: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    .feature-list i {
+      color: var(--primary);
+      width: 20px;
+      font-size: 0.85rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Stats minimal */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--card);
+      border-radius: 24px;
+      padding: 24px 32px;
+      margin: 32px 0;
+      border: 1px solid var(--border);
+    }
+
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Section titles */
+    .section {
+      padding: 48px 0 32px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 28px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-title i {
+      color: var(--primary);
+      margin-right: 8px;
+    }
+
+    /* Feature cards - minimal */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 22px 20px;
+      border: 1px solid var(--border);
+      transition: 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .feature-icon {
+      background: rgba(232, 106, 51, 0.1);
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 1.3rem;
+      color: var(--primary);
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      color: var(--text-light);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    /* Highlight card */
+    .highlight-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      border-left: 4px solid var(--primary);
+      margin: 20px 0;
+      border: 1px solid var(--border);
+    }
+
+    /* Portal boxes - non-clickable, just visual boxes */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .portal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 8px;
+      text-align: center;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.8rem;
+      transition: 0.2s;
+      cursor: default;
+    }
+
+    .portal-box i {
+      font-size: 1.3rem;
+      color: var(--primary);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .portal-box:hover {
+      border-color: var(--primary-light);
+      background: rgba(232, 106, 51, 0.04);
+    }
+
+    /* Compact split for traction & business */
+    .compact-split {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin: 24px 0 32px;
+    }
+
+    .compact-card {
+      flex: 1;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .compact-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .compact-card ul {
+      list-style: none;
+      margin: 0;
+    }
+
+    .compact-card li {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+
+    .compact-card li i {
+      color: var(--success);
+      width: 18px;
+      font-size: 0.8rem;
+    }
+
+    .badge-pilot {
+      background: rgba(232, 106, 51, 0.12);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-top: 16px;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .badge-pilot strong {
+      color: var(--primary);
+    }
+
+    /* CTA minimal */
+    .cta-minimal {
+      background: rgba(232, 106, 51, 0.06);
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+      margin: 32px 0;
+      border: 1px solid var(--border);
+    }
+
+    .cta-minimal h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .footer {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 32px 0 24px;
+      margin-top: 48px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    @media (max-width: 780px) {
+      .hero-grid {
+        flex-direction: column;
+      }
+
+      .stats-row {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .compact-split {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container nav">
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+        <h2>Arma</h2>
+      </div>
+      <div class="nav-links">
+        <a href="#">Features</a>
+        <a href="#">Pilot</a>
+        <a href="signin.html" style="font-weight: 600; color: var(--primary);">Sign in →</a>
+        <button class="theme-toggle" id="darkModeToggle"><i class="fas fa-moon"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero minimal -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-left">
+          <span class="badge"><i class="fas fa-robot"></i> AI-native · Multi-school</span>
+          <h1>One platform for <span>schools, teachers & families</span></h1>
+          <p>Arma connects admins, teachers, students, and parents. Automate quizzes, exams, weighted transcripts, and
+            collaboration across multiple institutions.</p>
+          <a href="signin.html" class="btn-primary"><i class="fas fa-rocket"></i> Access portal</a>
+        </div>
+        <div class="hero-right">
+          <div class="hero-card">
+            <h3><i class="fas fa-check-circle"></i> Core features</h3>
+            <ul class="feature-list">
+              <li><i class="fas fa-chart-line"></i> Weighted grades (CW, HW, Quiz, Final)</li>
+              <li><i class="fas fa-school"></i> Multiple schools & sections</li>
+              <li><i class="fas fa-comment"></i> Real‑time chat & dashboards</li>
+              <li><i class="fas fa-file-alt"></i> Auto transcripts & reports</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats minimal -->
+
+
+    <!-- Features -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title"><i class="fas fa-crown"></i> Designed for modern education</h2>
+        <div class="grid-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-chalkboard-user"></i></div>
+            <h3>Teacher dashboard</h3>
+            <p>Manage assessments, attendance, auto-averages with weighted categories.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-building"></i></div>
+            <h3>Multi‑school ready</h3>
+            <p>Handle K-12, tutor centers, and academies separately under one hub.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-chart-simple"></i></div>
+            <h3>Smart transcripts</h3>
+            <p>Auto term reports, CSV export, share with parents/admins instantly.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-message"></i></div>
+            <h3>Real‑time chat</h3>
+            <p>Secure conversations and instant grade alerts.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-trophy"></i></div>
+            <h3>Leaderboard</h3>
+            <p>Performance rankings and gamification.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-robot"></i></div>
+            <h3>AI recommendations</h3>
+            <p>Personalized learning paths based on performance.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlight multi-school -->
+    <div class="container">
+      <div class="highlight-card">
+        <i class="fas fa-globe" style="color: var(--primary); margin-right: 8px;"></i>
+        <strong>One Arma, many institutions</strong>
+        <p style="margin-top: 8px; font-size: 0.85rem;">Each school gets its own admin, teachers, grading rules, and
+          transcripts — unified oversight or full autonomy.</p>
+        <div style="display: flex; gap: 20px; margin-top: 14px; flex-wrap: wrap; font-size: 0.75rem;">
+          <span><i class="fas fa-check-circle"></i> Separate gradebooks</span>
+          <span><i class="fas fa-check-circle"></i> Central or local control</span>
+          <span><i class="fas fa-check-circle"></i> Custom grading rules</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Role portals - NON-CLICKABLE BOXES (just visual) -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title"><i class="fas fa-users"></i> Role portals</h2>
+        <div class="portal-grid">
+          <div class="portal-box"><i class="fas fa-user-graduate"></i> Student</div>
+          <div class="portal-box"><i class="fas fa-chalkboard"></i> Teacher</div>
+          <div class="portal-box"><i class="fas fa-heart"></i> Parent</div>
+          <div class="portal-box"><i class="fas fa-user-cog"></i> Admin</div>
+          <div class="portal-box"><i class="fas fa-file-signature"></i> Transcripts</div>
+          <div class="portal-box"><i class="fas fa-trophy"></i> Leaderboard</div>
+          <div class="portal-box"><i class="fas fa-comments"></i> Chat</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPACT: Traction & Growth + Business Model (minimal, clean) -->
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <i class="fas fa-bolt" style="color: var(--primary);"></i> <strong>Arma</strong><br>
+        <span>AI school ecosystem · Ethiopia</span>
+      </div>
+      <div>
+        <a href="#" style="color: var(--text-light); text-decoration: none;">Features</a> &nbsp;|&nbsp;
+        <a href="#" style="color: var(--text-light); text-decoration: none;">Pilot</a> &nbsp;|&nbsp;
+        <a href="#" style="color: var(--text-light); text-decoration: none;">Privacy</a>
+      </div>
+      <div>© 2026 Arma — unified intelligence for schools</div>
+    </div>
+  </footer>
+
+  <script>
+    // Dark mode with consistent palette
+    const themeToggle = document.getElementById('darkModeToggle');
+    const root = document.documentElement;
+
+    function setTheme(theme) {
+      root.setAttribute('data-theme', theme);
+      localStorage.setItem('arma-theme', theme);
+      if (themeToggle) {
+        themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      }
+    }
+
+    const saved = localStorage.getItem('arma-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = saved || (prefersDark ? 'dark' : 'light');
+    setTheme(initial);
+
+    themeToggle.addEventListener('click', () => {
+      const curr = root.getAttribute('data-theme');
+      setTheme(curr === 'dark' ? 'light' : 'dark');
+    });
+  </script>
+</body>
+
+</html>

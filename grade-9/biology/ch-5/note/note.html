@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 5: Human Health, Nutrition and Diseases</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #4361ee; --primary-dark: #3a56d4; --accent: #f8f9fa; --card-bg: #ffffff; --border: #e2e8f0; --shadow: 0 8px 20px rgba(0,0,0,0.05); --text: #1e293b; --bg: #f8fafc; }
+        [data-theme="dark"] { --primary: #818cf8; --primary-dark: #6366f1; --card-bg: #1e293b; --border: #334155; --shadow: 0 8px 20px rgba(0,0,0,0.3); --text: #f1f5f9; --bg: #0f172a; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: background 0.2s; }
+        .note-container { max-width: 1000px; margin: 80px auto 40px; padding: 0 20px; }
+        .note-card { background: var(--card-bg); border-radius: 20px; padding: 35px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .action-buttons { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 100; }
+        .action-btn { background: var(--primary); color: white; padding: 8px 16px; border-radius: 40px; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .back-btn { position: fixed; top: 20px; left: 20px; background: var(--primary); color: white; padding: 8px 16px; border-radius: 40px; text-decoration: none; display: flex; align-items: center; gap: 8px; z-index: 100; }
+        .footer { text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 12px; }
+        .account-icon { position: fixed; top: 20px; right: 25px; cursor: pointer; z-index: 1000; }
+        .account-icon-link { width: 46px; height: 46px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .account-dropdown { position: absolute; top: 55px; right: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; width: 260px; box-shadow: 0 12px 28px rgba(0,0,0,0.2); display: none; z-index: 1001; }
+        .account-dropdown.active { display: block; }
+        .dropdown-header { padding: 14px; border-bottom: 1px solid var(--border); }
+        .current-user { display: flex; align-items: center; gap: 12px; }
+        .user-avatar { width: 44px; height: 44px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; color: white; }
+        .user-name-dropdown { font-weight: 600; }
+        .user-grade-dropdown { font-size: 0.8rem; opacity: 0.7; }
+        .dropdown-menu { padding: 8px 0; }
+        .dropdown-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; width: 100%; background: none; border: none; cursor: pointer; font-size: 0.9rem; color: var(--text); transition: 0.1s; }
+        .dropdown-item:hover { background: var(--border); }
+        .theme-select { margin-left: auto; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; }
+        .dropdown-divider { height: 1px; background: var(--border); margin: 6px 0; }
+        .ai-bulb-btn { position: fixed; bottom: 28px; right: 28px; width: 60px; height: 60px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; border-radius: 50%; cursor: pointer; box-shadow: 0 8px 20px rgba(245,158,11,0.4); z-index: 1100; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; transition: 0.2s; }
+        .ai-bulb-btn:hover { transform: scale(1.05); background: #f59e0b; }
+        .ai-panel { position: fixed; bottom: 100px; right: 28px; width: 340px; max-height: 480px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; display: none; flex-direction: column; z-index: 1150; box-shadow: 0 20px 35px rgba(0,0,0,0.2); overflow: hidden; }
+        .ai-panel.active { display: flex; }
+        .ai-head { padding: 14px 16px; background: var(--primary); color: white; font-weight: 600; font-size: 1rem; }
+        .ai-chat { padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; height: 350px; background: var(--bg); }
+        .ai-msg { padding: 8px 12px; border-radius: 18px; max-width: 90%; font-size: 0.85rem; line-height: 1.4; }
+        .ai-msg.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .ai-msg.bot { background: var(--card-bg); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .ai-input-wrap { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); background: var(--card-bg); }
+        .ai-input-wrap input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 40px; background: var(--bg); color: var(--text); outline: none; }
+        .ai-input-wrap button { background: var(--primary); border: none; border-radius: 40px; padding: 0 16px; color: white; cursor: pointer; font-weight: 500; }
+        .general-ai-panel { position: fixed; bottom: 100px; right: 28px; width: 380px; max-height: 520px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; display: none; flex-direction: column; z-index: 1200; box-shadow: 0 20px 35px rgba(0,0,0,0.25); }
+        .general-ai-panel.active { display: flex; }
+        .general-ai-head { padding: 14px 16px; background: var(--primary-dark); color: white; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .general-ai-chat { padding: 12px; overflow-y: auto; height: 370px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+        .general-ai-msg { padding: 8px 12px; border-radius: 18px; max-width: 90%; font-size: 0.85rem; }
+        .general-ai-msg.user { background: var(--primary); color: white; align-self: flex-end; }
+        .general-ai-msg.bot { background: var(--card-bg); border: 1px solid var(--border); align-self: flex-start; }
+        .general-ai-input-wrap { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); background: var(--card-bg); }
+        .general-ai-input-wrap input { flex: 1; padding: 10px; border-radius: 40px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; }
+        .general-ai-input-wrap button { background: var(--primary); border: none; border-radius: 40px; padding: 0 18px; color: white; cursor: pointer; font-weight: 500; }
+        .fa-chevron-right { font-size: 0.75rem; }
+        h1 { color: var(--primary); margin-bottom: 20px; }
+        h2 { color: var(--primary); margin: 30px 0 15px 0; border-left: 4px solid var(--primary); padding-left: 15px; }
+        h3 { margin: 20px 0 10px 0; color: var(--primary); }
+        .key-term { background: var(--bg); padding: 12px; border-left: 4px solid var(--primary); margin: 15px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border: 1px solid var(--border); padding: 8px; text-align: left; }
+        th { background: var(--primary); color: white; }
+        @media (max-width: 768px) { .note-container { margin-top: 100px; } .ai-panel, .general-ai-panel { width: 290px; right: 15px; bottom: 85px; } .ai-bulb-btn { width: 52px; height: 52px; bottom: 20px; right: 20px; } }
+    </style>
+</head>
+<body data-theme="light">
+
+<div class="account-icon" id="accountIcon">
+    <div class="account-icon-link">👤</div>
+    <div class="account-dropdown" id="accountDropdown">
+        <div class="dropdown-header"><div class="current-user"><div class="user-avatar" id="dropdownAvatar">👤</div><div><div class="user-name-dropdown" id="dropdownUserName">Student</div><div class="user-grade-dropdown" id="dropdownUserGrade">Grade --</div></div></div></div>
+        <div class="dropdown-menu"><button id="openGeneralChatBtn" class="dropdown-item"><i class="fas fa-robot"></i> <span>General Study Chat</span><i class="fas fa-chevron-right" style="margin-left: auto;"></i></button><div class="dropdown-item"><i class="fas fa-palette"></i> <span>Theme</span><select id="theme-selector" class="theme-select"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option></select></div><div class="dropdown-divider"></div><button id="logoutBtn" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
+    </div>
+</div>
+
+<a href="../../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Chapters</a>
+<div class="action-buttons"><a href="../quiz/index.html" class="action-btn"><i class="fas fa-question-circle"></i> Take Quiz</a></div>
+
+<div class="note-container">
+    <div class="note-card">
+        <h1><i class="fas fa-apple-alt"></i> Unit 5: Human Health, Nutrition and Diseases</h1>
+
+        <h2>5.1 Nutrients</h2>
+        <p><strong>Macronutrients:</strong> Carbohydrates (energy), Proteins (growth/repair), Fats (energy storage). <strong>Micronutrients:</strong> Vitamins (A, B, C, D, E, K) and Minerals (calcium, iron, iodine).</p>
+
+        <h2>5.2 Balanced Diet</h2>
+        <p>A balanced diet contains all nutrients in correct proportions based on age, sex, and activity level.</p>
+
+        <h2>5.3 Deficiency Diseases</h2>
+        <ul><li>Kwashiorkor (protein deficiency) - swollen belly</li><li>Marasmus (energy deficiency) - extreme thinness</li><li>Anemia (iron) - weakness, tiredness</li><li>Rickets (Vitamin D) - soft bones</li><li>Scurvy (Vitamin C) - bleeding gums</li></ul>
+
+        <h2>5.4 Malnutrition</h2>
+        <p>Insufficient, excessive, or imbalanced nutrition. Includes undernutrition (wasting, stunting) and obesity (BMI ≥30).</p>
+
+        <h2>5.5 Substance Abuse</h2>
+        <ul><li><strong>Smoking:</strong> Tar, nicotine, CO → lung cancer, bronchitis</li><li><strong>Alcohol:</strong> Depressant → liver cirrhosis</li><li><strong>Khat:</strong> Stimulant → gastritis, insomnia</li><li><strong>Cannabis/Heroin:</strong> Psychoactive, highly addictive</li></ul>
+
+        <h2>5.6 Infectious Diseases</h2>
+        <ul><li><strong>HIV/AIDS:</strong> Virus attacks immune system</li><li><strong>Tuberculosis:</strong> Bacterial lung infection</li><li><strong>Malaria:</strong> Plasmodium protozoa from mosquitoes</li><li><strong>COVID-19:</strong> Coronavirus, respiratory droplets</li></ul>
+
+        <div class="key-term"><strong>Unit Summary:</strong> Nutrients include carbs, proteins, fats, vitamins, minerals. Balanced diet prevents deficiency diseases. Malnutrition includes undernutrition and obesity. Substance abuse harms health. Infectious diseases are caused by pathogens.</div>
+    </div>
+    <div class="footer">Bikolos Nur Academy (BNA) | Grade 9 Biology - Unit 5</div>
+</div>
+
+<button id="aiBulbBtn" class="ai-bulb-btn" title="Ask about Unit 5 Health & Nutrition"><i class="fas fa-lightbulb"></i></button>
+<div id="aiPanel" class="ai-panel">
+    <div class="ai-head"><i class="fas fa-apple-alt"></i> Biology AI (Unit 5: Health & Nutrition)</div>
+    <div id="aiChat" class="ai-chat"><div class="ai-msg bot">🍎 Hello! I answer questions about Unit 5: Nutrients, balanced diet, deficiency diseases, malnutrition, substance abuse, and infectious diseases.</div></div>
+    <div class="ai-input-wrap"><input id="aiInput" type="text" placeholder="Ask about health and nutrition..." /><button id="aiSendBtn">Send</button></div>
+</div>
+
+<div id="generalAiPanel" class="general-ai-panel">
+    <div class="general-ai-head"><i class="fas fa-globe"></i> General Study Assistant</div>
+    <div id="generalAiChat" class="general-ai-chat"><div class="general-ai-msg bot">🌍 Hello! I'm your unbounded study assistant for any school subject!</div></div>
+    <div class="general-ai-input-wrap"><input id="generalAiInput" type="text" placeholder="Ask any study question..." /><button id="generalAiSendBtn">Send</button></div>
+</div>
+
+<script>
+    function logout() { localStorage.removeItem("current_user_session"); window.location.href = '../../../../profile.html'; }
+    (function initUI() {
+        const icon = document.getElementById('accountIcon'); const dropdown = document.getElementById('accountDropdown');
+        if(icon && dropdown) { icon.onclick = (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); }; document.onclick = () => dropdown.classList.remove('active'); }
+        const themeSelect = document.getElementById('theme-selector'); const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        if(themeSelect) { themeSelect.value = savedTheme; themeSelect.onchange = (e) => { document.body.setAttribute('data-theme', e.target.value); localStorage.setItem('theme', e.target.value); }; }
+        const sessionData = localStorage.getItem("current_user_session");
+        if(sessionData) { try { const user = JSON.parse(sessionData); document.querySelector('.user-name-dropdown').textContent = user.name || "Student"; document.querySelector('.user-grade-dropdown').textContent = `Grade ${user.grade || "9"}`; document.querySelector('.user-avatar').textContent = (user.name?.charAt(0) || "S").toUpperCase(); } catch(e) {} }
+        document.getElementById('logoutBtn')?.addEventListener('click', logout);
+    })();
+    const bulbBtn = document.getElementById('aiBulbBtn'); const aiPanel = document.getElementById('aiPanel'); const aiChatDiv = document.getElementById('aiChat'); const aiInput = document.getElementById('aiInput'); const aiSendBtn = document.getElementById('aiSendBtn');
+    function addAiMessage(text, role) { const msgDiv = document.createElement('div'); msgDiv.className = `ai-msg ${role}`; msgDiv.textContent = text; aiChatDiv.appendChild(msgDiv); aiChatDiv.scrollTop = aiChatDiv.scrollHeight; }
+    function unit5Reply(q) { const question = q.toLowerCase().trim(); if(question.includes('nutrient')) return "🥗 Nutrients: Carbohydrates (energy), Proteins (growth), Fats (energy storage), Vitamins (A,B,C,D,E,K), Minerals (calcium, iron, iodine)."; if(question.includes('balanced diet')) return "⚖️ A balanced diet contains all nutrients in correct proportions based on age, sex, and activity level."; if(question.includes('deficiency')||question.includes('kwashiorkor')) return "⚠️ Kwashiorkor (protein), Marasmus (energy), Anemia (iron), Rickets (Vitamin D), Scurvy (Vitamin C)."; if(question.includes('obesity')||question.includes('bmi')) return "📏 Obesity is BMI ≥30. Causes: excess calories, lack of exercise. Health risks: heart disease, diabetes."; if(question.includes('smoking')||question.includes('alcohol')||question.includes('khat')) return "🚭 Substance abuse: Smoking (tar, nicotine, CO → lung cancer), Alcohol (depressant → cirrhosis), Khat (stimulant → gastritis)."; if(question.includes('hiv')||question.includes('aids')) return "🦠 HIV attacks immune cells → AIDS. Transmission: unprotected sex, blood, mother to child. Prevention: abstinence, condoms."; if(question.includes('malaria')) return "🦟 Malaria caused by Plasmodium, transmitted by female Anopheles mosquito. Prevention: nets, repellent, antimalarials."; if(question.includes('covid')) return "😷 COVID-19: coronavirus, respiratory droplets. Prevention: masks, distancing, vaccination."; return "📘 I specialize in Unit 5: Health & Nutrition. Try asking: 'What are deficiency diseases?', 'Explain substance abuse effects', or 'How is HIV transmitted?'"; }
+    function handleSend() { const query = aiInput.value.trim(); if(!query) return; addAiMessage(query,'user'); aiInput.value = ''; addAiMessage(unit5Reply(query),'bot'); }
+    bulbBtn?.addEventListener('click',(e)=>{ e.stopPropagation(); document.getElementById('generalAiPanel')?.classList.remove('active'); aiPanel.classList.toggle('active'); });
+    aiSendBtn?.addEventListener('click',handleSend); aiInput?.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleSend(); });
+    const generalPanel = document.getElementById('generalAiPanel'); const openGeneralBtn = document.getElementById('openGeneralChatBtn'); const generalChatDiv = document.getElementById('generalAiChat'); const generalInput = document.getElementById('generalAiInput'); const generalSendBtn = document.getElementById('generalAiSendBtn');
+    function addGeneralMsg(text,role){ const d=document.createElement('div'); d.className=`general-ai-msg ${role}`; d.textContent=text; generalChatDiv.appendChild(d); generalChatDiv.scrollTop=generalChatDiv.scrollHeight; }
+    function unboundedReply(q){ return "🌐 I can help with any school subject!"; }
+    function handleGeneralSend(){ const q=generalInput.value.trim(); if(!q) return; addGeneralMsg(q,'user'); generalInput.value=''; addGeneralMsg(unboundedReply(q),'bot'); }
+    openGeneralBtn?.addEventListener('click',(e)=>{ e.stopPropagation(); if(aiPanel) aiPanel.classList.remove('active'); generalPanel.classList.toggle('active'); const dd=document.getElementById('accountDropdown'); if(dd) dd.classList.remove('active'); });
+    generalSendBtn?.addEventListener('click',handleGeneralSend); generalInput?.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleGeneralSend(); });
+    window.addEventListener('load',()=>{ if(aiPanel) aiPanel.classList.remove('active'); if(generalPanel) generalPanel.classList.remove('active'); });
+</script>
+</body>
+</html>

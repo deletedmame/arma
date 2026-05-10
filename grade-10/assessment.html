@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Assessments - BNA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e86a33; --bg: #f8fafc; --card: #ffffff; --text: #0f172a;
+            --text-light: #64748b; --border: #e2e8f0; --success: #10b981;
+            --danger: #ef4444; --warning: #f59e0b; --info: #3b82f6; --purple: #6f42c1;
+        }
+        [data-theme="dark"] {
+            --primary: #ff8a5c; --bg: #0f0f12; --card: #1a1a1f; --text: #f1f5f9;
+            --text-light: #a1a5b0; --border: #2a2a30;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        .header { background: var(--card); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .header h2 { color: var(--primary); font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
+        .back-btn { color: var(--primary); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .grade-badge { background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+
+        .container { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .stat-mini { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
+        .stat-mini .value { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .stat-mini .label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+        .section-title { font-size: 16px; font-weight: 700; margin: 20px 0 12px; display: flex; align-items: center; gap: 10px; }
+        .badge-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; }
+
+        .assessment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 25px; }
+
+        .assessment-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: all 0.2s; position: relative; }
+        .assessment-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+        .assessment-card.forced { border-left: 4px solid var(--danger); }
+        .assessment-card.in-progress { border-left: 4px solid var(--info); }
+        .assessment-card.completed { border-left: 4px solid var(--success); }
+
+        .card-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); margin-bottom: 6px; }
+        .card-subject { font-size: 11px; color: var(--purple); font-weight: 600; margin-bottom: 4px; }
+        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+        .card-meta { font-size: 12px; color: var(--text-light); margin-bottom: 3px; display: flex; align-items: center; gap: 6px; }
+        .card-score { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 8px; }
+        .card-score.high { background: #d1fae5; color: #065f46; }
+        .card-score.mid { background: #fef3c7; color: #92400e; }
+        .card-score.low { background: #fee2e2; color: #991b1b; }
+
+        .btn { border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        .btn-block { width: 100%; justify-content: center; margin-top: 10px; }
+
+        .forced-indicator { position: absolute; top: 10px; right: 10px; background: var(--danger); color: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+        .tab-btn { padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; border: 1px solid var(--border); background: var(--card); color: var(--text); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .subject-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+        .subject-chip { padding: 5px 12px; border-radius: 16px; font-size: 11px; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); }
+        .subject-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--card); border-radius: 16px; padding: 24px; max-width: 750px; width: 95%; max-height: 85vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text); }
+
+        .question-block { background: var(--bg); border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .option-label { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; cursor: pointer; margin-bottom: 3px; font-size: 13px; }
+        .option-label:hover { background: var(--border); }
+        .option-label.correct { background: #d1fae5; border: 1px solid var(--success); }
+        .option-label.wrong { background: #fee2e2; border: 1px solid var(--danger); }
+        .option-label.disabled { pointer-events: none; opacity: 0.85; }
+
+        .result-summary { text-align: center; padding: 20px; background: var(--bg); border-radius: 12px; margin-bottom: 16px; }
+        .result-score { font-size: 52px; font-weight: 800; line-height: 1; }
+        .result-detail { display: flex; justify-content: center; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
+        .result-detail-item .val { font-size: 20px; font-weight: 700; }
+        .result-detail-item .lbl { font-size: 11px; color: var(--text-light); }
+
+        .warning-banner { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .timer { font-weight: 700; font-size: 16px; text-align: right; margin-bottom: 10px; }
+        .timer.warning { color: var(--danger); animation: pulse 1s infinite; }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
+        .empty-state i { font-size: 48px; margin-bottom: 12px; display: block; }
+
+        @media (max-width: 600px) { .assessment-grid { grid-template-columns: 1fr; } .header { flex-wrap: wrap; gap: 10px; } }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="subject-portal.html" class="back-btn"><i class="fas fa-arrow-left"></i> Portal</a>
+    <h2><i class="fas fa-tasks"></i> My Assessments</h2>
+    <span class="grade-badge" id="gradeBadge">Grade ?</span>
+</div>
+
+<div class="container">
+    <div class="stats-row">
+        <div class="stat-mini"><div class="value" id="totalCount">0</div><div class="label">Total</div></div>
+        <div class="stat-mini"><div class="value" id="pendingCount">0</div><div class="label">Pending</div></div>
+        <div class="stat-mini"><div class="value" id="forcedCount">0</div><div class="label">Required</div></div>
+        <div class="stat-mini"><div class="value" id="avgScoreDisplay">-</div><div class="label">Avg Score</div></div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="filterAssessments('all')">📋 All</button>
+        <button class="tab-btn" onclick="filterAssessments('pending')">⏳ Pending</button>
+        <button class="tab-btn" onclick="filterAssessments('forced')">⚠️ Required</button>
+        <button class="tab-btn" onclick="filterAssessments('completed')">✅ Completed</button>
+    </div>
+
+    <div class="subject-filter" id="subjectFilter"></div>
+
+    <div class="section-title"><i class="fas fa-exclamation-circle" style="color:var(--danger);"></i> Required & Pending <span class="badge-count" id="badgePending">0</span></div>
+    <div class="assessment-grid" id="pendingGrid"></div>
+
+    <div class="section-title"><i class="fas fa-check-circle" style="color:var(--success);"></i> Completed <span class="badge-count" id="badgeCompleted">0</span></div>
+    <div class="assessment-grid" id="completedGrid"></div>
+</div>
+
+<!-- Assessment Modal -->
+<div class="modal" id="assessmentModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div><h3 id="modalTitle">Assessment</h3><small id="modalInfo"></small></div>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="warning-banner" id="warningBanner" style="display:none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>⚠️ Do not close, refresh, or leave this page. Any exit will be reported.</span>
+        </div>
+        <div id="timerDisplay" class="timer" style="display:none;"></div>
+        <div id="questionsContainer"></div>
+        <div id="resultContainer" style="display:none;"></div>
+        <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
+            <button class="btn btn-outline" onclick="closeModal()">Close</button>
+            <button class="btn btn-primary" id="submitAssessmentBtn" onclick="submitAssessment()">Submit</button>
+            <button class="btn btn-success" id="retakeBtn" style="display:none;" onclick="retakeAssessment()">Retake</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { auth, db, collection, query, where, getDocs, doc, getDoc, updateDoc, addDoc, Timestamp } from '../firebase-config.js';
+
+const session = localStorage.getItem('current_user_session');
+if (!session) window.location.href = '../signin.html';
+const student = JSON.parse(session || '{}');
+if (student.role !== 'student') window.location.href = '../index.html';
+
+const studentGrade = parseInt(student.grade) || 9;
+const studentSection = String(student.section || 'A');
+const studentStream = (student.stream || '').toLowerCase().trim();
+document.getElementById('gradeBadge').textContent = `Grade ${studentGrade}${studentSection}`;
+
+let allAssessments = [], allScores = [], currentAssessment = null, currentScoreDoc = null;
+let timerInterval = null, timeLeftSeconds = 0, submitted = false;
+let currentFilter = 'all', currentSubjectFilter = 'all';
+
+const SUBJECTS_BY_GRADE = {
+    9: ['Biology','Physics','Chemistry','Mathematics','Geography','History','English','Civics','HPE','ICT'],
+    10: ['Biology','Physics','Chemistry','Mathematics','Geography','History','English','Economics','HPE','ICT'],
+    11: { natural: ['Biology','Physics','Chemistry','Mathematics','English','Agriculture','ICT'], social: ['Geography','History','Economics','Civics','English','Mathematics'] },
+    12: { natural: ['Biology','Physics','Chemistry','Mathematics','English','Agriculture','ICT'], social: ['Geography','History','Economics','Civics','English','Mathematics'] }
+};
+
+function getSubjects() {
+    if (studentGrade <= 10) return SUBJECTS_BY_GRADE[studentGrade] || SUBJECTS_BY_GRADE[9];
+    const key = studentStream.includes('natural') ? 'natural' : 'social';
+    return SUBJECTS_BY_GRADE[studentGrade]?.[key] || SUBJECTS_BY_GRADE[11].natural;
+}
+
+function getSC(s) {
+    if(!s) return 'general';
+    const n = s.toLowerCase().trim();
+    if(n.includes('bio')) return 'biology'; if(n.includes('phy')) return 'physics';
+    if(n.includes('chem')) return 'chemistry'; if(n.includes('math')) return 'mathematics';
+    if(n.includes('eng')) return 'english'; if(n.includes('geo')) return 'geography';
+    if(n.includes('hist')) return 'history'; if(n.includes('econ')) return 'economics';
+    if(n.includes('civ')) return 'civics'; if(n.includes('hpe')) return 'hpe';
+    if(n.includes('ict')) return 'ict'; if(n.includes('agri')) return 'agriculture';
+    return n.replace(/\s+/g,'_');
+}
+
+const displayNames = { biology:'Biology', physics:'Physics', chemistry:'Chemistry', mathematics:'Mathematics', geography:'Geography', history:'History', english:'English', civics:'Civics', economics:'Economics', hpe:'HPE', ict:'ICT', agriculture:'Agriculture' };
+function getDN(c) { return displayNames[c] || c; }
+function esc(t) { if(!t) return ''; const d = document.createElement('div'); d.textContent = String(t); return d.innerHTML; }
+
+function renderSubjectFilters() {
+    const subs = getSubjects();
+    document.getElementById('subjectFilter').innerHTML = `<span class="subject-chip active" onclick="filterBySubject('all')">All</span>` + subs.map(s => `<span class="subject-chip" onclick="filterBySubject('${getSC(s)}')">${s}</span>`).join('');
+}
+
+window.filterBySubject = function(code) {
+    currentSubjectFilter = code;
+    document.querySelectorAll('.subject-chip').forEach(c => c.classList.remove('active'));
+    const chip = document.querySelector(`.subject-chip[onclick="filterBySubject('${code}')"]`);
+    if(chip) chip.classList.add('active');
+    renderAssessments();
+};
+
+async function loadAssessments() {
+    try {
+        const aq = query(collection(db, 'assessments'), where('grade', '==', studentGrade), where('section', '==', studentSection));
+        const asnap = await getDocs(aq);
+        allAssessments = [];
+        asnap.forEach(d => {
+            const data = d.data();
+            if(studentGrade >= 11 && data.stream) {
+                if(!studentStream.includes((data.stream||'').toLowerCase().trim())) return;
+            }
+            allAssessments.push({ id: d.id, ...data });
+        });
+
+        const fq = query(collection(db, 'assessments'), where('grade', '==', studentGrade), where('forcedForAllSections', '==', true));
+        const fsnap = await getDocs(fq);
+        fsnap.forEach(d => {
+            if(!allAssessments.find(a => a.id === d.id)) {
+                const data = d.data();
+                if(studentGrade >= 11 && data.stream && !studentStream.includes((data.stream||'').toLowerCase().trim())) return;
+                allAssessments.push({ id: d.id, ...data });
+            }
+        });
+
+        const sq = query(collection(db, 'assessment_scores'), where('studentId', '==', student.id));
+        const ssnap = await getDocs(sq);
+        allScores = [];
+        ssnap.forEach(d => allScores.push({ id: d.id, ...d.data() }));
+
+        // Auto-open forced
+        for(const fs of allScores.filter(s => s.status === 'forced')) {
+            const key = `forced_handled_${fs.assessmentId}`;
+            if(!localStorage.getItem(key)) {
+                localStorage.setItem(key, '1');
+                const a = allAssessments.find(x => x.id === fs.assessmentId);
+                if(a) setTimeout(() => { if(!document.getElementById('assessmentModal').classList.contains('active')) openAssessment(a, fs.id); }, 500);
+            }
+        }
+
+        updateStats();
+        renderAssessments();
+    } catch(e) { console.error(e); }
+}
+
+function updateStats() {
+    let p = [], f = [], c = [], ts = 0, sc = 0;
+    allAssessments.forEach(a => {
+        const score = allScores.find(s => s.assessmentId === a.id);
+        const st = !score ? 'pending' : score.status === 'forced' ? 'forced' : score.status === 'in_progress' ? 'in_progress' : ['completed','graded','submitted'].includes(score.status) ? 'completed' : 'pending';
+        if(st === 'completed') { c.push(a); if(score) { ts += score.percentage || 0; sc++; } }
+        else if(st === 'forced') f.push(a);
+        else p.push(a);
+    });
+    document.getElementById('totalCount').textContent = allAssessments.length;
+    document.getElementById('pendingCount').textContent = p.length;
+    document.getElementById('forcedCount').textContent = f.length;
+    document.getElementById('avgScoreDisplay').textContent = sc > 0 ? Math.round(ts/sc) + '%' : '-';
+    document.getElementById('badgePending').textContent = p.length + f.length;
+    document.getElementById('badgeCompleted').textContent = c.length;
+}
+
+function renderAssessments() {
+    const pc = [], cc = [];
+    allAssessments.forEach(a => {
+        if(currentSubjectFilter !== 'all') {
+            const asc = a.subjectCode || getSC(a.title || '');
+            if(asc !== currentSubjectFilter) return;
+        }
+        const score = allScores.find(s => s.assessmentId === a.id);
+        const st = !score ? 'pending' : score.status === 'forced' ? 'forced' : score.status === 'in_progress' ? 'in_progress' : ['completed','graded','submitted'].includes(score.status) ? 'completed' : 'pending';
+        const card = createCard(a, st, score);
+        if(st === 'completed') cc.push(card); else pc.push(card);
+    });
+
+    let dp = pc, dc = cc;
+    if(currentFilter === 'pending') dc = [];
+    else if(currentFilter === 'forced') { dp = pc.filter(c => c.status === 'forced'); dc = []; }
+    else if(currentFilter === 'completed') dp = [];
+
+    document.getElementById('pendingGrid').innerHTML = dp.length ? dp.map(c => c.html).join('') : '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-inbox"></i><p>No pending assessments</p></div>';
+    document.getElementById('completedGrid').innerHTML = dc.length ? dc.map(c => c.html).join('') : '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-check-circle"></i><p>No completed assessments</p></div>';
+}
+
+function createCard(a, st, score) {
+    const tl = { CW:'📝 Classwork', HW:'🏠 Homework', Final:'🎓 Final Exam', Test:'📋 Test', Quiz:'❓ Quiz', Assignment:'📄 Assignment', Behavior:'👤 Behavior', Bookmark:'📖 Bookmark' };
+    let sd = '', scl = 'none', ccl = '', badge = '', btn = '';
+    const sc = a.subjectCode || getSC(a.title || '');
+    const subj = sc ? `<div class="card-subject">📚 ${getDN(sc)}</div>` : '';
+
+    if(st === 'completed' && score) {
+        const pct = score.percentage || (score.total > 0 ? Math.round((score.score/score.total)*100) : 0);
+        if(pct >= 80) scl = 'high'; else if(pct >= 50) scl = 'mid'; else scl = 'low';
+        sd = `<div class="card-score ${scl}">✅ ${pct}% (${score.score}/${score.total || a.totalPoints || 100})</div>`;
+        ccl = 'completed';
+        btn = `<button class="btn btn-outline btn-sm" onclick="viewResult('${a.id}')">👁 View</button> <button class="btn btn-outline btn-sm" onclick="openAssessmentById('${a.id}')">🔄 Retake</button>`;
+    } else if(st === 'forced') {
+        ccl = 'forced'; badge = '<span class="forced-indicator">⚠️ REQUIRED</span>';
+        btn = `<button class="btn btn-primary btn-block" onclick="openAssessmentById('${a.id}')">⚠️ Take Now</button>`;
+    } else if(st === 'in_progress') {
+        ccl = 'in-progress'; badge = '<span class="forced-indicator" style="background:var(--info);">🔄 IN PROGRESS</span>';
+        btn = `<button class="btn btn-primary btn-block" onclick="openAssessmentById('${a.id}')">▶ Continue</button>`;
+    } else {
+        btn = `<button class="btn btn-primary btn-block" onclick="openAssessmentById('${a.id}')">▶ Start</button>`;
+    }
+
+    return { status: st, html: `
+        <div class="assessment-card ${ccl}">
+            ${badge}${subj}
+            <div class="card-type">${tl[a.type] || a.type || 'Assessment'}</div>
+            <div class="card-title">${esc(a.title || 'Untitled')}</div>
+            <div class="card-meta">⭐ ${a.totalPoints || 100} pts | ⏱ ${a.timeLimit || 60}min</div>
+            <div class="card-meta">📅 ${a.dueDate || 'No deadline'} | 👨‍🏫 ${esc(a.teacherName || '')}</div>
+            ${sd}${btn}
+        </div>` };
+}
+
+window.openAssessmentById = function(id) {
+    const a = allAssessments.find(x => x.id === id);
+    if(!a) return;
+    openAssessment(a, allScores.find(s => s.assessmentId === id)?.id);
+};
+
+window.viewResult = function(id) {
+    const a = allAssessments.find(x => x.id === id);
+    const score = allScores.find(s => s.assessmentId === id);
+    if(!a || !score) return;
+    openAssessment(a, score.id, true);
+};
+
+async function openAssessment(assessment, scoreDocId, viewOnly = false) {
+    currentAssessment = assessment;
+    submitted = false;
+    clearInterval(timerInterval);
+
+    document.getElementById('modalTitle').textContent = assessment.title || 'Assessment';
+    document.getElementById('modalInfo').innerHTML = `${assessment.type || 'Assessment'} • ${assessment.totalPoints || 100} pts • G${assessment.grade || studentGrade}${assessment.section || studentSection} • ⏱ ${assessment.timeLimit || 60}min`;
+
+    const isForced = assessment.forceAllStudents || assessment.forcedByAdmin || (scoreDocId && allScores.find(s => s.id === scoreDocId)?.status === 'forced');
+    document.getElementById('warningBanner').style.display = (isForced && !viewOnly) ? 'flex' : 'none';
+
+    if((isForced || assessment.type === 'Final' || assessment.type === 'Test') && !viewOnly) {
+        timeLeftSeconds = (assessment.timeLimit || 60) * 60;
+        document.getElementById('timerDisplay').style.display = 'block';
+        updateTimerDisplay();
+        startTimer();
+    } else {
+        document.getElementById('timerDisplay').style.display = 'none';
+    }
+
+    if(scoreDocId) {
+        const snap = await getDoc(doc(db, 'assessment_scores', scoreDocId));
+        if(snap.exists()) currentScoreDoc = { id: scoreDocId, ...snap.data() };
+    }
+
+    if(!currentScoreDoc) {
+        const ref = await addDoc(collection(db, 'assessment_scores'), {
+            studentId: student.id, studentName: student.name, assessmentId: assessment.id,
+            assessmentTitle: assessment.title, assessmentType: assessment.type,
+            score: 0, total: assessment.totalPoints || 100, percentage: 0, status: 'in_progress',
+            grade: assessment.grade || studentGrade, section: assessment.section || studentSection,
+            subjectCode: assessment.subjectCode || '', startedAt: Timestamp.now()
+        });
+        currentScoreDoc = { id: ref.id, score: 0, total: assessment.totalPoints || 100, percentage: 0, status: 'in_progress' };
+    }
+
+    renderQuestions(assessment, viewOnly);
+    const done = ['completed','graded','submitted'].includes(currentScoreDoc.status);
+    document.getElementById('submitAssessmentBtn').style.display = (done || viewOnly) ? 'none' : 'inline-flex';
+    document.getElementById('retakeBtn').style.display = done ? 'inline-flex' : 'none';
+    document.getElementById('assessmentModal').classList.add('active');
+}
+
+function renderQuestions(assessment, viewOnly = false) {
+    const qc = document.getElementById('questionsContainer');
+    const rc = document.getElementById('resultContainer');
+    let questions = assessment.questions || [];
+
+    if(!questions.length) {
+        const n = Math.min(Math.max(Math.floor((assessment.totalPoints || 100) / 5), 5), 20);
+        for(let i = 1; i <= n; i++) questions.push({ id: `q${i}`, question: `Question ${i}`, options: [{ id:'A', text:'Option A' },{ id:'B', text:'Option B' },{ id:'C', text:'Option C' },{ id:'D', text:'Option D' }], correctAnswer: 'A', points: Math.ceil((assessment.totalPoints || 100)/n) });
+    }
+
+    const answers = currentScoreDoc?.answers || {};
+    const done = ['completed','graded','submitted'].includes(currentScoreDoc?.status);
+
+    if(done || viewOnly) {
+        qc.style.display = 'none'; rc.style.display = 'block';
+        const score = currentScoreDoc.score || 0, total = currentScoreDoc.total || assessment.totalPoints || 100;
+        const pct = currentScoreDoc.percentage || (total > 0 ? Math.round((score/total)*100) : 0);
+        const cc = currentScoreDoc.correctCount || 0;
+        let sc = 'var(--danger)'; if(pct >= 80) sc = 'var(--success)'; else if(pct >= 50) sc = 'var(--warning)';
+
+        rc.innerHTML = `<div class="result-summary">
+            <div class="result-score" style="color:${sc}">${pct}%</div>
+            <div>${pct >= 80 ? '🌟 Excellent!' : pct >= 50 ? '👍 Good!' : '💪 Keep trying!'}</div>
+            <div class="result-detail">
+                <div class="result-detail-item"><div class="val">${score}</div><div class="lbl">Earned</div></div>
+                <div class="result-detail-item"><div class="val">${total}</div><div class="lbl">Total</div></div>
+                <div class="result-detail-item"><div class="val">${cc}/${questions.length}</div><div class="lbl">Correct</div></div>
+            </div>
+        </div>` + questions.map((q, i) => {
+            const ua = answers[q.id], isCorrect = ua === q.correctAnswer;
+            return `<div class="question-block"><h4>${i+1}. ${esc(q.question)} (${q.points||1}pt)</h4>` + q.options.map(o => {
+                let cls = 'option-label disabled';
+                if(o.id === q.correctAnswer) cls += ' correct';
+                else if(o.id === ua && !isCorrect) cls += ' wrong';
+                const icon = o.id === q.correctAnswer ? ' ✅' : (o.id === ua && !isCorrect ? ' ❌' : '');
+                return `<div class="${cls}"><input type="radio" disabled ${o.id === ua ? 'checked' : ''}> ${o.id}) ${esc(o.text)}${icon}</div>`;
+            }).join('') + `<div style="font-size:12px;color:${isCorrect ? 'var(--success)' : 'var(--danger)'};margin-top:6px;">${isCorrect ? '✓ Correct' : '✗ Answer: ' + q.correctAnswer}</div></div>`;
+        }).join('');
+    } else {
+        qc.style.display = 'block'; rc.style.display = 'none';
+        qc.innerHTML = questions.map((q, i) => `<div class="question-block"><h4>${i+1}. ${esc(q.question)} (${q.points||1}pt)</h4>` + q.options.map(o => `<label class="option-label"><input type="radio" name="q_${q.id}" value="${o.id}" ${answers[q.id] === o.id ? 'checked' : ''}> ${o.id}) ${esc(o.text)}</label>`).join('') + '</div>').join('');
+    }
+}
+
+window.submitAssessment = async function() {
+    if(submitted || !currentAssessment) return;
+
+    const unanswered = currentAssessment.questions.filter(q => !document.querySelector(`input[name="q_${q.id}"]:checked`));
+    if(unanswered.length > 0 && !confirm(`${unanswered.length} unanswered. Submit anyway?`)) return;
+
+    submitted = true; clearInterval(timerInterval);
+
+    const answers = {}; let correct = 0, tp = 0, ep = 0;
+    currentAssessment.questions.forEach(q => {
+        const sel = document.querySelector(`input[name="q_${q.id}"]:checked`);
+        answers[q.id] = sel ? sel.value : null;
+        const ppq = q.points || Math.ceil((currentAssessment.totalPoints || 100) / currentAssessment.questions.length);
+        tp += ppq;
+        if(sel && sel.value === q.correctAnswer) { correct++; ep += ppq; }
+    });
+
+    const pct = tp > 0 ? Math.round((ep/tp)*100) : 0;
+
+    try {
+        if(currentScoreDoc?.id) {
+            await updateDoc(doc(db, 'assessment_scores', currentScoreDoc.id), {
+                score: ep, total: tp, percentage: pct, answers, correctCount: correct,
+                totalQuestions: currentAssessment.questions.length, status: 'submitted',
+                completedAt: Timestamp.now(), submittedAt: Timestamp.now()
+            });
+
+            // Auto-update transcript
+            const tq = query(collection(db, "student_transcripts"), where("studentId","==",student.id), where("assessmentId","==",currentAssessment.id));
+            const ts = await getDocs(tq);
+            if(!ts.empty) {
+                for(const d of ts.docs) await updateDoc(d.ref, { score: ep, total: tp, percentage: pct, status: 'submitted', submittedAt: Timestamp.now() });
+            }
+
+            const pq = query(collection(db, "published_transcripts"), where("studentId","==",student.id), where("assessmentId","==",currentAssessment.id));
+            const ps = await getDocs(pq);
+            if(!ps.empty) {
+                for(const d of ps.docs) await updateDoc(d.ref, { score: ep, total: tp, percentage: pct, status: 'submitted', submittedAt: Timestamp.now() });
+            }
+
+            // Notify teacher
+            if(currentAssessment.teacherId) {
+                await addDoc(collection(db, 'notifications'), {
+                    userId: currentAssessment.teacherId, type: 'assessment_submitted',
+                    title: '📝 Assessment Submitted',
+                    message: `${student.name} submitted "${currentAssessment.title}". Score: ${ep}/${tp} (${pct}%)`,
+                    studentId: student.id, assessmentId: currentAssessment.id,
+                    score: ep, total: tp, percentage: pct, grade: studentGrade,
+                    read: false, createdAt: Timestamp.now()
+                });
+            }
+
+            currentScoreDoc.score = ep; currentScoreDoc.total = tp;
+            currentScoreDoc.percentage = pct; currentScoreDoc.status = 'submitted';
+            const idx = allScores.findIndex(s => s.id === currentScoreDoc.id);
+            if(idx >= 0) allScores[idx] = { ...allScores[idx], ...currentScoreDoc };
+        }
+    } catch(e) { console.error(e); alert('Error submitting'); submitted = false; return; }
+
+    renderQuestions(currentAssessment, true);
+    document.getElementById('submitAssessmentBtn').style.display = 'none';
+    document.getElementById('retakeBtn').style.display = 'inline-flex';
+    document.getElementById('timerDisplay').style.display = 'none';
+    document.getElementById('warningBanner').style.display = 'none';
+
+    alert(`✅ Submitted!\nScore: ${ep}/${tp} (${pct}%)\nCorrect: ${correct}/${currentAssessment.questions.length}\nTranscript auto-updated.`);
+    updateStats();
+    setTimeout(() => renderAssessments(), 300);
+};
+
+window.retakeAssessment = async function() {
+    if(!currentAssessment || !currentScoreDoc?.id) return;
+    if(!confirm('Retake? Previous score will be replaced.')) return;
+    await updateDoc(doc(db, 'assessment_scores', currentScoreDoc.id), { score: 0, total: currentAssessment.totalPoints || 100, percentage: 0, answers: {}, correctCount: 0, status: 'in_progress', startedAt: Timestamp.now(), completedAt: null });
+    currentScoreDoc.score = 0; currentScoreDoc.total = currentAssessment.totalPoints || 100;
+    currentScoreDoc.percentage = 0; currentScoreDoc.status = 'in_progress';
+    submitted = false;
+    renderQuestions(currentAssessment, false);
+    document.getElementById('submitAssessmentBtn').style.display = 'inline-flex';
+    document.getElementById('retakeBtn').style.display = 'none';
+    if(currentAssessment.forceAllStudents || currentAssessment.type === 'Final') {
+        timeLeftSeconds = (currentAssessment.timeLimit || 60) * 60;
+        document.getElementById('timerDisplay').style.display = 'block';
+        startTimer();
+    }
+};
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeftSeconds--;
+        updateTimerDisplay();
+        if(timeLeftSeconds <= 0) { clearInterval(timerInterval); if(!submitted) { alert('⏰ Time up!'); window.submitAssessment(); } }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(timeLeftSeconds/60).toString().padStart(2,'0');
+    const s = Math.floor(timeLeftSeconds%60).toString().padStart(2,'0');
+    const d = document.getElementById('timerDisplay');
+    d.textContent = `⏱ ${m}:${s}`;
+    if(timeLeftSeconds < 300) d.classList.add('warning'); else d.classList.remove('warning');
+}
+
+window.closeModal = function() {
+    if(!submitted && currentAssessment && (currentAssessment.forceAllStudents || currentAssessment.type === 'Final')) {
+        if(!confirm('⚠️ Required assessment. Close anyway?')) return;
+    }
+    clearInterval(timerInterval);
+    document.getElementById('assessmentModal').classList.remove('active');
+    currentAssessment = null; currentScoreDoc = null; submitted = false;
+    renderAssessments();
+};
+
+window.filterAssessments = function(f) {
+    currentFilter = f;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.tab-btn[onclick="filterAssessments('${f}')"]`)?.classList.add('active');
+    renderAssessments();
+};
+
+// Anti-cheat
+document.addEventListener('visibilitychange', async () => {
+    if(document.hidden && currentAssessment && !submitted && (currentAssessment.forceAllStudents || currentAssessment.type === 'Final')) {
+        try { await addDoc(collection(db, 'notifications'), { type: 'exam_visibility_exit', title: 'Student Left Page', message: `${student.name} switched tabs`, studentId: student.id, assessmentId: currentAssessment.id, grade: studentGrade, read: false, createdAt: Timestamp.now() }); } catch(e) {}
+    }
+});
+
+window.addEventListener('beforeunload', (e) => {
+    if(currentAssessment && !submitted && (currentAssessment.forceAllStudents || currentAssessment.type === 'Final')) {
+        e.preventDefault(); e.returnValue = '';
+    }
+});
+
+document.getElementById('assessmentModal')?.addEventListener('click', function(e) { if(e.target === this) closeModal(); });
+
+renderSubjectFilters();
+loadAssessments();
+setInterval(loadAssessments, 45000);
+</script>
+</body>
+</html>
