@@ -33,6 +33,13 @@
       var ls = localStorage.getItem('studyAiProxyBase');
       if (ls && ls.trim()) return ls.trim().replace(/\/$/, '');
     } catch (_) {}
+    var host = location.hostname || '';
+    if (host === 'localhost' || host === '127.0.0.1') {
+      // Local dev: avoid manual localStorage when site is served over plain HTTP (Live Server, etc.)
+      if (location.protocol === 'http:' || location.protocol === 'file:') {
+        return 'http://127.0.0.1:8787';
+      }
+    }
     return '';
   }
 
@@ -41,7 +48,7 @@
     var base = proxyBase();
     if (!base) {
       throw new Error(
-        'Study AI proxy URL is not set. In the browser console run: localStorage.setItem("studyAiProxyBase","http://127.0.0.1:8787") or set window.__STUDY_AI_PROXY_BASE__ / meta[name=study-ai-proxy-base]. Never put OpenRouter keys in the frontend.'
+        'Study AI proxy URL is not set. For local testing use http://localhost (not https) or run: localStorage.setItem("studyAiProxyBase","https://your-hosted-proxy"). On GitHub Pages set the same in localStorage or meta study-ai-proxy-base. API keys belong only in server/.env.'
       );
     }
 
