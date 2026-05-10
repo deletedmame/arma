@@ -367,6 +367,18 @@
         const code = getSubjectCode(subject);
         return `grade-${grade}/${code}/index.html`;
     }
+
+    /** Grade/stream assessment landing page (root-relative). */
+    function resolveGradeAssessmentHref(user) {
+        const g = parseInt(user?.grade, 10) || 9;
+        const stream = String(user?.stream || '').toLowerCase();
+        if (g >= 11) {
+            return stream.includes('social')
+                ? `/grade-${g}/social/assessment.html`
+                : `/grade-${g}/natural/assessment.html`;
+        }
+        return `/grade-${g}/assessment.html`;
+    }
     
     // Load announcements
     let unsubscribeAnnouncements = null;
@@ -520,9 +532,13 @@
     }
     
     // Show homework notification
-    function showHWNotification(assessment) {
+    function showHWNotification(assessment, forcedAssessmentId) {
         const existing = document.getElementById('hwNotificationPopup');
         if (existing) existing.remove();
+        const ah = resolveGradeAssessmentHref(currentUser);
+        const assessmentHref = forcedAssessmentId
+            ? `${ah}?assessmentId=${encodeURIComponent(forcedAssessmentId)}&autoOpen=1`
+            : ah;
         
         const notif = document.createElement('div');
         notif.id = 'hwNotificationPopup';
@@ -535,8 +551,9 @@
                     <p style="margin:5px 0;font-size:13px;"><strong>${escapeHtml(assessment.title || 'Homework')}</strong></p>
                     <p style="font-size:12px;color:var(--text-light);">${escapeHtml(assessment.description || '')}</p>
                     <p style="font-size:11px;color:var(--text-light);margin-top:5px;">Due: ${assessment.dueDate || 'Check assessments tab'}</p>
-                    <div style="display:flex;gap:10px;margin-top:10px;">
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;">
                         <a href="${getSubjectPath(currentUser.grade, assessment.subjectCode || '')}" style="color:var(--primary);text-decoration:none;font-weight:600;">Go to Subject →</a>
+                        <a href="${assessmentHref}" style="color:var(--primary);text-decoration:none;font-weight:600;">Grade assessments (full page) →</a>
                     </div>
                 </div>
                 <button onclick="this.parentElement.parentElement.remove()">&times;</button>
@@ -565,37 +582,35 @@
                         const row = d.data();
                         if (!row?.assessmentId) continue;
                         const assessmentId = row.assessmentId;
-                        
+
                         const aSnap = await getDoc(doc(db, 'assessments', assessmentId));
                         if (!aSnap.exists()) continue;
                         const assessment = aSnap.data();
-                        
+
                         if (localStorage.getItem(handledKey(assessmentId)) === '1') continue;
-                        
-                        if (assessment.type === 'CW') {
-                            const currentSubject = await getStudentCurrentSubject();
-                            const assessmentSubjectCode = getSubjectCode(assessment.subjectCode || '');
-                            const currentSubjectCode = getSubjectCode(currentSubject || '');
-                            
-                            const subjectMatch = currentSubjectCode === assessmentSubjectCode;
-                            
-                            if (subjectMatch) {
-                                localStorage.setItem(handledKey(assessmentId), '1');
-                                
-                                // Redirect to the correct subject page for the student's grade
-                                const path = getSubjectPath(currentUser.grade, assessment.subjectCode || currentSubject);
-                                window.location.href = `${path}/assessment.html?id=${encodeURIComponent(assessmentId)}`;
-                                return;
-                            }
-                        } else if (assessment.type === 'HW') {
+
+                        if (assessment.type === 'HW') {
                             if (localStorage.getItem(notifiedKey(assessmentId)) !== '1') {
                                 localStorage.setItem(notifiedKey(assessmentId), '1');
                                 localStorage.setItem(handledKey(assessmentId), '1');
-                                showHWNotification(assessment);
+                                showHWNotification(assessment, assessmentId);
                             }
-                        } else {
-                            localStorage.setItem(handledKey(assessmentId), '1');
+                            continue;
                         }
+
+                        localStorage.setItem(handledKey(assessmentId), '1');
+
+                        let target = String(row.assessmentUrl || assessment.assessmentUrl || '').trim();
+                        if (!target || !target.toLowerCase().includes('assessment.html')) {
+                            target = resolveGradeAssessmentHref(currentUser);
+                        }
+                        if (!target.startsWith('/')) target = '/' + target.replace(/^\.?\//, '');
+
+                        const url = new URL(target, window.location.origin);
+                        url.searchParams.set('assessmentId', assessmentId);
+                        url.searchParams.set('autoOpen', '1');
+                        window.location.replace(url.pathname + url.search + url.hash);
+                        return;
                     } catch (innerError) {
                         console.error("Error processing forced assessment:", innerError);
                     }

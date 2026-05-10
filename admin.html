@@ -1403,15 +1403,27 @@
         const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
         const PERIODS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-        // Assessment URL mapping
+        // Grade-level assessment pages (must match deployed paths)
         const ASSESSMENT_URLS = {
-            '9': '/grade-9/assessment-9.html',
-            '10': '/grade-10/assessment-10.html',
-            '11-Natural': '/grade-11/natural/assessment-11-natural.html',
-            '11-Social': '/grade-11/social/assessment-11-social.html',
-            '12-Natural': '/grade-12/natural/assessment-12-natural.html',
-            '12-Social': '/grade-12/social/assessment-12-social.html'
+            '9': '/grade-9/assessment.html',
+            '10': '/grade-10/assessment.html',
+            '11-Natural': '/grade-11/natural/assessment.html',
+            '11-Social': '/grade-11/social/assessment.html',
+            '12-Natural': '/grade-12/natural/assessment.html',
+            '12-Social': '/grade-12/social/assessment.html'
         };
+        function adminResolveStreamLabel(assessment, subjectCode) {
+            const raw = String(assessment?.stream || subjectCode || '').toLowerCase();
+            return raw.includes('social') ? 'Social' : 'Natural';
+        }
+        function resolveAdminAssessmentUrl(grade, assessment, subjectCode) {
+            const g = parseInt(grade, 10);
+            if (g === 11 || g === 12) {
+                const stream = adminResolveStreamLabel(assessment, subjectCode);
+                return ASSESSMENT_URLS[`${g}-${stream}`] || ASSESSMENT_URLS[`${g}-Natural`];
+            }
+            return ASSESSMENT_URLS[String(g)] || `/grade-${g}/assessment.html`;
+        }
         let examReports = [];
         let transcriptSubmissions = [];
 
@@ -1947,19 +1959,7 @@
             const grade = assessment.grade;
             const subject = assessment.subjectCode;
 
-            // Determine stream for grades 11-12
-            let stream = '';
-            if (grade === 11 || grade === 12) {
-                stream = assessment.stream || (subject?.toLowerCase().includes('natural') ? 'Natural' : 'Social');
-            }
-
-            // Get the assessment URL
-            let assessmentUrl;
-            if (grade === 11 || grade === 12) {
-                assessmentUrl = ASSESSMENT_URLS[`${grade}-${stream}`] || `/assessment-${grade}.html`;
-            } else {
-                assessmentUrl = ASSESSMENT_URLS[String(grade)] || `/assessment-${grade}.html`;
-            }
+            const assessmentUrl = resolveAdminAssessmentUrl(grade, assessment, subject);
 
             // Update assessment as forced
             await updateDoc(assessmentRef, {

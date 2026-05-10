@@ -17,6 +17,17 @@
         .avatar { width: 45px; height: 45px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; }
         .logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
         .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .transcript-section-title { font-size: 1.15rem; margin-top: 36px; margin-bottom: 12px; font-weight: 700; }
+        .transcript-full-list { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; width: 100%; }
+        .transcript-full-card {
+            background: var(--card); border-radius: 16px; padding: 22px 26px; border: 1px solid var(--border);
+            width: 100%; cursor: pointer; transition: all 0.2s; text-align: left;
+        }
+        .transcript-full-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); border-color: var(--primary); }
+        .transcript-full-card p { margin: 6px 0; font-size: 14px; line-height: 1.45; }
+        .transcript-full-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .btn-transcript { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-transcript:hover { opacity: 0.92; }
         .add-child-card { background: var(--card); border-radius: 20px; padding: 25px; margin-bottom: 30px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .add-child-card input { flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
         .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; }
@@ -60,8 +71,8 @@
     <div class="add-child-card"><input type="text" id="childCode" placeholder="Enter your child's ID number"><button class="btn-primary" onclick="addChild()"><i class="fas fa-plus"></i> Add Child</button></div>
     <h3><i class="fas fa-child"></i> My Children</h3>
     <div class="children-grid" id="childrenList"><div class="empty-chat">Loading your children...</div></div>
-    <h3 style="margin-top:24px;"><i class="fas fa-scroll"></i> Published Transcripts</h3>
-    <div id="parentTranscriptList" class="children-grid"><div class="empty-chat">Loading transcripts...</div></div>
+    <h3 class="transcript-section-title"><i class="fas fa-scroll"></i> Published Transcripts &amp; Reports</h3>
+    <div id="parentTranscriptList" class="transcript-full-list"><div class="empty-chat">Loading transcripts...</div></div>
 </div>
 
 <div class="footer"><p>Bikolos Nur Academy (BNA) | Powered by <a href="https://youtube.com" target="_blank">Arma</a></p></div>
@@ -101,6 +112,7 @@
         const transcriptContainer = document.getElementById('parentTranscriptList');
         const childList = children || await getParentChildren(currentParent.id);
         if (childList.length === 0) {
+            transcriptContainer.className = 'transcript-full-list';
             transcriptContainer.innerHTML = '<div class="empty-chat">Add children to view their transcripts.</div>';
             return;
         }
@@ -112,18 +124,26 @@
             transcripts.sort((a, b) => (b.publishedAt?.toMillis?.() || 0) - (a.publishedAt?.toMillis?.() || 0));
             if (transcripts.length === 0) continue;
             transcripts.forEach(t => {
+                const nameJson = JSON.stringify(child.childName || '');
+                const safeName = escapeHtml(child.childName);
                 cards.push(`
-                    <div class="child-card">
-                        <div class="child-name">${escapeHtml(child.childName)}</div>
+                    <div class="transcript-full-card" role="button" tabindex="0"
+                        onclick="viewReportCard('${child.childId}', ${nameJson})"
+                        onkeydown="if(event.key==='Enter'||event.key===' '){ event.preventDefault(); viewReportCard('${child.childId}', ${nameJson}); }">
+                        <div class="child-name">${safeName}</div>
                         <div class="child-info">Grade ${t.grade || child.childGrade} • Section ${t.section || child.childSection || '-'}</div>
                         <p><strong>Term:</strong> ${escapeHtml(t.term || 'Not specified')}</p>
                         <p><strong>Included:</strong> ${escapeHtml((t.selectedItems || []).join(', ') || '-')}</p>
                         <p><strong>Teacher:</strong> ${escapeHtml(t.teacherName || '-')}</p>
                         <p><strong>Note:</strong> ${escapeHtml(t.note || 'No note')}</p>
+                        <div class="transcript-full-actions">
+                            <span class="btn-transcript" onclick="event.stopPropagation(); viewReportCard('${child.childId}', ${nameJson})"><i class="fas fa-file-alt"></i> Open full report card</span>
+                        </div>
                     </div>
                 `);
             });
         }
+        transcriptContainer.className = 'transcript-full-list';
         transcriptContainer.innerHTML = cards.length > 0 ? cards.join('') : '<div class="empty-chat">No published transcripts yet.</div>';
     }
     

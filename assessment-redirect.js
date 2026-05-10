@@ -1,145 +1,121 @@
-// assessment-redirect.js - Central redirect script
-// Place this in your root directory (same level as your HTML files)
+// assessment-redirect.js - Central redirect for mandatory (forced) assessments
+// Place at site root (same level as firebase-config.js).
 
 (function() {
     'use strict';
-    
-    // Get student session
-    const session = localStorage.getItem("current_user_session");
+
+    const session = localStorage.getItem('current_user_session');
     if (!session) return;
-    
+
     let student;
     try {
         student = JSON.parse(session);
-    } catch(e) {
+    } catch (e) {
         return;
     }
-    
+
     if (student.role !== 'student') return;
-    
-    // Prevent redirect loops - check max once per 30 seconds
+
     const lastCheck = sessionStorage.getItem('_ar_check');
     const now = Date.now();
-    if (lastCheck && (now - parseInt(lastCheck)) < 30000) return;
+    if (lastCheck && (now - parseInt(lastCheck, 10)) < 15000) return;
     sessionStorage.setItem('_ar_check', now.toString());
-    
-    // Don't redirect if already on assessment page
+
     const currentPath = window.location.pathname.toLowerCase();
-    if (currentPath.includes('assessment-') || 
-        currentPath.includes('exam-') || 
+    if (currentPath.includes('/assessment.html') ||
+        currentPath.includes('assessment-') ||
+        currentPath.includes('exam-') ||
         currentPath.includes('test-')) {
         return;
     }
-    
-    // Check for forced assessment
+
     checkForcedAssessment(student);
-    
+
     async function checkForcedAssessment(student) {
         try {
-            // Dynamically import Firebase config
-            // Adjust this path based on where your firebase-config.js is located
             const firebasePath = `${window.location.origin}/firebase-config.js`;
             const { db, collection, query, where, getDocs } = await import(firebasePath);
-            
-            // Query for forced assessments
+
             const q = query(
                 collection(db, 'assessment_scores'),
                 where('studentId', '==', student.id),
                 where('status', '==', 'forced')
             );
-            
+
             const snapshot = await getDocs(q);
-            
             if (snapshot.empty) return;
-            
-            // Find the most recent forced assessment (within last 2 hours)
+
             let latestAssessment = null;
             let latestTime = 0;
-            
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const assignedTime = data.assignedAt?.toDate?.()?.getTime() || 
-                                    data.assignedAt?.seconds * 1000 || 0;
-                
-                if (assignedTime > latestTime) {
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const assignedTime = data.assignedAt?.toDate?.()?.getTime() ||
+                    (data.assignedAt?.seconds ? data.assignedAt.seconds * 1000 : 0);
+
+                if (assignedTime >= latestTime) {
                     latestTime = assignedTime;
-                    latestAssessment = { id: doc.id, ...data };
+                    latestAssessment = { id: docSnap.id, ...data };
                 }
             });
-            
-            // Check if within last 2 hours
-            const twoHoursAgo = now - (2 * 60 * 60 * 1000);
-            if (!latestAssessment || latestTime < twoHoursAgo) return;
-            
-            // Get the assessment URL
+
+            if (!latestAssessment) return;
+
+            const seventyTwoHoursAgo = now - (72 * 60 * 60 * 1000);
+            if (latestTime > 0 && latestTime < seventyTwoHoursAgo) return;
+
             let assessmentUrl = latestAssessment.assessmentUrl;
-            
-            // Fallback URL mapping if no URL stored
             if (!assessmentUrl) {
                 assessmentUrl = getAssessmentUrl(student.grade, student.stream);
             }
-            
-            // Build full URL with parameters
+
             const fullUrl = buildAssessmentUrl(assessmentUrl, latestAssessment.assessmentId, student.id);
-            
-            // Show confirmation dialog
-            showRedirectDialog(latestAssessment.assessmentTitle, fullUrl);
-            
+            showMandatoryOverlay(latestAssessment.assessmentTitle);
+            window.location.replace(fullUrl);
         } catch (error) {
             console.warn('Assessment redirect check failed:', error.message);
         }
     }
-    
-    function getAssessmentUrl(grade, stream) {
-        const baseUrl = window.location.origin;
-        const urlMap = {
-            '9': '/assessment-9.html',
-            '10': '/assessment-10.html',
-            '11': stream === 'Social' ? '/assessment-social-11.html' : '/assessment-natural-11.html',
-            '12': stream === 'Social' ? '/assessment-social-12.html' : '/assessment-natural-12.html'
+
+    function getAssessmentUrl(grade, streamRaw) {
+        const g = String(grade != null ? grade : '9');
+        const stream = String(streamRaw || '').toLowerCase();
+        const map = {
+            '9': '/grade-9/assessment.html',
+            '10': '/grade-10/assessment.html',
+            '11': stream.includes('social') ? '/grade-11/social/assessment.html' : '/grade-11/natural/assessment.html',
+            '12': stream.includes('social') ? '/grade-12/social/assessment.html' : '/grade-12/natural/assessment.html'
         };
-        return urlMap[String(grade)] || '/assessment-9.html';
+        return map[g] || '/grade-9/assessment.html';
     }
-    
+
     function buildAssessmentUrl(assessmentUrl, assessmentId, studentId) {
-        // Handle relative paths
         let url;
         if (assessmentUrl.startsWith('http')) {
             url = new URL(assessmentUrl);
         } else {
-            // Make sure we have the correct base
-            const base = window.location.origin;
             const path = assessmentUrl.startsWith('/') ? assessmentUrl : '/' + assessmentUrl;
-            url = new URL(path, base);
+            url = new URL(path, window.location.origin);
         }
-        
-        // Add parameters
+
         if (assessmentId) url.searchParams.set('assessmentId', assessmentId);
         if (studentId) url.searchParams.set('studentId', studentId);
-        
+        url.searchParams.set('autoOpen', '1');
         return url.toString();
     }
-    
-    function showRedirectDialog(title, url) {
-        const message = [
-            '⚠️ MANDATORY ASSESSMENT',
-            '',
-            `"${title || 'Untitled Assessment'}"`,
-            '',
-            'You have been assigned a mandatory assessment.',
-            'Click OK to be redirected now.',
-            '',
-            '⚠️ Do not close or refresh during the assessment!'
-        ].join('\n');
-        
-        if (confirm(message)) {
-            window.location.href = url;
-        } else {
-            // If cancelled, check again in 10 seconds
-            setTimeout(() => {
-                sessionStorage.removeItem('_ar_check');
-            }, 10000);
-        }
+
+    function showMandatoryOverlay(title) {
+        const el = document.createElement('div');
+        el.setAttribute('id', 'mandatory-assessment-overlay');
+        el.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:rgba(15,23,42,0.92);color:#f8fafc;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font-family:system-ui,sans-serif;';
+        el.innerHTML = '<div><p style="font-size:14px;opacity:0.85;margin-bottom:12px;">Mandatory assessment</p><p style="font-size:18px;font-weight:700;max-width:420px;line-height:1.4;">' +
+            escapeHtml(title || 'Opening your assessment…') + '</p><p style="margin-top:16px;font-size:13px;opacity:0.75;">Redirecting…</p></div>';
+        document.body.appendChild(el);
     }
-    
+
+    function escapeHtml(t) {
+        const d = document.createElement('div');
+        d.textContent = t == null ? '' : String(t);
+        return d.innerHTML;
+    }
 })();

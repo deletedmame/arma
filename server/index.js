@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 
 const app = express();
-const PORT = Number(process.env.PORT || 8787);
+const PORT = Number(process.env.PORT || 5500);
 
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY || '';
 const DEFAULT_MODEL =

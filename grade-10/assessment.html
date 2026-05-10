@@ -71,6 +71,9 @@
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
+        .modal.fullscreen-modal { align-items: stretch; padding: 0; background: var(--bg); }
+        .modal.fullscreen-modal .modal-content.fullscreen-modal-content { max-width: none; width: 100%; max-height: none; height: 100vh; border-radius: 0; padding: clamp(16px, 4vw, 28px); display: flex; flex-direction: column; }
+        .modal.fullscreen-modal .modal-content.fullscreen-modal-content #questionsContainer { flex: 1; overflow-y: auto; min-height: 0; }
         .modal-content { background: var(--card); border-radius: 16px; padding: 24px; max-width: 750px; width: 95%; max-height: 85vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
         .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text); }
@@ -101,7 +104,7 @@
 <body>
 
 <div class="header">
-    <a href="subject-portal.html" class="back-btn"><i class="fas fa-arrow-left"></i> Portal</a>
+    <a href="../subject-portal.html" class="back-btn"><i class="fas fa-arrow-left"></i> Portal</a>
     <h2><i class="fas fa-tasks"></i> My Assessments</h2>
     <span class="grade-badge" id="gradeBadge">Grade ?</span>
 </div>
@@ -145,7 +148,7 @@
         <div id="questionsContainer"></div>
         <div id="resultContainer" style="display:none;"></div>
         <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
-            <button class="btn btn-outline" onclick="closeModal()">Close</button>
+            <button type="button" class="btn btn-outline" id="assessmentFooterCloseBtn" onclick="closeModal()">Close</button>
             <button class="btn btn-primary" id="submitAssessmentBtn" onclick="submitAssessment()">Submit</button>
             <button class="btn btn-success" id="retakeBtn" style="display:none;" onclick="retakeAssessment()">Retake</button>
         </div>
@@ -168,6 +171,7 @@ document.getElementById('gradeBadge').textContent = `Grade ${studentGrade}${stud
 let allAssessments = [], allScores = [], currentAssessment = null, currentScoreDoc = null;
 let timerInterval = null, timeLeftSeconds = 0, submitted = false;
 let currentFilter = 'all', currentSubjectFilter = 'all';
+let lockMandatoryExit = false;
 
 const SUBJECTS_BY_GRADE = {
     9: ['Biology','Physics','Chemistry','Mathematics','Geography','History','English','Civics','HPE','ICT'],
@@ -251,7 +255,23 @@ async function loadAssessments() {
 
         updateStats();
         renderAssessments();
+        maybeOpenAssessmentFromQuery();
     } catch(e) { console.error(e); }
+}
+
+function maybeOpenAssessmentFromQuery() {
+    const p = new URLSearchParams(location.search);
+    const aid = p.get('assessmentId') || p.get('id');
+    const autoOpen = p.get('autoOpen') === '1' || p.get('autoOpen') === 'true';
+    if (!aid || !autoOpen) return;
+    const sessionKey = 'assessment_auto_opened_' + aid;
+    if (sessionStorage.getItem(sessionKey)) return;
+    sessionStorage.setItem(sessionKey, '1');
+    const a = allAssessments.find(x => x.id === aid);
+    if (!a) return;
+    setTimeout(() => {
+        if (!document.getElementById('assessmentModal').classList.contains('active')) openAssessmentById(aid);
+    }, 700);
 }
 
 function updateStats() {
@@ -343,21 +363,10 @@ async function openAssessment(assessment, scoreDocId, viewOnly = false) {
     currentAssessment = assessment;
     submitted = false;
     clearInterval(timerInterval);
+    currentScoreDoc = null;
     
     document.getElementById('modalTitle').textContent = assessment.title || 'Assessment';
     document.getElementById('modalInfo').innerHTML = `${assessment.type || 'Assessment'} • ${assessment.totalPoints || 100} pts • G${assessment.grade || studentGrade}${assessment.section || studentSection} • ⏱ ${assessment.timeLimit || 60}min`;
-    
-    const isForced = assessment.forceAllStudents || assessment.forcedByAdmin || (scoreDocId && allScores.find(s => s.id === scoreDocId)?.status === 'forced');
-    document.getElementById('warningBanner').style.display = (isForced && !viewOnly) ? 'flex' : 'none';
-    
-    if((isForced || assessment.type === 'Final' || assessment.type === 'Test') && !viewOnly) {
-        timeLeftSeconds = (assessment.timeLimit || 60) * 60;
-        document.getElementById('timerDisplay').style.display = 'block';
-        updateTimerDisplay();
-        startTimer();
-    } else {
-        document.getElementById('timerDisplay').style.display = 'none';
-    }
     
     if(scoreDocId) {
         const snap = await getDoc(doc(db, 'assessment_scores', scoreDocId));
@@ -374,12 +383,39 @@ async function openAssessment(assessment, scoreDocId, viewOnly = false) {
         });
         currentScoreDoc = { id: ref.id, score: 0, total: assessment.totalPoints || 100, percentage: 0, status: 'in_progress' };
     }
+
+    const isForced = !!(assessment.forceAllStudents || assessment.forcedByAdmin || (scoreDocId && allScores.find(s => s.id === scoreDocId)?.status === 'forced') || currentScoreDoc?.status === 'forced');
+    lockMandatoryExit = !!(isForced && !viewOnly);
+    document.getElementById('warningBanner').style.display = (isForced && !viewOnly) ? 'flex' : 'none';
+
+    if((isForced || assessment.type === 'Final' || assessment.type === 'Test') && !viewOnly) {
+        timeLeftSeconds = (assessment.timeLimit || 60) * 60;
+        document.getElementById('timerDisplay').style.display = 'block';
+        updateTimerDisplay();
+        startTimer();
+    } else {
+        document.getElementById('timerDisplay').style.display = 'none';
+    }
+
+    const modalEl = document.getElementById('assessmentModal');
+    const modalInner = modalEl.querySelector('.modal-content');
+    if (lockMandatoryExit) {
+        modalEl.classList.add('fullscreen-modal');
+        modalInner.classList.add('fullscreen-modal-content');
+        modalEl.querySelector('.modal-close').style.display = 'none';
+        document.getElementById('assessmentFooterCloseBtn').style.display = 'none';
+    } else {
+        modalEl.classList.remove('fullscreen-modal');
+        modalInner.classList.remove('fullscreen-modal-content');
+        modalEl.querySelector('.modal-close').style.display = '';
+        document.getElementById('assessmentFooterCloseBtn').style.display = 'inline-flex';
+    }
     
     renderQuestions(assessment, viewOnly);
     const done = ['completed','graded','submitted'].includes(currentScoreDoc.status);
     document.getElementById('submitAssessmentBtn').style.display = (done || viewOnly) ? 'none' : 'inline-flex';
     document.getElementById('retakeBtn').style.display = done ? 'inline-flex' : 'none';
-    document.getElementById('assessmentModal').classList.add('active');
+    modalEl.classList.add('active');
 }
 
 function renderQuestions(assessment, viewOnly = false) {
@@ -490,6 +526,12 @@ window.submitAssessment = async function() {
     document.getElementById('retakeBtn').style.display = 'inline-flex';
     document.getElementById('timerDisplay').style.display = 'none';
     document.getElementById('warningBanner').style.display = 'none';
+    lockMandatoryExit = false;
+    const modAfter = document.getElementById('assessmentModal');
+    modAfter.classList.remove('fullscreen-modal');
+    modAfter.querySelector('.modal-content')?.classList.remove('fullscreen-modal-content');
+    modAfter.querySelector('.modal-close').style.display = '';
+    document.getElementById('assessmentFooterCloseBtn').style.display = 'inline-flex';
     
     alert(`✅ Submitted!\nScore: ${ep}/${tp} (${pct}%)\nCorrect: ${correct}/${currentAssessment.questions.length}\nTranscript auto-updated.`);
     updateStats();
@@ -511,6 +553,17 @@ window.retakeAssessment = async function() {
         document.getElementById('timerDisplay').style.display = 'block';
         startTimer();
     }
+    const isForcedRetake = !!(currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.type === 'Final' || currentAssessment.type === 'Test');
+    lockMandatoryExit = isForcedRetake;
+    const modalRt = document.getElementById('assessmentModal');
+    const innerRt = modalRt.querySelector('.modal-content');
+    if (isForcedRetake) {
+        modalRt.classList.add('fullscreen-modal');
+        innerRt.classList.add('fullscreen-modal-content');
+        modalRt.querySelector('.modal-close').style.display = 'none';
+        document.getElementById('assessmentFooterCloseBtn').style.display = 'none';
+        document.getElementById('warningBanner').style.display = 'flex';
+    }
 };
 
 function startTimer() {
@@ -531,11 +584,17 @@ function updateTimerDisplay() {
 }
 
 window.closeModal = function() {
+    if (lockMandatoryExit && !submitted) return;
     if(!submitted && currentAssessment && (currentAssessment.forceAllStudents || currentAssessment.type === 'Final')) {
         if(!confirm('⚠️ Required assessment. Close anyway?')) return;
     }
     clearInterval(timerInterval);
-    document.getElementById('assessmentModal').classList.remove('active');
+    const modalEl = document.getElementById('assessmentModal');
+    modalEl.classList.remove('active', 'fullscreen-modal');
+    modalEl.querySelector('.modal-content')?.classList.remove('fullscreen-modal-content');
+    modalEl.querySelector('.modal-close').style.display = '';
+    document.getElementById('assessmentFooterCloseBtn').style.display = 'inline-flex';
+    lockMandatoryExit = false;
     currentAssessment = null; currentScoreDoc = null; submitted = false;
     renderAssessments();
 };
@@ -549,13 +608,18 @@ window.filterAssessments = function(f) {
 
 // Anti-cheat
 document.addEventListener('visibilitychange', async () => {
-    if(document.hidden && currentAssessment && !submitted && (currentAssessment.forceAllStudents || currentAssessment.type === 'Final')) {
+    const strict = document.hidden && currentAssessment && !submitted && (
+        lockMandatoryExit || currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.type === 'Final' || currentAssessment.type === 'Test' || currentScoreDoc?.status === 'forced'
+    );
+    if(strict) {
         try { await addDoc(collection(db, 'notifications'), { type: 'exam_visibility_exit', title: 'Student Left Page', message: `${student.name} switched tabs`, studentId: student.id, assessmentId: currentAssessment.id, grade: studentGrade, read: false, createdAt: Timestamp.now() }); } catch(e) {}
     }
 });
 
 window.addEventListener('beforeunload', (e) => {
-    if(currentAssessment && !submitted && (currentAssessment.forceAllStudents || currentAssessment.type === 'Final')) {
+    if(currentAssessment && !submitted && (
+        lockMandatoryExit || currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.type === 'Final' || currentAssessment.type === 'Test' || currentScoreDoc?.status === 'forced'
+    )) {
         e.preventDefault(); e.returnValue = '';
     }
 });
