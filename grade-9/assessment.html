@@ -384,7 +384,7 @@ async function openAssessment(assessment, scoreDocId, viewOnly = false) {
         currentScoreDoc = { id: ref.id, score: 0, total: assessment.totalPoints || 100, percentage: 0, status: 'in_progress' };
     }
 
-    const isForced = !!(assessment.forceAllStudents || assessment.forcedByAdmin || (scoreDocId && allScores.find(s => s.id === scoreDocId)?.status === 'forced') || currentScoreDoc?.status === 'forced');
+    const isForced = !!(assessment.forceAllStudents || assessment.forcedByAdmin || assessment.forcedByTeacher || (scoreDocId && allScores.find(s => s.id === scoreDocId)?.status === 'forced') || currentScoreDoc?.status === 'forced');
     lockMandatoryExit = !!(isForced && !viewOnly);
     document.getElementById('warningBanner').style.display = (isForced && !viewOnly) ? 'flex' : 'none';
 
@@ -553,7 +553,7 @@ window.retakeAssessment = async function() {
         document.getElementById('timerDisplay').style.display = 'block';
         startTimer();
     }
-    const isForcedRetake = !!(currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.type === 'Final' || currentAssessment.type === 'Test');
+    const isForcedRetake = !!(currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.forcedByTeacher || currentAssessment.type === 'Final' || currentAssessment.type === 'Test');
     lockMandatoryExit = isForcedRetake;
     const modalRt = document.getElementById('assessmentModal');
     const innerRt = modalRt.querySelector('.modal-content');
@@ -609,7 +609,7 @@ window.filterAssessments = function(f) {
 // Anti-cheat
 document.addEventListener('visibilitychange', async () => {
     const strict = document.hidden && currentAssessment && !submitted && (
-        lockMandatoryExit || currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.type === 'Final' || currentAssessment.type === 'Test' || currentScoreDoc?.status === 'forced'
+        lockMandatoryExit || currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.forcedByTeacher || currentAssessment.type === 'Final' || currentAssessment.type === 'Test' || currentScoreDoc?.status === 'forced'
     );
     if(strict) {
         try { await addDoc(collection(db, 'notifications'), { type: 'exam_visibility_exit', title: 'Student Left Page', message: `${student.name} switched tabs`, studentId: student.id, assessmentId: currentAssessment.id, grade: studentGrade, read: false, createdAt: Timestamp.now() }); } catch(e) {}
@@ -618,7 +618,7 @@ document.addEventListener('visibilitychange', async () => {
 
 window.addEventListener('beforeunload', (e) => {
     if(currentAssessment && !submitted && (
-        lockMandatoryExit || currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.type === 'Final' || currentAssessment.type === 'Test' || currentScoreDoc?.status === 'forced'
+        lockMandatoryExit || currentAssessment.forceAllStudents || currentAssessment.forcedByAdmin || currentAssessment.forcedByTeacher || currentAssessment.type === 'Final' || currentAssessment.type === 'Test' || currentScoreDoc?.status === 'forced'
     )) {
         e.preventDefault(); e.returnValue = '';
     }
