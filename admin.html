@@ -936,7 +936,7 @@
             <div class="panel">
                 <div class="panel-title"><i class="fas fa-file-alt"></i> Exam Management & Quarter Control</div>
 
-                <div class="section-title"><i class="fas fa-check-circle"></i> Step 1: Check Final Exam Status</div>
+                <div class="section-title"><i class="fas fa-check-circle"></i> Step 1: Check Assessment Status</div>
                 <div class="form-row">
                     <div class="form-group"><label>Grade</label><select id="checkFinalGrade">
                             <option value="9">Grade 9</option>
@@ -951,7 +951,7 @@
 
                 <hr>
 
-                <div class="section-title"><i class="fas fa-bolt"></i> Step 2: Force Final Exams (Teachers can force -
+                <div class="section-title"><i class="fas fa-bolt"></i> Step 2: Force Assessments (Teachers can force -
                     Admin overrides)</div>
                 <div class="form-row">
                     <div class="form-group"><label>Grade</label><select id="forceGrade">
@@ -961,19 +961,19 @@
                             <option value="12">12</option>
                         </select></div>
                     <div class="form-group"><label>Subject</label><select id="forceSubject"></select></div>
-                    <div class="form-group"><button class="btn btn-primary" onclick="loadFinalExamsForGrade()"><i
-                                class="fas fa-search"></i> Find Finals</button></div>
+                    <div class="form-group"><button class="btn btn-primary" onclick="loadAssessmentsForGradeAdmin()"><i
+                                class="fas fa-search"></i> Find Assessments</button></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Select Final Exam</label><select id="finalExamSelect"
+                    <div class="form-group"><label>Select Assessment</label><select id="finalExamSelect"
                             style="min-width:300px;"></select></div>
-                    <div class="form-group"><button class="btn btn-success" onclick="forceFinalExamAdmin()"><i
-                                class="fas fa-bolt"></i> Force This Final & Redirect Students</button></div>
+                    <div class="form-group"><button class="btn btn-success" onclick="forceAssessmentAdmin()"><i
+                                class="fas fa-bolt"></i> Force Assessment & Redirect Students</button></div>
                 </div>
-                <div class="helper">⚠️ Forcing a final exam will redirect all students in that grade to their assessment
-                    page. Teachers can also force tests for their subject.</div>
+                <div class="helper">⚠️ Forcing an assessment will redirect all students in that grade to their assessment
+                    page and lock the screen.</div>
                 <div id="teacherFinalStatus" style="margin-top:16px;">
-                    <h5>Teachers Final Status:</h5>
+                    <h5>Teachers Assessment Status:</h5>
                     <div id="teacherFinalStatusList" class="teacher-status-list"></div>
                 </div>
 
@@ -1799,22 +1799,21 @@
             }
         };
 
-        window.loadFinalExamsForGrade = async () => {
+        window.loadAssessmentsForGradeAdmin = async () => {
             const grade = document.getElementById('forceGrade').value;
             const subject = document.getElementById('forceSubject').value;
             if (!subject) { alert('Select a subject'); return; }
 
             const q = query(collection(db, 'assessments'),
-                where('type', '==', 'Final'),
                 where('grade', '==', parseInt(grade)),
                 where('subjectCode', '==', subject));
             const snap = await getDocs(q);
-            const finals = [];
-            snap.forEach(d => finals.push({ id: d.id, ...d.data() }));
+            const assessments = [];
+            snap.forEach(d => assessments.push({ id: d.id, ...d.data() }));
 
             document.getElementById('finalExamSelect').innerHTML =
-                '<option value="">Select a final exam</option>' +
-                finals.map(f => `<option value="${f.id}">${f.title} - ${f.teacherName || 'Unknown'} (Section ${f.section || 'All'})</option>`).join('');
+                '<option value="">Select an assessment</option>' +
+                assessments.map(f => `<option value="${f.id}">${f.title} (${f.type}) - ${f.teacherName || 'Unknown'} (Section ${f.section || 'All'})</option>`).join('');
 
             const teachersForGrade = allTeachers.filter(t =>
                 t.approved &&
@@ -1825,13 +1824,13 @@
 
             const teacherStatus = teachersForGrade.map(t => ({
                 teacher: t,
-                hasFinal: finals.some(f => f.teacherId === t.id)
+                hasAssessment: assessments.some(f => f.teacherId === t.id)
             }));
 
             document.getElementById('teacherFinalStatusList').innerHTML = teacherStatus.map(ts =>
                 `<div class="teacher-status-item">
                 <span><i class="fas fa-user"></i> ${ts.teacher.name}</span>
-                <span class="badge ${ts.hasFinal ? 'badge-success' : 'badge-danger'}">${ts.hasFinal ? '✓ Final Created' : '✗ No Final'}</span>
+                <span class="badge ${ts.hasAssessment ? 'badge-success' : 'badge-danger'}">${ts.hasAssessment ? '✓ Created' : '✗ Not Created'}</span>
             </div>`
             ).join('');
         };
@@ -1946,10 +1945,10 @@
             await loadTranscriptSubmissions();
         };
 
-        // UPDATED: Force Final Exam with Student Redirect
-        window.forceFinalExamAdmin = async () => {
+        // UPDATED: Force Assessment with Student Redirect
+        window.forceAssessmentAdmin = async () => {
             const assessmentId = document.getElementById('finalExamSelect').value;
-            if (!assessmentId) { alert('Select a final exam'); return; }
+            if (!assessmentId) { alert('Select an assessment'); return; }
 
             const assessmentRef = doc(db, 'assessments', assessmentId);
             const assessmentSnap = await getDoc(assessmentRef);
@@ -2025,8 +2024,8 @@
                     await addDoc(collection(db, 'notifications'), {
                         userId: s.id,
                         type: 'forced_exam',
-                        title: 'Final Exam Started - Do Not Exit',
-                        message: `You have been directed to take your ${subject} Final Exam. Do not close or refresh the page until finished.`,
+                        title: 'Assessment Started - Do Not Exit',
+                        message: `You have been directed to take your ${subject} ${assessment.type || 'Assessment'}. Do not close or refresh the page until finished.`,
                         assessmentId: assessmentId,
                         assessmentUrl: assessmentUrl,
                         read: false,
@@ -2050,8 +2049,8 @@
                 await addDoc(collection(db, 'notifications'), {
                     userId: teacher.id,
                     type: 'exam_forced',
-                    title: 'Final Exam Forced by Admin',
-                    message: `The ${subject} Final Exam for Grade ${grade} has been forced by Admin. ${totalStudentsForced} students have been redirected to the assessment.`,
+                    title: 'Assessment Forced by Admin',
+                    message: `The ${subject} ${assessment.type || 'Assessment'} for Grade ${grade} has been forced by Admin. ${totalStudentsForced} students have been redirected.`,
                     assessmentId: assessmentId,
                     grade: grade,
                     read: false,
@@ -2059,7 +2058,7 @@
                 });
             }
 
-            showPopup(`Final exam forced for Grade ${grade} (${subject})! ${totalStudentsForced} students redirected to ${assessmentUrl}`, 'success');
+            showPopup(`Assessment forced for Grade ${grade} (${subject})! ${totalStudentsForced} students redirected.`, 'success');
             await checkAllFinalsStatus();
         };
 

@@ -1237,7 +1237,22 @@
             const rows = await Promise.all(allAssessments.map(async (a) => {
                 const avg = await getAssessmentAverage(a.id);
                 const inT = await isAssessmentInTranscript(a.id);
-                return `<tr><td><strong>${escapeHtml(a.title || 'Untitled')}</strong></td><td><span class="score-badge">${getWeightLabel(a.type)}</span></td><td><strong>${getWeightByType(a.type)}%</strong></td><td>G${a.grade || '-'} ${a.section || ''}</td><td>${a.dueDate || '-'}</td><td><strong>${avg}%</strong></td><td>${inT ? '<span class="badge-transcript">✅ In Transcript</span>' : `<button class="btn btn-info btn-sm" onclick="openTranscriptModal('${a.id}')"><i class="fas fa-plus"></i> Add</button>`}</td><td><button class="btn btn-primary btn-sm" onclick="openMarkModal('${a.id}')"><i class="fas fa-pen"></i> Mark</button></td></tr>`;
+                const isForced = a.forceAllStudents || a.forcedByTeacher || a.forcedByAdmin;
+                return `<tr>
+                    <td><strong>${escapeHtml(a.title || 'Untitled')}</strong></td>
+                    <td><span class="score-badge">${getWeightLabel(a.type)}</span></td>
+                    <td><strong>${getWeightByType(a.type)}%</strong></td>
+                    <td>G${a.grade || '-'} ${a.section || ''}</td>
+                    <td>${a.dueDate || '-'}</td>
+                    <td><strong>${avg}%</strong></td>
+                    <td>${inT ? '<span class="badge-transcript">✅ In Transcript</span>' : `<button class="btn btn-info btn-sm" onclick="openTranscriptModal('${a.id}')"><i class="fas fa-plus"></i> Add</button>`}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="openMarkModal('${a.id}')"><i class="fas fa-pen"></i> Mark</button>
+                        <button class="btn ${isForced ? 'btn-success' : 'btn-warning'} btn-sm" onclick="forceAssessmentTeacher('${a.id}')" ${isForced ? 'disabled' : ''}>
+                            <i class="fas fa-bolt"></i> ${isForced ? 'Forced' : 'Force'}
+                        </button>
+                    </td>
+                </tr>`;
             }));
             tbody.innerHTML = rows.join('');
         }
@@ -1351,6 +1366,92 @@
                 showNotice('assessmentNotice', 'Error: ' + error.message, 'error');
             }
         };
+
+        window.forceAssessmentTeacher = async function (assessmentId) {
+            const a = allAssessments.find(x => x.id === assessmentId);
+            if (!a) return;
+
+            if (!confirm(`Force assessment "${a.title}" for all students in Grade ${a.grade}${a.section}? This will redirect them and lock their screens.`)) return;
+
+            try {
+                const assessmentRef = doc(db, 'assessments', assessmentId);
+                const subjectCode = a.subjectCode || getSubjectCode(currentTeacher.subject);
+                let assessmentUrl = `/grade-${a.grade}/assessment.html`;
+                if (parseInt(a.grade) >= 11) {
+                    assessmentUrl = `/grade-${a.grade}/${(a.stream || '').toLowerCase().includes('social') ? 'social' : 'natural'}/assessment.html`;
+                }
+
+                await updateDoc(assessmentRef, {
+                    forceAllStudents: true,
+                    forcedByTeacher: true,
+                    forcedAt: Timestamp.now(),
+                    status: 'active',
+                    assessmentUrl: assessmentUrl
+                });
+
+                const classStudents = allStudents.filter(s =>
+                    parseInt(s.grade) === parseInt(a.grade) &&
+                    String(s.section) === String(a.section)
+                );
+
+                let forcedCount = 0;
+                for (const student of classStudents) {
+                    const existingQ = query(collection(db, 'assessment_scores'),
+                        where('studentId', '==', student.id),
+                        where('assessmentId', '==', assessmentId));
+                    const existingSnap = await getDocs(existingQ);
+
+                    if (existingSnap.empty) {
+                        await addDoc(collection(db, 'assessment_scores'), {
+                            studentId: student.id,
+                            studentName: student.name,
+                            assessmentId,
+                            assessmentTitle: a.title,
+                            assessmentType: a.type,
+                            score: 0,
+                            total: a.totalPoints || 100,
+                            percentage: 0,
+                            status: 'forced',
+                            forced: true,
+                            grade: a.grade,
+                            section: a.section,
+                            assessmentUrl: assessmentUrl,
+                            timeLimit: a.timeLimit || 60,
+                            includeInAverage: a.includeInAverage !== false,
+                            teacherId: currentTeacher.id,
+                            assignedAt: Timestamp.now()
+                        });
+                    } else {
+                        await updateDoc(doc(db, 'assessment_scores', existingSnap.docs[0].id), {
+                            status: 'forced',
+                            forced: true,
+                            updatedAt: Timestamp.now()
+                        });
+                    }
+
+                    // Notification
+                    await addDoc(collection(db, 'notifications'), {
+                        userId: student.id,
+                        type: 'forced_exam',
+                        title: 'Assessment Started',
+                        message: `Your teacher has started "${a.title}". You are being redirected.`,
+                        assessmentId: assessmentId,
+                        assessmentUrl: assessmentUrl,
+                        read: false,
+                        priority: 'high',
+                        createdAt: Timestamp.now()
+                    });
+                    forcedCount++;
+                }
+
+                showNotice('assessmentNotice', `✅ Forced "${a.title}" for ${forcedCount} students!`, 'success');
+                await loadAssessments();
+            } catch (e) {
+                console.error(e);
+                showNotice('assessmentNotice', 'Error forcing assessment: ' + e.message, 'error');
+            }
+        };
+
         // --- Transcript Modal ---
         window.openTranscriptModal = function (aid) {
             const a = allAssessments.find(x => x.id === aid);
