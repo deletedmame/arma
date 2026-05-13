@@ -1230,6 +1230,142 @@
             return !snap.empty;
         }
 
+        window.forceAssessment = async function(aid) {
+            const a = allAssessments.find(x => x.id === aid);
+            if (!a) return;
+
+            const isFinal = a.type === 'Final';
+
+            if (!isFinal) {
+                // Check schedule: only active during scheduled class hour
+                const now = new Date();
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const currentDay = days[now.getDay()];
+
+                const totalMinutes = now.getHours() * 60 + now.getMinutes();
+                const boundaries = [
+                    { period: 1, start: 480, end: 540 },    // 8:00-9:00
+                    { period: 2, start: 540, end: 600 },    // 9:00-10:00
+                    { period: 3, start: 600, end: 660 },    // 10:00-11:00
+                    { period: 4, start: 660, end: 720 },    // 11:00-12:00
+                    { period: 5, start: 720, end: 780 },    // 12:00-13:00
+                    { period: 6, start: 780, end: 840 },    // 13:00-14:00
+                    { period: 7, start: 840, end: 900 },    // 14:00-15:00
+                    { period: 8, start: 900, end: 960 },    // 15:00-16:00
+                    { period: 9, start: 960, end: 1020 },   // 16:00-17:00
+                    { period: 10, start: 1020, end: 1100 }  // 17:00-18:20
+                ];
+
+                let currentPeriod = null;
+                for (let b of boundaries) {
+                    if (totalMinutes >= b.start && totalMinutes < b.end) {
+                        currentPeriod = b.period;
+                        break;
+                    }
+                }
+
+                if (!currentPeriod) {
+                    alert("Regular assessments can only be forced during scheduled class periods.");
+                    return;
+                }
+
+                const scheduledClass = teacherSchedules.find(s =>
+                    String(s.day) === currentDay &&
+                    parseInt(s.period) === currentPeriod &&
+                    parseInt(s.grade) === parseInt(a.grade) &&
+                    String(s.section) === String(a.section)
+                );
+
+                if (!scheduledClass) {
+                    alert(`You don't have a scheduled class for Grade ${a.grade}${a.section} on ${currentDay} Period ${currentPeriod}.`);
+                    return;
+                }
+            }
+
+            if (!confirm(`Are you sure you want to FORCE this ${a.type} on all students in Grade ${a.grade}${a.section}?`)) return;
+
+            try {
+                // Update assessment doc
+                await updateDoc(doc(db, 'assessments', aid), {
+                    forcedByTeacher: true,
+                    forcedAt: Timestamp.now(),
+                    status: 'active'
+                });
+
+                // Get all students in this class
+                const classStudents = allStudents.filter(s =>
+                    parseInt(s.grade) === parseInt(a.grade) &&
+                    String(s.section) === String(a.section)
+                );
+
+                const today = new Date().toISOString().split('T')[0];
+                const attQ = query(collection(db, 'attendance'),
+                    where('grade', '==', String(a.grade)),
+                    where('section', '==', String(a.section)),
+                    where('date', '==', today)
+                );
+                const attSnap = await getDocs(attQ);
+                const absentIds = new Set();
+                attSnap.forEach(d => {
+                    d.data().records?.forEach(r => {
+                        if (r.status === 'A') absentIds.add(r.studentId);
+                    });
+                });
+
+                let count = 0;
+                for (const s of classStudents) {
+                    // Requirement: Absent students get a notification but are not forced until they return
+                    const status = absentIds.has(s.id) ? 'pending' : 'forced';
+
+                    const eq = query(collection(db, "assessment_scores"), where("studentId", "==", s.id), where("assessmentId", "==", aid));
+                    const es = await getDocs(eq);
+
+                    if (es.empty) {
+                        await addDoc(collection(db, "assessment_scores"), {
+                            studentId: s.id,
+                            studentName: s.name,
+                            assessmentId: aid,
+                            assessmentTitle: a.title,
+                            assessmentType: a.type,
+                            score: 0,
+                            total: a.totalPoints || 100,
+                            percentage: 0,
+                            status: status,
+                            forced: true,
+                            grade: a.grade,
+                            section: a.section,
+                            subjectCode: a.subjectCode,
+                            assignedAt: Timestamp.now(),
+                            teacherId: currentTeacher.id
+                        });
+                    } else {
+                        await updateDoc(doc(db, "assessment_scores", es.docs[0].id), {
+                            status: status,
+                            forced: true,
+                            assignedAt: Timestamp.now()
+                        });
+                    }
+
+                    // Always send a notification
+                    await addDoc(collection(db, "notifications"), {
+                        userId: s.id,
+                        type: status === 'forced' ? 'forced_assessment' : 'new_assessment',
+                        title: isFinal ? '⚠️ FORCED FINAL EXAM' : `Forced ${a.type} Started`,
+                        message: isFinal ? `You must complete the Final Exam: ${a.title}` : `Your teacher is starting a forced ${a.type} - Get ready!`,
+                        assessmentId: aid,
+                        read: false,
+                        createdAt: Timestamp.now()
+                    });
+                    count++;
+                }
+
+                alert(`Successfully forced ${a.type} for ${count} students!`);
+            } catch (e) {
+                console.error(e);
+                alert("Error forcing assessment: " + e.message);
+            }
+        };
+
         async function displayAssessments() {
             const tbody = document.getElementById('assessmentsBody');
             if (!tbody) return;
@@ -1237,7 +1373,7 @@
             const rows = await Promise.all(allAssessments.map(async (a) => {
                 const avg = await getAssessmentAverage(a.id);
                 const inT = await isAssessmentInTranscript(a.id);
-                return `<tr><td><strong>${escapeHtml(a.title || 'Untitled')}</strong></td><td><span class="score-badge">${getWeightLabel(a.type)}</span></td><td><strong>${getWeightByType(a.type)}%</strong></td><td>G${a.grade || '-'} ${a.section || ''}</td><td>${a.dueDate || '-'}</td><td><strong>${avg}%</strong></td><td>${inT ? '<span class="badge-transcript">✅ In Transcript</span>' : `<button class="btn btn-info btn-sm" onclick="openTranscriptModal('${a.id}')"><i class="fas fa-plus"></i> Add</button>`}</td><td><button class="btn btn-primary btn-sm" onclick="openMarkModal('${a.id}')"><i class="fas fa-pen"></i> Mark</button></td></tr>`;
+                return `<tr><td><strong>${escapeHtml(a.title || 'Untitled')}</strong></td><td><span class="score-badge">${getWeightLabel(a.type)}</span></td><td><strong>${getWeightByType(a.type)}%</strong></td><td>G${a.grade || '-'} ${a.section || ''}</td><td>${a.dueDate || '-'}</td><td><strong>${avg}%</strong></td><td>${inT ? '<span class="badge-transcript">✅ In Transcript</span>' : `<button class="btn btn-info btn-sm" onclick="openTranscriptModal('${a.id}')"><i class="fas fa-plus"></i> Add</button>`}</td><td><div style="display:flex;gap:5px;"><button class="btn btn-primary btn-sm" onclick="openMarkModal('${a.id}')"><i class="fas fa-pen"></i> Mark</button><button class="btn ${a.type === 'Final' ? 'btn-danger' : 'btn-warning'} btn-sm" onclick="forceAssessment('${a.id}')"><i class="fas fa-bolt"></i> ${a.type === 'Final' ? 'Force Final' : 'Force'}</button></div></td></tr>`;
             }));
             tbody.innerHTML = rows.join('');
         }
