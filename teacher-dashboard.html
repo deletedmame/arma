@@ -1778,9 +1778,37 @@
             <td><input type="number" class="transcript-input" id="beh_${d.studentId}" value="${d.behaviorScore}" min="0" max="100" onchange="updateBehaviorBookmark('${d.studentId}')" title="Behavior Score (0-100)"></td>
             <td><input type="number" class="transcript-input" id="bm_${d.studentId}" value="${d.bookmarkScore}" min="0" max="100" onchange="updateBehaviorBookmark('${d.studentId}')" title="Bookmark Score (0-100)"></td>
             <td><strong class="score-badge ${getScoreClass(d.weightedTotal)}" title="Weighted: CW(10%)+HW(10%)+Quiz(10%)+Final(30%)+Test(10%)+Assignment(10%)+Behavior(10%)+Bookmark(10%)">${d.weightedTotal}%</strong><span class="count-small">${d.totalAppliedWeight}% applied</span></td>
-            <td>${d.sentToAdmin ? `<span class="badge-sent">✅ Sent<br><small>${d.sentAt?.toDate?.().toLocaleDateString() || ''}</small></span>` : '<span class="badge-pending">Draft</span>'}</td>
+            <td>${d.sentToAdmin ? `<span class="badge-sent">✅ Sent<br><small>${d.sentAt?.toDate?.().toLocaleDateString() || ''}</small></span>` : `<div><span class="badge-pending">Draft</span><br><button class="btn btn-warning btn-xs" style="margin-top:4px;" onclick="forceLatestForStudent('${d.studentId}')"><i class="fas fa-bolt"></i> Force</button></div>`}</td>
         </tr>`).join('');
         }
+
+        window.forceLatestForStudent = async function(studentId) {
+            try {
+                const studentData = currentTranscriptData.find(d => d.studentId === studentId);
+                if (!studentData) return;
+
+                // Find the latest assessment for this class
+                const q = query(collection(db, "assessments"),
+                    where("grade", "==", studentData.grade),
+                    where("section", "==", studentData.section),
+                    orderBy("createdAt", "desc")
+                );
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    alert("No assessments found to force.");
+                    return;
+                }
+
+                const latestAssessment = { id: snap.docs[0].id, ...snap.docs[0].data() };
+
+                // Use the existing forceAssessment logic
+                await forceAssessment(latestAssessment.id);
+                loadTranscriptTab(); // Refresh
+            } catch (e) {
+                console.error(e);
+                alert("Error forcing: " + e.message);
+            }
+        };
 
         window.updateBehaviorBookmark = async function (studentId) {
             const behInput = document.getElementById('beh_' + studentId);
